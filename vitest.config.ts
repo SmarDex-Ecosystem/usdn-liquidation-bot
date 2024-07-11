@@ -1,13 +1,11 @@
-import { defineConfig, mergeConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
-import vitestConfig from '../../vitest.config.js';
-
-export default mergeConfig(
-  vitestConfig,
-  defineConfig({
+export default defineConfig({
     test: {
-      include: ['tests/**/*.test.ts'],
-      testTimeout: 3000,
+        include: ['src/**/*.test.ts'],
+        testTimeout: 3000,
+        coverage: {
+          reporter: ['text', 'json', 'html'],
+        },
     },
-  }),
-);
+}); 
