@@ -1,7 +1,6 @@
-import { SignedDataPackage } from '@redstone-finance/protocol';
 import { DataPackagesResponse, requestDataPackages } from '@redstone-finance/sdk';
 import IRedstoneAdapter from './IRedstoneAdapter.js';
-import { RedstonePriceData, RedstonePriceFetchingError } from './types.js';
+import { RedstonePriceFetchingError } from './types.js';
 
 export default class RedstoneAdapter implements IRedstoneAdapter {
     private readonly PRICE_DECIMALS = 8;
