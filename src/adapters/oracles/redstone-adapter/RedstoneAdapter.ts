@@ -13,7 +13,7 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
      * @param uint8Array The array to extract the bigint from
      * @returns The bigint corresponding to the array of uint8
      */
-    private uint8ArrayToBigInt(uint8Array: Uint8Array): bigint {
+    private uint8ArrayToBigInt(uint8Array: Uint8Array) {
         let bigInt = 0n;
         for (const byte of uint8Array) {
             bigInt = (bigInt << 8n) + BigInt(byte);
@@ -25,7 +25,7 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
      * Get the latest data of the ETH price feed from Redstone
      * @returns The ETH price feed data
      */
-    private async getETHPriceFeedData(): Promise<SignedDataPackage> {
+    private async getETHPriceFeedData() {
         let data: DataPackagesResponse;
         try {
             data = await requestDataPackages({
@@ -45,7 +45,7 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
     }
 
     /** @inheritDoc */
-    async getLatestPrice(): Promise<RedstonePriceData> {
+    async getLatestPrice() {
         const data = await this.getETHPriceFeedData();
         if (data.dataPackage.dataPoints.length === 0) {
             throw new RedstonePriceFetchingError('Not enough data points from Redstone');
