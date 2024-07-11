@@ -1,14 +1,19 @@
 import { SignedDataPackage } from "@redstone-finance/protocol";
 import { DataPackagesResponse, requestDataPackages } from "@redstone-finance/sdk";
 import IRedstoneAdapter from "./IRedstoneAdapter.js";
-import { RedstonePrice, RedstonePriceFetchingError } from "./types.js";
+import { RedstonePriceData, RedstonePriceFetchingError } from "./types.js";
 
 export default class RedstoneAdapter implements IRedstoneAdapter {
-    private PRICE_DECIMALS = 8;
-    private MIN_UNIQUE_SIGNERS_COUNT = 3;
-    private PRICE_FEED_ID = 'ETH';
+    private readonly PRICE_DECIMALS = 8;
+    private readonly MIN_UNIQUE_SIGNERS_COUNT = 3;
+    private readonly PRICE_FEED_ID = 'ETH';
 
-    private uint8ArrayToBigInt(uint8Array: Uint8Array) {
+    /**
+     * Convert an array of uint8 to a bigint
+     * @param uint8Array The array to extract the bigint from
+     * @returns The bigint corresponding to the array of uint8
+     */
+    private uint8ArrayToBigInt(uint8Array: Uint8Array): bigint {
         let bigInt = 0n;
         for (const byte of uint8Array) {
             bigInt = (bigInt << 8n) + BigInt(byte);
@@ -16,7 +21,11 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
         return bigInt;
     }
 
-    private async getOracleData(): Promise<SignedDataPackage> {
+    /**
+     * Get the latest data of the ETH price feed from Redstone
+     * @returns The ETH price feed data
+     */
+    private async getETHPriceFeedData(): Promise<SignedDataPackage> {
         let data: DataPackagesResponse;
         try {
             data = await requestDataPackages({
@@ -35,8 +44,9 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
         return data.ETH[0];
     }
 
-    async getLatestPrice(): Promise<RedstonePrice> {
-        const data = await this.getOracleData();
+    /** @inheritDoc */
+    async getLatestPrice(): Promise<RedstonePriceData> {
+        const data = await this.getETHPriceFeedData();
         if (data.dataPackage.dataPoints.length === 0) {
             throw new RedstonePriceFetchingError('Not enough data points from Redstone');
         }
