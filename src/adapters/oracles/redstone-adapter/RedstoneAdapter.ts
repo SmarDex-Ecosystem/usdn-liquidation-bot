@@ -1,7 +1,7 @@
-import { SignedDataPackage } from "@redstone-finance/protocol";
-import { DataPackagesResponse, requestDataPackages } from "@redstone-finance/sdk";
-import IRedstoneAdapter from "./IRedstoneAdapter.js";
-import { RedstonePriceData, RedstonePriceFetchingError } from "./types.js";
+import { SignedDataPackage } from '@redstone-finance/protocol';
+import { DataPackagesResponse, requestDataPackages } from '@redstone-finance/sdk';
+import IRedstoneAdapter from './IRedstoneAdapter.js';
+import { RedstonePriceData, RedstonePriceFetchingError } from './types.js';
 
 export default class RedstoneAdapter implements IRedstoneAdapter {
     private readonly PRICE_DECIMALS = 8;
@@ -36,7 +36,7 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
         } catch (error) {
             throw new Error('Failed to get data from Redstone');
         }
-        
+
         if (data?.ETH === undefined || data.ETH.length === 0) {
             throw new RedstonePriceFetchingError('Redstone returned empty data');
         }
@@ -53,11 +53,11 @@ export default class RedstoneAdapter implements IRedstoneAdapter {
 
         const price = this.uint8ArrayToBigInt(data.dataPackage.dataPoints[0].value);
         const signature = data.signature.compact;
-        
+
         return {
             price,
             decimals: this.PRICE_DECIMALS,
-            signature
+            signature,
         };
     }
 }

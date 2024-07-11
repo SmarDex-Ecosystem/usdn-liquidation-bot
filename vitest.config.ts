@@ -5,7 +5,7 @@ export default defineConfig({
         include: ['src/**/*.test.ts'],
         testTimeout: 3000,
         coverage: {
-          reporter: ['text', 'json', 'html'],
+            reporter: ['text', 'json', 'html'],
         },
     },
-}); 
+});
