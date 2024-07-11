@@ -4,4 +4,4 @@ const helloWorld = () => {
 
 helloWorld();
 
-export {};
+export type {};

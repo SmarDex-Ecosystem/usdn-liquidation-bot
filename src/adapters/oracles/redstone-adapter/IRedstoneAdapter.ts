@@ -1,4 +1,4 @@
-import { RedstonePriceData } from './types.js';
+import type { RedstonePriceData } from './types.js';
 
 /** Allow to communicate with the Redstone oracle */
 export default interface IRedstoneAdapter {

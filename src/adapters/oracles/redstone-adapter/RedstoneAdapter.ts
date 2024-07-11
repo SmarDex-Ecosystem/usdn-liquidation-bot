@@ -1,5 +1,5 @@
-import { DataPackagesResponse, requestDataPackages } from '@redstone-finance/sdk';
-import IRedstoneAdapter from './IRedstoneAdapter.js';
+import { type DataPackagesResponse, requestDataPackages } from '@redstone-finance/sdk';
+import type IRedstoneAdapter from './IRedstoneAdapter.js';
 import { RedstonePriceFetchingError } from './types.js';
 
 export default class RedstoneAdapter implements IRedstoneAdapter {
