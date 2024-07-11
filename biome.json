@@ -14,11 +14,16 @@
         }
     },
     "linter": {
-        "enabled": true
+        "enabled": true,
+        "rules": {
+            "correctness": {
+                "noUnusedImports": "error"
+            }
+        }
     },
     "files": {
         "ignore": [
-            ".coverage/*",
+            "coverage/*",
             ".devenv/*",
             ".direnv/*",
             "broadcast/*",
