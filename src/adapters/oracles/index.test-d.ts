@@ -1,0 +1,11 @@
+import { describe, expectTypeOf, it } from 'vitest';
+import type IOracleAdapter from './IOracleAdapter.js';
+
+describe('adapters/oracles/index', () => {
+    it('should return valid data', async () => {
+        const adapters = await import('./index.js');
+        for (const oracle of Object.values(adapters)) {
+            expectTypeOf(oracle).toEqualTypeOf<IOracleAdapter>();
+        }
+    });
+});
