@@ -1,7 +1,7 @@
 const helloWorld = () => {
-  return 'Hello, World!';
+    return 'Hello, World!';
 };
 
 helloWorld();
 
-export {};
+export type {};
