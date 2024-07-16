@@ -61,7 +61,7 @@ describe('PythAdapter', () => {
             await expect(pythAdapter.getLatestPrice()).to.rejects.toThrow('Failed to get data from Pyth');
         });
 
-        it('should throw an error when the returned data is empty', async () => {
+        it('should throw an error when the client returns empty data', async () => {
             const mockedClient = await import('@pythnetwork/price-service-client');
             vi.mocked(mockedClient).PriceServiceConnection.prototype.getLatestPriceFeeds = vi
                 .fn()
@@ -73,7 +73,7 @@ describe('PythAdapter', () => {
             await expect(pythAdapter.getLatestPrice()).to.rejects.toThrow('Pyth returned empty data');
         });
 
-        it('should throw an error when the returned data for the price feed is an empty array', async () => {
+        it('should throw an error when the client returns an empty array', async () => {
             const mockedClient = await import('@pythnetwork/price-service-client');
             vi.mocked(mockedClient).PriceServiceConnection.prototype.getLatestPriceFeeds = vi
                 .fn()
@@ -85,7 +85,7 @@ describe('PythAdapter', () => {
             await expect(pythAdapter.getLatestPrice()).to.rejects.toThrow('Pyth returned empty data');
         });
 
-        it('should throw an error when the returned data does not contain any data points', async () => {
+        it('should throw an error when the client cannot return a recent price', async () => {
             const mockedClient = await import('@pythnetwork/price-service-client');
             vi.mocked(mockedClient).PriceServiceConnection.prototype.getLatestPriceFeeds = vi
                 .fn()
@@ -165,7 +165,7 @@ describe('PythAdapter', () => {
                 client.send('new price');
             }
 
-            // wait for the callback to be called before executing assertions
+            // wait for the callback to be executed before making assertions
             await callbackPromise;
 
             expect(callback).toHaveBeenCalledWith({
@@ -175,7 +175,7 @@ describe('PythAdapter', () => {
             } as OraclePriceData);
         });
 
-        it('should not call the callback if the returned data by `getPriceNoOlderThan` is empty', async () => {
+        it('should not execute the callback if the returned data by `getPriceNoOlderThan` is empty', async () => {
             // if `callback` is called, it will resolve `callbackPromise`
             let resolveCallback: undefined | ((value: unknown) => void);
             const callbackPromise = new Promise((r) => {
@@ -206,13 +206,13 @@ describe('PythAdapter', () => {
                 client.send('new price');
             }
 
-            // wait for the callback to be called before executing assertions
+            // wait for the callback to be executed before making assertions
             await callbackPromise;
 
             expect(callback).toHaveBeenCalledTimes(0);
         });
 
-        it('should not call the callback if the data does not contain a signature', async () => {
+        it('should not execute the callback if the data does not contain a signature', async () => {
             // if `callback` is called, it will resolve `callbackPromise`
             let resolveCallback: undefined | ((value: unknown) => void);
             const callbackPromise = new Promise((r) => {
@@ -243,7 +243,7 @@ describe('PythAdapter', () => {
                 client.send('new price');
             }
 
-            // wait for the callback to be called before executing assertions
+            // wait for the callback to be executed before making assertions
             await callbackPromise;
 
             expect(callback).toHaveBeenCalledTimes(0);
