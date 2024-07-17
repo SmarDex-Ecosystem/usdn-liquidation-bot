@@ -1,6 +1,6 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import PythAdapter from './PythAdapter.js';
-import { WebSocketServer, WebSocket } from 'ws';
+import {} from 'ws';
 import type { OraclePriceData } from '../types.js';
 
 vi.mock('@pythnetwork/price-service-client');
@@ -125,48 +125,17 @@ describe('PythAdapter', () => {
     });
 
     describe('subscribeToPriceUpdate', () => {
-        let wss: WebSocketServer;
-        let ws: WebSocket;
-        beforeAll(async () => {
-            wss = new WebSocketServer({ host: 'localhost', port: 1234 });
-            ws = new WebSocket(`ws://${wss.options.host}:${wss.options.port}`);
-
-            // Wait for the connection to be ready before proceeding with the tests
-            await new Promise((resolve) => {
-                ws.on('open', () => {
-                    resolve('connection ready');
-                });
-            });
-        });
-
         it('should execute the callback on price update', async () => {
             const mockedClient = await import('@pythnetwork/price-service-client');
             vi.mocked(mockedClient).PriceServiceConnection.prototype.subscribePriceFeedUpdates = vi
                 .fn()
                 .mockImplementation(async (_priceFeeds, cb) => {
-                    ws.on('message', (_m) => {
-                        cb(priceFeedData[0]);
-                    });
+                    cb(priceFeedData[0]);
                 });
 
-            // if `callback` is called, it will resolve `callbackPromise`
-            let resolveCallback: undefined | ((value: unknown) => void);
-            const callbackPromise = new Promise((r) => {
-                resolveCallback = r;
-            });
-            const callback = vi.fn().mockImplementation(() => {
-                if (resolveCallback) resolveCallback(0);
-            });
-
+            const callback = vi.fn();
             const pythAdapter = new PythAdapter();
             await pythAdapter.subscribeToPriceUpdate(callback);
-
-            for (const client of wss.clients) {
-                client.send('new price');
-            }
-
-            // wait for the callback to be executed before making assertions
-            await callbackPromise;
 
             expect(callback).toHaveBeenCalledWith({
                 price: BigInt(validPythData.price.price),
@@ -176,75 +145,43 @@ describe('PythAdapter', () => {
         });
 
         it('should not execute the callback if the returned data by `getPriceNoOlderThan` is empty', async () => {
-            // if `callback` is called, it will resolve `callbackPromise`
-            let resolveCallback: undefined | ((value: unknown) => void);
-            const callbackPromise = new Promise((r) => {
-                resolveCallback = r;
-            });
-
             const mockedClient = await import('@pythnetwork/price-service-client');
             vi.mocked(mockedClient).PriceServiceConnection.prototype.subscribePriceFeedUpdates = vi
                 .fn()
                 .mockImplementation(async (_priceFeeds, cb) => {
-                    ws.on('message', (_m) => {
-                        const priceFeedDataModified = [
-                            {
-                                ...validPythData,
-                                getPriceNoOlderThan: () => undefined,
-                            },
-                        ];
-                        cb(priceFeedDataModified);
-                        if (resolveCallback) resolveCallback(0);
-                    });
+                    const priceFeedDataModified = [
+                        {
+                            ...validPythData,
+                            getPriceNoOlderThan: () => undefined,
+                        },
+                    ];
+                    cb(priceFeedDataModified);
                 });
 
             const callback = vi.fn();
             const pythAdapter = new PythAdapter();
             await pythAdapter.subscribeToPriceUpdate(callback);
-
-            for (const client of wss.clients) {
-                client.send('new price');
-            }
-
-            // wait for the callback to be executed before making assertions
-            await callbackPromise;
 
             expect(callback).toHaveBeenCalledTimes(0);
         });
 
         it('should not execute the callback if the data does not contain a signature', async () => {
-            // if `callback` is called, it will resolve `callbackPromise`
-            let resolveCallback: undefined | ((value: unknown) => void);
-            const callbackPromise = new Promise((r) => {
-                resolveCallback = r;
-            });
-
             const mockedClient = await import('@pythnetwork/price-service-client');
             vi.mocked(mockedClient).PriceServiceConnection.prototype.subscribePriceFeedUpdates = vi
                 .fn()
                 .mockImplementation(async (_priceFeeds, cb) => {
-                    ws.on('message', (_m) => {
-                        const priceFeedDataModified = [
-                            {
-                                ...priceFeedData[0],
-                                vaa: undefined,
-                            },
-                        ];
-                        cb(priceFeedDataModified);
-                        if (resolveCallback) resolveCallback(0);
-                    });
+                    const priceFeedDataModified = [
+                        {
+                            ...priceFeedData[0],
+                            vaa: undefined,
+                        },
+                    ];
+                    cb(priceFeedDataModified);
                 });
 
             const callback = vi.fn();
             const pythAdapter = new PythAdapter();
             await pythAdapter.subscribeToPriceUpdate(callback);
-
-            for (const client of wss.clients) {
-                client.send('new price');
-            }
-
-            // wait for the callback to be executed before making assertions
-            await callbackPromise;
 
             expect(callback).toHaveBeenCalledTimes(0);
         });
