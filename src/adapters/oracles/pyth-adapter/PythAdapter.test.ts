@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import PythAdapter from './PythAdapter.js';
-import {} from 'ws';
 import type { OraclePriceData } from '../types.js';
 
 vi.mock('@pythnetwork/price-service-client');
