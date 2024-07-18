@@ -33,7 +33,7 @@ export default class RedstoneAdapter implements IOracleAdapter {
                 uniqueSignersCount: this.MIN_UNIQUE_SIGNERS_COUNT,
             });
         } catch (error) {
-            throw new Error('Failed to get data from Redstone');
+            throw new OraclePriceFetchingError('Failed to get data from Redstone');
         }
 
         if (data?.ETH === undefined || data.ETH.length === 0) {

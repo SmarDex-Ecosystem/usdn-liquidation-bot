@@ -70,7 +70,7 @@ export default class PythAdapter implements IOracleAdapter {
         try {
             priceFeeds = await this.connection.getLatestPriceFeeds([this.PRICE_FEED_ID]);
         } catch (error) {
-            throw new Error('Failed to get data from Pyth');
+            throw new OraclePriceFetchingError('Failed to get data from Pyth');
         }
 
         if (priceFeeds === undefined || priceFeeds.length === 0) {

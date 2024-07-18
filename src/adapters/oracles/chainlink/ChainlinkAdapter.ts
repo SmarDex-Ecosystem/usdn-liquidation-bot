@@ -1,5 +1,5 @@
 import type IOracleAdapter from '../IOracleAdapter.js';
-import type { OraclePriceData, OraclePriceUpdateCallback } from '../types.js';
+import { OraclePriceFetchingError, type OraclePriceData, type OraclePriceUpdateCallback } from '../types.js';
 import { Chainlink } from 'dev3-sdk';
 import { encodeAbiParameters } from 'viem';
 
@@ -26,7 +26,7 @@ export default class ChainlinkAdapter implements IOracleAdapter {
         try {
             priceData = await this.ethSDK.getFromOracle(this.ethSDK.feeds.ETH_USD);
         } catch (error) {
-            throw new Error('Failed to get data from Chainlink');
+            throw new OraclePriceFetchingError('Failed to get data from Chainlink');
         }
 
         return {
