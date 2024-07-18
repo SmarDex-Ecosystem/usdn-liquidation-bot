@@ -22,6 +22,10 @@ export default class PythAdapter implements IOracleAdapter {
 
     /** Make sure we close all of the open connections before terminating the process */
     private prepareGracefulShutdown() {
+        if (process.env.NODE_ENV === 'test') {
+            return;
+        }
+
         const closeConnection = (signalReceived: string) => {
             console.info(`${signalReceived}: Closing Pyth oracle websocket`);
             this.connection.closeWebSocket();
