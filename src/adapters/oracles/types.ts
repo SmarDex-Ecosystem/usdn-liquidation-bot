@@ -1,9 +1,12 @@
-/** Price data from an oracle */
+/**
+ * Price data from an oracle
+ * @param price The price (to be divided by `decimals`)
+ * @param decimals The number of decimals the price has
+ * @param signature The signature that can be used to verify the price during an on-chain call
+ */
 export type OraclePriceData = {
     price: bigint;
-    /** The number of decimals the price has */
     decimals: number;
-    /** The signature that can be used to verify the price during an on-chain call */
     signature: string;
 };
 
