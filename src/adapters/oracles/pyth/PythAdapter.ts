@@ -74,7 +74,7 @@ export default class PythAdapter implements IOracleAdapter {
                 );
             }
         } catch (error) {
-            throw new Error('Failed to get data from Pyth');
+            throw new OraclePriceFetchingError('Failed to get data from Pyth');
         }
 
         return priceUpdates;

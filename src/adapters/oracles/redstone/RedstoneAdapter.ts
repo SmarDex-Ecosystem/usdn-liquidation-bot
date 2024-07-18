@@ -35,7 +35,7 @@ export default class RedstoneAdapter implements IOracleAdapter {
                 historicalTimestamp: timestamp === 0 ? undefined : timestamp,
             });
         } catch (error) {
-            throw new Error('Failed to get data from Redstone');
+            throw new OraclePriceFetchingError('Failed to get data from Redstone');
         }
 
         if (data?.ETH === undefined || data.ETH.length === 0) {
