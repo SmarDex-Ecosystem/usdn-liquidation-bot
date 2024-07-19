@@ -8,6 +8,10 @@ const helloWorld = async () => {
         console.log(`Received an update for Pyth ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`);
     });
 
+    redstoneAdapter.subscribeToPriceUpdates((priceData) => {
+        console.log(`Received an update for Redstone ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`);
+    });
+
     return 'Hello, World!';
 };
 

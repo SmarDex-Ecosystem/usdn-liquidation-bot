@@ -1,6 +1,7 @@
 import { type DataPackagesResponse, requestDataPackages } from '@redstone-finance/sdk';
 import type IOracleAdapter from '../IOracleAdapter.ts';
-import { OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
+import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
+import { sleep } from '../../../utils/index.ts';
 
 export default class RedstoneAdapter implements IOracleAdapter {
     private readonly PRICE_DECIMALS = 8;
@@ -61,7 +62,42 @@ export default class RedstoneAdapter implements IOracleAdapter {
     }
 
     /** @inheritdoc */
-    async subscribeToPriceUpdates(_callback: OraclePriceUpdateCallback) {
-        throw new Error('Price subscription is not supported for Redstone');
+    async subscribeToPriceUpdates(callback: OraclePriceUpdateCallback) {
+        let isPolling = true;
+
+        // Stop polling if process is getting stopped
+        const closeConnection = (signalReceived: string) => {
+            console.info(`${signalReceived}: Stopping Redstone polling`);
+            isPolling = false;
+        };
+
+        process.on('SIGTERM', () => {
+            closeConnection('SIGTERM');
+        });
+        process.on('SIGINT', () => {
+            closeConnection('SIGINT');
+        });
+
+        let lastPriceSignature = '';
+        while (isPolling) {
+            let priceData: OraclePriceData;
+            try {
+                priceData = await this.getLatestPrice();
+            } catch (e) {
+                console.error(`Failed to parse Redstone price data: ${(e as Error).message}`);
+                await sleep(1000);
+                continue;
+            }
+
+            // Check if the signature changed which would mean it's a new price
+            if (priceData.signature !== lastPriceSignature) {
+                callback(priceData);
+                lastPriceSignature = priceData.signature;
+            }
+
+            // Wait 1 second before continuing
+            await sleep(1000);
+        }
+        console.info('Redstone polling stopped');
     }
 }

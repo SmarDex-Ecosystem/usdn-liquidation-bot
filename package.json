@@ -6,7 +6,7 @@
     "type": "module",
     "files": ["dist"],
     "scripts": {
-        "dev": "nodemon --exec 'node --loader ts-node/esm' src/index.ts",
+        "dev": "nodemon -r dotenv/config --exec 'node --loader ts-node/esm' src/index.ts",
         "test": "vitest run --typecheck",
         "test:watch": "vitest",
         "build": "tsup src/index.ts --clean",

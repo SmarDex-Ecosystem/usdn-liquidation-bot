@@ -10,6 +10,7 @@ export default class PythAdapter implements IOracleAdapter {
 
     constructor() {
         const hermesUrl = process.env.HERMES_URL;
+        console.log(hermesUrl);
         if (hermesUrl === undefined || hermesUrl === '') {
             throw new Error('Environment variable HERMES_URL not set');
         }
