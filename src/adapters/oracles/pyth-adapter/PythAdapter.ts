@@ -5,13 +5,16 @@ import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateC
 export default class PythAdapter implements IOracleAdapter {
     /** ID of the price feed of ETH/USD in the Pyth oracle */
     private readonly PRICE_FEED_ID = '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace';
-    /** API endpoint to hit to get price data */
-    private readonly HERMES_URL = 'https://hermes.pyth.network';
     /** Instance of the client to get data from Pyth */
     private connection;
 
     constructor() {
-        this.connection = new HermesClient(this.HERMES_URL, {});
+        const hermesUrl = process.env.HERMES_URL;
+        if (hermesUrl === undefined || hermesUrl === '') {
+            throw new Error('Environment variable HERMES_URL not set');
+        }
+
+        this.connection = new HermesClient(hermesUrl, {});
     }
 
     /** Make sure we close all of the open connections before terminating the process */

@@ -23,6 +23,15 @@ describe('PythAdapter', () => {
     afterEach(() => {
         vi.clearAllMocks();
         vi.resetAllMocks();
+        vi.unstubAllEnvs();
+    });
+
+    describe('constructor', () => {
+        it('should throw an error if the env variable HERMES_URL is not set', async () => {
+            vi.stubEnv('HERMES_URL', '');
+
+            expect(() => new PythAdapter()).to.throw('Environment variable HERMES_URL not set');
+        });
     });
 
     describe('getLatestPrice', () => {
