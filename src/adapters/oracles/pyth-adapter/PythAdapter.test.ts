@@ -136,5 +136,40 @@ describe('PythAdapter', () => {
 
             expect(callback).toHaveBeenCalledTimes(0);
         });
+
+        it('should not execute the callback if the data does not contain a signature', async () => {
+            const mockedClient = await import('@pythnetwork/hermes-client');
+            const mockEventSource = { onmessage: vi.fn(), close: vi.fn() };
+            vi.mocked(mockedClient).HermesClient.prototype.getPriceUpdatesStream = vi
+                .fn()
+                .mockImplementation(async (_priceFeeds) => {
+                    return mockEventSource;
+                });
+
+            const callback = vi.fn();
+            const pythAdapter = new PythAdapter();
+            await pythAdapter.subscribeToPriceUpdate(callback);
+
+            let priceFeedDataModified = {
+                ...pythPriceUpdate,
+                parsed: undefined as undefined | null | undefined[],
+            };
+            mockEventSource.onmessage({ data: JSON.stringify(priceFeedDataModified) } as MessageEvent);
+            expect(callback).toHaveBeenCalledTimes(0);
+
+            priceFeedDataModified = {
+                ...pythPriceUpdate,
+                parsed: null,
+            };
+            mockEventSource.onmessage({ data: JSON.stringify(priceFeedDataModified) } as MessageEvent);
+            expect(callback).toHaveBeenCalledTimes(0);
+
+            priceFeedDataModified = {
+                ...pythPriceUpdate,
+                parsed: [],
+            };
+            mockEventSource.onmessage({ data: JSON.stringify(priceFeedDataModified) } as MessageEvent);
+            expect(callback).toHaveBeenCalledTimes(0);
+        });
     });
 });
