@@ -78,7 +78,7 @@ export default class PythAdapter implements IOracleAdapter {
     }
 
     /** @inheritdoc */
-    async subscribeToPriceUpdate(callback: OraclePriceUpdateCallback) {
+    async subscribeToPriceUpdates(callback: OraclePriceUpdateCallback) {
         const eventSource = await this.connection.getPriceUpdatesStream([this.PRICE_FEED_ID], {
             parsed: true,
             encoding: 'hex',
@@ -89,6 +89,7 @@ export default class PythAdapter implements IOracleAdapter {
             try {
                 oraclePriceData = this.extractDataFromPriceUpdate(priceUpdate);
             } catch (e) {
+                console.error(`Failed to parse Pyth price update: ${(e as Error).message}`);
                 return;
             }
             callback(oraclePriceData);

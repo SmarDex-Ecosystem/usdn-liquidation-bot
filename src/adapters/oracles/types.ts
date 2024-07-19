@@ -4,7 +4,7 @@ export type OraclePriceData = {
     price: bigint;
     /** The number of decimals the price has */
     decimals: number;
-    /** The signature that can be used to verify the price during an on-chain call */
+    /** Hexadecimal string that can be used to verify the price during an on-chain call */
     signature: string;
 };
 

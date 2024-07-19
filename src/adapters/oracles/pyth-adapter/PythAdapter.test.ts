@@ -102,7 +102,7 @@ describe('PythAdapter', () => {
         });
     });
 
-    describe('subscribeToPriceUpdate', () => {
+    describe('subscribeToPriceUpdates', () => {
         it('should execute the callback on price update', async () => {
             const mockedClient = await import('@pythnetwork/hermes-client');
             const mockEventSource = { onmessage: vi.fn(), close: vi.fn() };
@@ -114,7 +114,7 @@ describe('PythAdapter', () => {
 
             const callback = vi.fn();
             const pythAdapter = new PythAdapter();
-            await pythAdapter.subscribeToPriceUpdate(callback);
+            await pythAdapter.subscribeToPriceUpdates(callback);
 
             mockEventSource.onmessage({ data: JSON.stringify(pythPriceUpdate) } as MessageEvent);
 
@@ -136,7 +136,7 @@ describe('PythAdapter', () => {
 
             const callback = vi.fn();
             const pythAdapter = new PythAdapter();
-            await pythAdapter.subscribeToPriceUpdate(callback);
+            await pythAdapter.subscribeToPriceUpdates(callback);
 
             const priceFeedDataModified = [
                 {
@@ -160,7 +160,7 @@ describe('PythAdapter', () => {
 
             const callback = vi.fn();
             const pythAdapter = new PythAdapter();
-            await pythAdapter.subscribeToPriceUpdate(callback);
+            await pythAdapter.subscribeToPriceUpdates(callback);
 
             let priceFeedDataModified = {
                 ...pythPriceUpdate,

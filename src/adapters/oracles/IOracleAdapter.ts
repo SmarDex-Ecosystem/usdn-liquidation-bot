@@ -12,5 +12,5 @@ export default interface IOracleAdapter {
      * Execute a callback whenever a new price is available
      * @param callback function to execute when a new price is received
      */
-    subscribeToPriceUpdate(callback: OraclePriceUpdateCallback): Promise<void>;
+    subscribeToPriceUpdates(callback: OraclePriceUpdateCallback): Promise<void>;
 }

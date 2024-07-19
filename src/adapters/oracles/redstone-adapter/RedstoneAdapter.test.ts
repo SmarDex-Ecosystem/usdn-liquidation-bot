@@ -85,10 +85,10 @@ describe('RedstoneAdapter', () => {
         });
     });
 
-    describe('subscribeToPriceUpdate', () => {
+    describe('subscribeToPriceUpdates', () => {
         it('should throw an error as price subscription is not supported for Redstone', async () => {
             const redstoneAdapter = new RedstoneAdapter();
-            await expect(redstoneAdapter.subscribeToPriceUpdate(() => {})).to.rejects.toThrowError(
+            await expect(redstoneAdapter.subscribeToPriceUpdates(() => {})).to.rejects.toThrowError(
                 'Price subscription is not supported for Redstone',
             );
         });

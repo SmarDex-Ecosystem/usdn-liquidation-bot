@@ -61,7 +61,7 @@ export default class RedstoneAdapter implements IOracleAdapter {
     }
 
     /** @inheritdoc */
-    async subscribeToPriceUpdate(_callback: OraclePriceUpdateCallback) {
+    async subscribeToPriceUpdates(_callback: OraclePriceUpdateCallback) {
         throw new Error('Price subscription is not supported for Redstone');
     }
 }
