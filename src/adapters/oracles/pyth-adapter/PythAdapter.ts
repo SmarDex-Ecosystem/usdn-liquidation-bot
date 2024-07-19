@@ -83,7 +83,6 @@ export default class PythAdapter implements IOracleAdapter {
         eventSource.onmessage = (event: MessageEvent) => {
             const priceUpdate = JSON.parse(event.data);
             let oraclePriceData: OraclePriceData;
-            console.log(priceUpdate);
             try {
                 oraclePriceData = this.extractDataFromPriceUpdate(priceUpdate);
             } catch (e) {
