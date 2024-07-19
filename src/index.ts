@@ -1,4 +1,4 @@
-import { pythAdapter, redstoneAdapter } from './adapters/oracles/index.js';
+import { pythAdapter, redstoneAdapter } from './adapters/oracles/index.ts';
 
 const helloWorld = async () => {
     console.log('redstone', await redstoneAdapter.getLatestPrice());

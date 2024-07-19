@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type IOracleAdapter from './IOracleAdapter.js';
+import type IOracleAdapter from './IOracleAdapter.ts';
 
 describe('adapters/oracles/index', () => {
     it('should export instances of IOracleAdapter', async () => {

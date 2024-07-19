@@ -1,4 +1,4 @@
-import type { OraclePriceData, OraclePriceUpdateCallback } from './types.js';
+import type { OraclePriceData, OraclePriceUpdateCallback } from './types.ts';
 
 /** Allow to communicate with an oracle */
 export default interface IOracleAdapter {

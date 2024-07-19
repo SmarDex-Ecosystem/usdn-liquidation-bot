@@ -1,6 +1,6 @@
 import { HermesClient, type PriceUpdate } from '@pythnetwork/hermes-client';
-import type IOracleAdapter from '../IOracleAdapter.js';
-import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.js';
+import type IOracleAdapter from '../IOracleAdapter.ts';
+import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
 
 export default class PythAdapter implements IOracleAdapter {
     /** ID of the price feed of ETH/USD in the Pyth oracle */

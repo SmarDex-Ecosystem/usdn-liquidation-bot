@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import RedstoneAdapter from './RedstoneAdapter.js';
+import RedstoneAdapter from './RedstoneAdapter.ts';
 
 vi.mock('@redstone-finance/sdk');
 

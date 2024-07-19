@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import PythAdapter from './PythAdapter.js';
-import type { OraclePriceData } from '../types.js';
+import PythAdapter from './PythAdapter.ts';
+import type { OraclePriceData } from '../types.ts';
 
 vi.mock('@pythnetwork/hermes-client');
 

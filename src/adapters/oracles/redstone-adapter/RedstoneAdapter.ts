@@ -1,6 +1,6 @@
 import { type DataPackagesResponse, requestDataPackages } from '@redstone-finance/sdk';
-import type IOracleAdapter from '../IOracleAdapter.js';
-import { OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.js';
+import type IOracleAdapter from '../IOracleAdapter.ts';
+import { OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
 
 export default class RedstoneAdapter implements IOracleAdapter {
     private readonly PRICE_DECIMALS = 8;
