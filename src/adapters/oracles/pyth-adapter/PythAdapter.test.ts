@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PythAdapter from './PythAdapter.ts';
 import type { OraclePriceData } from '../types.ts';
 
@@ -20,6 +20,9 @@ const pythPriceUpdate = {
 };
 
 describe('PythAdapter', () => {
+    beforeEach(() => {
+        vi.stubEnv('HERMES_URL', 'a non-empty value');
+    });
     afterEach(() => {
         vi.clearAllMocks();
         vi.resetAllMocks();
