@@ -101,6 +101,7 @@ describe('RedstoneAdapter', () => {
             expect(data.decimals).toEqual(8);
             expect(data.signature).toEqual('mockedSignature');
 
+            expect(mockedFn).toHaveBeenCalledOnce();
             expect(mockedFn.mock.calls[0][0].historicalTimestamp).to.equal(42);
         });
     });
