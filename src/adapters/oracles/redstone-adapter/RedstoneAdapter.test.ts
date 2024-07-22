@@ -126,7 +126,7 @@ describe('RedstoneAdapter', () => {
             expect(callback).toHaveBeenCalledOnce();
         });
 
-        it('should execute the callback only once if the price signature did not change', async () => {
+        it('should execute the callback twice if the price signature changed', async () => {
             const mockedSdk = await import('@redstone-finance/sdk');
             vi.mocked(mockedSdk).requestDataPackages = vi
                 .fn()
@@ -148,7 +148,7 @@ describe('RedstoneAdapter', () => {
             expect(callback).toHaveBeenCalledTimes(2);
         });
 
-        it('should execute the callback twice if the price signature changed', async () => {
+        it('should execute the callback only once if the price signature did not change', async () => {
             const mockedSdk = await import('@redstone-finance/sdk');
             vi.mocked(mockedSdk).requestDataPackages = vi
                 .fn()
