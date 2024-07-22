@@ -102,6 +102,23 @@ describe('PythAdapter', () => {
         });
     });
 
+    describe('getPriceAtTimestamp', () => {
+        it('should return valid data', async () => {
+            const mockedClient = await import('@pythnetwork/hermes-client');
+            vi.mocked(mockedClient).HermesClient.prototype.getPriceUpdatesAtTimestamp = vi
+                .fn()
+                .mockImplementation(async () => {
+                    return pythPriceUpdate;
+                });
+
+            const pythAdapter = new PythAdapter();
+            const data = await pythAdapter.getPriceAtTimestamp(42);
+            expect(data.price).toEqual(BigInt(pythPriceUpdate.parsed[0].price.price));
+            expect(data.decimals).toEqual(8);
+            expect(data.signature).toEqual(pythPriceUpdate.binary.data[0]);
+        });
+    });
+
     describe('subscribeToPriceUpdates', () => {
         it('should execute the callback on price update', async () => {
             const mockedClient = await import('@pythnetwork/hermes-client');

@@ -2,12 +2,14 @@
     "compilerOptions": {
         "target": "ESNext",
         "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "declaration": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "skipLibCheck": true,
         "resolveJsonModule": true,
-        "emitDeclarationOnly": false,
+        "emitDeclarationOnly": true,
         "allowImportingTsExtensions": true
     },
     "include": ["**/*.ts"]

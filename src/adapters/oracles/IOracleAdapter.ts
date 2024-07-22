@@ -9,6 +9,12 @@ export default interface IOracleAdapter {
     getLatestPrice(): Promise<OraclePriceData>;
 
     /**
+     * Get the price and its signature from the oracle for the provided timestamp
+     * @returns The price and its signature
+     */
+    getPriceAtTimestamp(timestamp: number): Promise<OraclePriceData>;
+
+    /**
      * Execute a callback whenever a new price is available
      * @param callback function to execute when a new price is received
      */

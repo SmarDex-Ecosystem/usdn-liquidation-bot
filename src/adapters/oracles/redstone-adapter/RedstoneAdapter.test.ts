@@ -87,6 +87,24 @@ describe('RedstoneAdapter', () => {
         });
     });
 
+    describe('getPriceAtTimestamp', () => {
+        it('should return valid data', async () => {
+            const mockedSdk = await import('@redstone-finance/sdk');
+            const mockedFn = vi.fn().mockImplementation(async () => {
+                return validRedstoneData;
+            });
+            vi.mocked(mockedSdk).requestDataPackages = mockedFn;
+
+            const redstoneAdapter = new RedstoneAdapter();
+            const data = await redstoneAdapter.getPriceAtTimestamp(42);
+            expect(data.price).toEqual(500000000000n);
+            expect(data.decimals).toEqual(8);
+            expect(data.signature).toEqual('mockedSignature');
+
+            expect(mockedFn.mock.calls[0][0].historicalTimestamp).to.equal(42);
+        });
+    });
+
     describe('subscribeToPriceUpdates', () => {
         beforeEach(async () => {
             const mockedUtils = await import('../../../utils/index.ts');
@@ -151,7 +169,8 @@ describe('RedstoneAdapter', () => {
         it('should not execute the callback and not throw an error if the price fetching fails', async () => {
             const mockedSdk = await import('@redstone-finance/sdk');
             vi.mocked(mockedSdk).requestDataPackages = vi.fn().mockImplementation(async () => {
-                process.emit('SIGINT');
+                // stop the polling after the first iteration
+                process.emit('SIGTERM');
                 throw new Error();
             });
 

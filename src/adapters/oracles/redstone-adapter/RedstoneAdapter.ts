@@ -25,13 +25,14 @@ export default class RedstoneAdapter implements IOracleAdapter {
      * Get the latest data of the ETH price feed from Redstone
      * @returns The ETH price feed data
      */
-    private async getETHPriceFeedData() {
+    private async getETHPriceFeedData(timestamp = 0) {
         let data: DataPackagesResponse;
         try {
             data = await requestDataPackages({
                 dataFeeds: [this.PRICE_FEED_ID],
                 dataServiceId: 'redstone-primary-prod',
                 uniqueSignersCount: this.MIN_UNIQUE_SIGNERS_COUNT,
+                historicalTimestamp: timestamp === 0 ? undefined : timestamp,
             });
         } catch (error) {
             throw new Error('Failed to get data from Redstone');
@@ -47,6 +48,23 @@ export default class RedstoneAdapter implements IOracleAdapter {
     /** @inheritDoc */
     async getLatestPrice() {
         const data = await this.getETHPriceFeedData();
+        if (data.dataPackage.dataPoints.length === 0) {
+            throw new OraclePriceFetchingError('Not enough data points from Redstone');
+        }
+
+        const price = this.uint8ArrayToBigInt(data.dataPackage.dataPoints[0].value);
+        const signature = data.signature.compact;
+
+        return {
+            price,
+            decimals: this.PRICE_DECIMALS,
+            signature,
+        };
+    }
+
+    /** @inheritDoc */
+    async getPriceAtTimestamp(timestamp: number) {
+        const data = await this.getETHPriceFeedData(timestamp);
         if (data.dataPackage.dataPoints.length === 0) {
             throw new OraclePriceFetchingError('Not enough data points from Redstone');
         }

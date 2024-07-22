@@ -57,13 +57,22 @@ export default class PythAdapter implements IOracleAdapter {
      * Get the most recent data for the PRICE_FEED_ID
      * @returns The price data
      */
-    private async getFeedPriceUpdate(): Promise<PriceUpdate> {
+    private async getFeedPriceUpdate(timestamp = 0): Promise<PriceUpdate> {
         let priceUpdates: PriceUpdate;
+        const options = {
+            parsed: true,
+            encoding: 'hex' as const,
+        };
         try {
-            priceUpdates = await this.connection.getLatestPriceUpdates([this.PRICE_FEED_ID], {
-                parsed: true,
-                encoding: 'hex',
-            });
+            if (timestamp === 0) {
+                priceUpdates = await this.connection.getLatestPriceUpdates([this.PRICE_FEED_ID], options);
+            } else {
+                priceUpdates = await this.connection.getPriceUpdatesAtTimestamp(
+                    timestamp,
+                    [this.PRICE_FEED_ID],
+                    options,
+                );
+            }
         } catch (error) {
             throw new Error('Failed to get data from Pyth');
         }
@@ -74,6 +83,13 @@ export default class PythAdapter implements IOracleAdapter {
     /** @inheritdoc */
     async getLatestPrice() {
         const priceUpdate = await this.getFeedPriceUpdate();
+
+        return this.extractDataFromPriceUpdate(priceUpdate);
+    }
+
+    /** @inheritdoc */
+    async getPriceAtTimestamp(timestamp: number) {
+        const priceUpdate = await this.getFeedPriceUpdate(timestamp);
 
         return this.extractDataFromPriceUpdate(priceUpdate);
     }
