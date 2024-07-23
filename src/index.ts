@@ -1,7 +1,20 @@
-const helloWorld = () => {
-    return 'Hello, World!';
-};
+import RedstoneAdapter from "./adapters/oracles/redstone-adapter/RedstoneAdapter.js";
 
-helloWorld();
+async function getPriceAndLog(redstoneAdapter: RedstoneAdapter) {
+  try {
+    const data = await redstoneAdapter.getLatestPrice();
+    console.log(data);
+  } catch (error) {
+    console.error("Error fetching the latest price:", error);
+  }
+}
 
-export type {};
+async function main() {
+  const redstoneAdapter = new RedstoneAdapter();
+  await getPriceAndLog(redstoneAdapter);
+  setInterval(() => {
+    getPriceAndLog(redstoneAdapter);
+  }, 5000);
+}
+
+main();
