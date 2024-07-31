@@ -6,8 +6,8 @@
     "type": "module",
     "files": ["dist"],
     "scripts": {
-        "dev": "nodemon --exec 'node --loader ts-node/esm' src/index.ts",
-        "test": "vitest run",
+        "dev": "nodemon -r dotenv/config --exec 'node --loader ts-node/esm' src/index.ts",
+        "test": "vitest run --typecheck",
         "test:watch": "vitest",
         "build": "tsup src/index.ts --clean",
         "format": "biome check --write ."
@@ -27,6 +27,8 @@
     "dockerize": true,
     "publishToCodeArtifact": false,
     "dependencies": {
-        "@redstone-finance/sdk": "^0.5.4"
+        "@pythnetwork/hermes-client": "^1.0.4",
+        "@redstone-finance/sdk": "^0.5.4",
+        "dotenv": "^16.4.5"
     }
 }

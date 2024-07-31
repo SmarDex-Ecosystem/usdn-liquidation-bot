@@ -1,20 +1,16 @@
-import RedstoneAdapter from './adapters/oracles/redstone-adapter/RedstoneAdapter.js';
+import { pythAdapter, redstoneAdapter } from './adapters/oracles/index.ts';
 
-async function getPriceAndLog(redstoneAdapter: RedstoneAdapter) {
-    try {
-        const data = await redstoneAdapter.getLatestPrice();
-        console.log(data);
-    } catch (error) {
-        console.error('Error fetching the latest price:', error);
-    }
-}
+const main = async () => {
+    console.log('Latest Redstone price', await redstoneAdapter.getLatestPrice());
+    console.log('Latest Pyth price', await pythAdapter.getLatestPrice());
 
-async function main() {
-    const redstoneAdapter = new RedstoneAdapter();
-    await getPriceAndLog(redstoneAdapter);
-    setInterval(() => {
-        getPriceAndLog(redstoneAdapter);
-    }, 5000);
-}
+    pythAdapter.subscribeToPriceUpdates((priceData) => {
+        console.log(`Received an update for Pyth ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`);
+    });
+
+    redstoneAdapter.subscribeToPriceUpdates((priceData) => {
+        console.log(`Received an update for Redstone ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`);
+    });
+};
 
 main();

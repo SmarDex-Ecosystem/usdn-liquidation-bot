@@ -7,5 +7,6 @@ export default defineConfig({
         coverage: {
             reporter: ['text', 'json', 'html'],
         },
+        setupFiles: 'dotenv/config',
     },
 });
