@@ -1,6 +1,6 @@
 import type { GasPriceData } from './types.js';
 
-/** Allow to communicate with the RPC */
+/** Interface for a gas price provider */
 export default interface IGasPrice {
     /**
      * Get the gas price for a blockchain transaction
