@@ -1,4 +1,6 @@
-import type IRedstoneAdapter from "./redstone-adapter/IRedstoneAdapter.js";
-import RedstoneAdapter from "./redstone-adapter/RedstoneAdapter.js";
+import type IOracleAdapter from "./IOracleAdapter.ts";
+import RedstoneAdapter from "./redstone-adapter/RedstoneAdapter.ts";
+import PythAdapter from "./pyth-adapter/PythAdapter.ts";
 
-export const redstoneAdapter: IRedstoneAdapter = new RedstoneAdapter();
+export const redstoneAdapter: IOracleAdapter = new RedstoneAdapter();
+export const pythAdapter: IOracleAdapter = new PythAdapter();
