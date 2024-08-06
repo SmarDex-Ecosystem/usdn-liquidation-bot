@@ -7,7 +7,12 @@ export async function sleep(milliseconds: number) {
     });
 }
 
-export async function newClient(rpcUrl: string) {
+export async function newClient() {
+    const rpcUrl = process.env.RPC_URL;
+    if (!rpcUrl) {
+        throw new Error('RPC URL not set');
+    }
+
     const publicClient = createPublicClient({
         chain: mainnet,
         transport: http(rpcUrl),
