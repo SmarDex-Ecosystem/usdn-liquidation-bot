@@ -1,22 +1,5 @@
 import { pythAdapter, redstoneAdapter } from "./adapters/oracles/index.ts";
-
-async function getPriceAndLog(redstoneAdapter: RedstoneAdapter) {
-  try {
-    const data = await redstoneAdapter.getLatestPrice();
-    console.log(data);
-  } catch (error) {
-    console.error("Error fetching the latest price:", error);
-  }
-}
-
-async function getGasPriceAndLog(gasPrice: GasPrice) {
-  try {
-    const data = await gasPrice.getGasPrice();
-    console.log(data);
-  } catch (error) {
-    console.error("Error fetching the gas price:", error);
-  }
-}
+import { gasPrice } from "./gasPrice/index.ts";
 
 const main = async () => {
   console.log("Latest Redstone price", await redstoneAdapter.getLatestPrice());
@@ -38,14 +21,7 @@ const main = async () => {
     );
   });
 
-  const redstoneAdapter = new RedstoneAdapter();
-  const gasPrice = new GasPrice();
-  await getPriceAndLog(redstoneAdapter);
-  await getGasPriceAndLog(gasPrice);
-  setInterval(() => {
-    getPriceAndLog(redstoneAdapter);
-    getGasPriceAndLog(gasPrice);
-  }, 5000);
+  console.log("Gas price", await gasPrice.getGasPrice());
 };
 
 main();
