@@ -1,20 +1,20 @@
-import type { PublicClient } from "viem";
-import type IViem from "./IViem.ts";
+import type { PublicClient } from 'viem';
+import type IViem from './IViem.ts';
 
 export default class Viem implements IViem {
-  private client: PublicClient;
+    private client: PublicClient;
 
-  constructor(newClient: PublicClient) {
-    this.client = newClient;
-  }
+    constructor(newClient: PublicClient) {
+        this.client = newClient;
+    }
 
-  /** @inheritDoc */
-  async getGasPrice() {
-    const gasPrice = await this.client.getGasPrice();
+    /** @inheritDoc */
+    async getGasPrice() {
+        const gasPrice = await this.client.getGasPrice();
 
-    return {
-      average: gasPrice,
-      high: gasPrice * BigInt(2),
-    };
-  }
+        return {
+            average: gasPrice,
+            high: gasPrice * BigInt(2),
+        };
+    }
 }

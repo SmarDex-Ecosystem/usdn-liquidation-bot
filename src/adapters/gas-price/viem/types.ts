@@ -1,5 +1,5 @@
 /** ViemData type */
 export type ViemData = {
-  average: bigint;
-  high: bigint;
+    average: bigint;
+    high: bigint;
 };
