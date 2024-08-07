@@ -1,7 +1,7 @@
 import type { PublicClient } from "viem";
-import type IGasPrice from "./IGasPrice.js";
+import type IViem from "./IViem.ts";
 
-export default class GasPrice implements IGasPrice {
+export default class Viem implements IViem {
   private client: PublicClient | null = null;
 
   constructor(newClient: PublicClient) {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import GasPrice from "./GasPrice.js";
+import GasPrice from "./Viem.ts";
 import { PublicClient } from "viem";
 
 // Mocking viem and PublicClient
