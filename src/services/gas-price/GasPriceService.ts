@@ -6,7 +6,7 @@ import Etherscan from "../../adapters/gas-price/etherscan/Etherscan.ts";
 
 class GasPriceService {
   private etherscan: IEtherscan;
-  private viem: IViem | undefined;
+  private viem?: IViem;
 
   constructor() {
     const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "";
@@ -19,8 +19,8 @@ class GasPriceService {
       const client = await newClient();
       this.viem = new Viem(client);
     } catch (error) {
-      console.error("Erreur lors de l'initialisation de Viem:", error);
-      throw new Error("Impossible d'initialiser le client Viem.");
+      console.error("Error initializing Viem:", error);
+      throw new Error("Failed to initialize Viem client.");
     }
   }
 
@@ -31,9 +31,7 @@ class GasPriceService {
       if (this.viem) {
         return await this.viem.getGasPrice();
       }
-      throw new Error(
-        "Viem n'est pas initialisé. Impossible de récupérer le prix du gaz."
-      );
+      throw new Error("Viem is not initialized. Unable to retrieve gas price.");
     }
   }
 }

@@ -9,7 +9,6 @@ export default class Etherscan implements IEtherscan {
     this.apiKeyToken = YourApiKeyToken;
   }
 
-  /** @inheritDoc */
   async getGasPrice() {
     const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKeyToken}`;
     try {
@@ -21,10 +20,7 @@ export default class Etherscan implements IEtherscan {
       }
       return response.data;
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération du prix du gaz via Etherscan:",
-        error
-      );
+      console.error("Error retrieving gas price from Etherscan:", error);
       throw error;
     }
   }
