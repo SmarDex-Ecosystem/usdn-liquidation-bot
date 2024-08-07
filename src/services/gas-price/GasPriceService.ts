@@ -38,7 +38,6 @@ class GasPriceService {
   }
 }
 
-// Création d'une instance unique de GasPriceService
 const gasPriceService = new GasPriceService();
 
 export default gasPriceService;

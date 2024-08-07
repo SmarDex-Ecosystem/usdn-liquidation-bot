@@ -19,7 +19,7 @@ export default class Etherscan implements IEtherscan {
           `Error fetching gas oracle data: ${response.data.message}`
         );
       }
-      return response.data.result;
+      return response.data;
     } catch (error) {
       console.error(
         "Erreur lors de la récupération du prix du gaz via Etherscan:",

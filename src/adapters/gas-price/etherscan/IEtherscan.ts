@@ -1,4 +1,4 @@
-import type { ViemData } from "./types.ts";
+import type { EtherscanData } from "./types.ts";
 
 /** Interface for a gas price provider */
 export default interface IViem {
@@ -6,5 +6,5 @@ export default interface IViem {
    * Get the gas price for a blockchain transaction
    * @returns The gas price data
    */
-  getGasPrice(): Promise<ViemData>;
+  getGasPrice(): Promise<EtherscanData>;
 }
