@@ -3,8 +3,9 @@ import type IViem from "../../adapters/gas-price/viem/IViem.ts";
 import { newClient } from "../../utils/index.ts";
 import type IEtherscan from "../../adapters/gas-price/etherscan/IEtherscan.ts";
 import Etherscan from "../../adapters/gas-price/etherscan/Etherscan.ts";
+import type IGasPriceService from "./IGasPriceService.ts";
 
-class GasPriceService {
+class GasPriceService implements IGasPriceService {
   private etherscan: IEtherscan;
   private viem!: IViem;
 
@@ -24,11 +25,30 @@ class GasPriceService {
     }
   }
 
+  /** @inheritdoc */
   public async getGasPrice() {
     try {
-      return await this.etherscan.getGasPrice();
+      const etherscanResult = await this.etherscan.getGasPrice();
+      return {
+        average:
+          BigInt(etherscanResult.result.SafeGasPrice) * BigInt(1000000000),
+        high: BigInt(etherscanResult.result.FastGasPrice) * BigInt(1000000000),
+        baseFee:
+          BigInt(
+            Math.ceil(
+              Number.parseFloat(
+                etherscanResult.result.suggestBaseFee.toString()
+              )
+            ).toString()
+          ) * BigInt(1000000000),
+      };
     } catch {
-      return await this.viem.getGasPrice();
+      const viemResult = await this.viem.getGasPrice();
+      return {
+        average: viemResult.average,
+        high: viemResult.high,
+        baseFee: 0n,
+      };
     }
   }
 }

@@ -15,9 +15,12 @@ describe("Etherscan", () => {
           status: "1",
           message: "OK",
           result: {
-            SafeGasPrice: "100",
-            ProposeGasPrice: "120",
-            FastGasPrice: "150",
+            LastBlock: 14856877,
+            SafeGasPrice: 100,
+            ProposeGasPrice: 120,
+            FastGasPrice: 150,
+            suggestBaseFee: 150,
+            gasUsedRatio: "150",
           },
         },
       };

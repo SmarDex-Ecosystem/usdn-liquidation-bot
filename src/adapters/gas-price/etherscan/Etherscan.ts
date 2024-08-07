@@ -9,6 +9,7 @@ export default class Etherscan implements IEtherscan {
     this.apiKeyToken = YourApiKeyToken;
   }
 
+  /** @inheritdoc */
   async getGasPrice() {
     const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKeyToken}`;
     try {

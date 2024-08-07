@@ -21,9 +21,6 @@ const main = async () => {
     );
   });
 
-  // console.log("Gas price", await viem.getGasPrice());
-  // console.log("Gas price 2 ", await etherscan.getGasPrice());
-
   console.log("Gas price", await gasPriceService.getGasPrice());
 };
 
