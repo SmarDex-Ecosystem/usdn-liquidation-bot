@@ -12,14 +12,20 @@ export default class Etherscan implements IEtherscan {
   /** @inheritDoc */
   async getGasPrice() {
     const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKeyToken}`;
-    const response = await axios.get<EtherscanData>(url);
-
-    if (response.data.status !== "1") {
-      throw new Error(
-        `Error fetching gas oracle data: ${response.data.message}`
+    try {
+      const response = await axios.get<EtherscanData>(url);
+      if (response.data.status !== "1") {
+        throw new Error(
+          `Error fetching gas oracle data: ${response.data.message}`
+        );
+      }
+      return response.data.result;
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération du prix du gaz via Etherscan:",
+        error
       );
+      throw error;
     }
-
-    return response.data.result;
   }
 }
