@@ -1,6 +1,6 @@
 import type { ViemData } from "./types.ts";
 
-/** Interface for a gas price provider */
+/** Interface for a gas price viem provider */
 export default interface IViem {
   /**
    * Get the gas price for a blockchain transaction

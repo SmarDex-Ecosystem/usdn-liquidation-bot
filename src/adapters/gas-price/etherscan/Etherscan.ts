@@ -20,8 +20,7 @@ export default class Etherscan implements IEtherscan {
       }
       return response.data;
     } catch (error) {
-      console.error("Error retrieving gas price from Etherscan:", error);
-      throw error;
+      throw new Error(`Error retrieving gas price from Etherscan: ${error}`);
     }
   }
 }

@@ -6,7 +6,7 @@ import Etherscan from "../../adapters/gas-price/etherscan/Etherscan.ts";
 
 class GasPriceService {
   private etherscan: IEtherscan;
-  private viem?: IViem;
+  private viem!: IViem;
 
   constructor() {
     const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "";
@@ -28,10 +28,7 @@ class GasPriceService {
     try {
       return await this.etherscan.getGasPrice();
     } catch {
-      if (this.viem) {
-        return await this.viem.getGasPrice();
-      }
-      throw new Error("Viem is not initialized. Unable to retrieve gas price.");
+      return await this.viem.getGasPrice();
     }
   }
 }

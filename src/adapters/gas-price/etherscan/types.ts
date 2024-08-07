@@ -1,4 +1,4 @@
-/** Gas price depending on how fast the TX should be mined */
+/** EtherscanData type */
 export type EtherscanData = {
   status: string;
   message: string;
