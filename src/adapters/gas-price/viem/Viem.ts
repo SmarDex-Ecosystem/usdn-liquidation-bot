@@ -2,7 +2,7 @@ import type { PublicClient } from "viem";
 import type IViem from "./IViem.ts";
 
 export default class Viem implements IViem {
-  private client: PublicClient | null = null;
+  private client: PublicClient;
 
   constructor(newClient: PublicClient) {
     this.client = newClient;
@@ -10,10 +10,6 @@ export default class Viem implements IViem {
 
   /** @inheritDoc */
   async getGasPrice() {
-    if (!this.client) {
-      throw new Error("Public client not initialized");
-    }
-
     const gasPrice = await this.client.getGasPrice();
 
     return {

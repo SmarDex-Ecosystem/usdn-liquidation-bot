@@ -40,13 +40,5 @@ describe("GasPrice", () => {
       expect(data.average).toEqual(0n);
       expect(data.high).toEqual(0n);
     });
-
-    it("should throw Error when client is not initialized", async () => {
-      const gasPrice = new GasPrice(null);
-
-      await expect(gasPrice.getGasPrice()).rejects.toThrow(
-        "Public client not initialized"
-      );
-    });
   });
 });
