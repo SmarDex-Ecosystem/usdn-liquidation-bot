@@ -1,5 +1,5 @@
 import { pythAdapter, redstoneAdapter } from "./adapters/oracles/index.ts";
-import { viem } from "./services/gas-price/GasPriceService.ts";
+import { etherscan, viem } from "./services/gas-price/GasPriceService.ts";
 
 const main = async () => {
   console.log("Latest Redstone price", await redstoneAdapter.getLatestPrice());
@@ -22,6 +22,7 @@ const main = async () => {
   });
 
   console.log("Gas price", await viem.getGasPrice());
+  console.log("Gas price 2 ", await etherscan.getGasPrice());
 };
 
 main();
