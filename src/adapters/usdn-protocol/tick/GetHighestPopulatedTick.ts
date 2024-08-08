@@ -22,7 +22,6 @@ export default class GetHighestPopulatedTick implements IGetHighestPopulatedTick
 
             return result as number;
         } catch (error) {
-            console.error('Failed to call getHighestPopulatedTick:', error);
             throw new Error('Error while fetching the highest populated tick.');
         }
     }
