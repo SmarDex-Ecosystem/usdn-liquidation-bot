@@ -3,5 +3,5 @@ export default interface IGetHighestPopulatedTick {
     /** Get the highest populated tick
      * @returns The highest populated tick
      */
-    getHighestPopulatedTick(): Promise<number>;
+    getHighestPopulatedTick(): Promise<bigint>;
 }

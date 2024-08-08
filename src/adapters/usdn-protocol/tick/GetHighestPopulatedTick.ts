@@ -20,7 +20,7 @@ export default class GetHighestPopulatedTick implements IGetHighestPopulatedTick
                 functionName: 'getHighestPopulatedTick',
             });
 
-            return result as number;
+            return result as bigint;
         } catch (error) {
             throw new Error('Error while fetching the highest populated tick.');
         }

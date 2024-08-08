@@ -21,7 +21,7 @@ describe('GetHighestPopulatedTick', () => {
     describe('getHighestPopulatedTick', () => {
         it('should return the highest populated tick', async () => {
             // Mocking the readContract method of the PublicClient instance
-            const expectedTick = 42;
+            const expectedTick = 42n;
             const mockedClientInstance = await newClient();
             mockedClientInstance.readContract.mockResolvedValue(expectedTick);
 
