@@ -10,7 +10,8 @@
         "test": "vitest run --typecheck",
         "test:watch": "vitest",
         "build": "tsup src/index.ts --clean",
-        "format": "biome check --write ."
+        "format": "biome check --write .",
+        "coverage": "vitest run --coverage"
     },
     "keywords": [],
     "author": "RA2 TECH SA <contact@ra2.tech> (https://ra2.tech)",
