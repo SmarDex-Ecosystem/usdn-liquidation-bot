@@ -1,5 +1,5 @@
 import type { PublicClient } from 'viem';
-import ABI from '../../../../abi/UsdnProtocolFallback.json';
+import { abi } from '../../../../abi/UsdnProtocolFallback.ts';
 import type IGetHighestPopulatedTick from './IGetHighestPopulatedTick.ts';
 
 export default class GetHighestPopulatedTick implements IGetHighestPopulatedTick {
@@ -16,11 +16,11 @@ export default class GetHighestPopulatedTick implements IGetHighestPopulatedTick
         try {
             const result = await this.client.readContract({
                 address: this.contractAddress as `0x${string}`,
-                abi: ABI.abi,
+                abi: abi,
                 functionName: 'getHighestPopulatedTick',
             });
 
-            return result as bigint;
+            return result;
         } catch (error) {
             throw new Error('Error while fetching the highest populated tick.');
         }
