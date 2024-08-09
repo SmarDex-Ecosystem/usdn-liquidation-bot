@@ -1,28 +1,14 @@
-import Etherscan from '../../adapters/gas-price/etherscan/Etherscan.ts';
 import type IEtherscan from '../../adapters/gas-price/etherscan/IEtherscan.ts';
 import type IViem from '../../adapters/gas-price/viem/IViem.ts';
-import Viem from '../../adapters/gas-price/viem/Viem.ts';
-import { newClient } from '../../utils/index.ts';
 import type IGasPriceService from './IGasPriceService.ts';
 
-class GasPriceService implements IGasPriceService {
+export default class GasPriceService implements IGasPriceService {
+    private viem: IViem;
     private etherscan: IEtherscan;
-    private viem!: IViem;
 
-    constructor() {
-        const etherscanApiKey = process.env.ETHERSCAN_API_KEY || '';
-        this.etherscan = new Etherscan(etherscanApiKey);
-        this.initializeViem();
-    }
-
-    private async initializeViem(): Promise<void> {
-        try {
-            const client = await newClient();
-            this.viem = new Viem(client);
-        } catch (error) {
-            console.error('Error initializing Viem:', error);
-            throw new Error('Failed to initialize Viem client.');
-        }
+    constructor(viem: IViem, etherscan: IEtherscan) {
+        this.viem = viem;
+        this.etherscan = etherscan;
     }
 
     /** @inheritdoc */
@@ -46,7 +32,3 @@ class GasPriceService implements IGasPriceService {
         }
     }
 }
-
-const gasPriceService = new GasPriceService();
-
-export default gasPriceService;

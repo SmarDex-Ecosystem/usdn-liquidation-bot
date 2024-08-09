@@ -1,5 +1,5 @@
 import { pythAdapter, redstoneAdapter } from './adapters/oracles/index.ts';
-import gasPriceService from './services/gas-price/GasPriceService.ts';
+import { gasPriceService } from './services/gas-price/index.ts';
 
 const main = async () => {
     console.log('Latest Redstone price', await redstoneAdapter.getLatestPrice());
