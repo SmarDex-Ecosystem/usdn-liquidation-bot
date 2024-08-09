@@ -1,5 +1,5 @@
 import { PublicClient } from "viem";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import UsdnProtocolContract from "./UsdnProtocolContract.ts";
 
 // Mocking viem and PublicClient
@@ -17,6 +17,10 @@ const mockReadContract = vi.spyOn(mockPublicClient, "readContract");
 const mockMulticall = vi.spyOn(mockPublicClient, "multicall");
 
 describe("UsdnProtocolContract", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe("getHighestPopulatedTick", () => {
     it("should return the highest populated tick", async () => {
       // Mocking the readContract method of the PublicClient instance
