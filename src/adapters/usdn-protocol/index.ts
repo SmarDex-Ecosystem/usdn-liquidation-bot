@@ -1,8 +1,6 @@
-import { newClient } from '../../utils/index.ts';
-import UsdnProtocolContract from './blockchain/Contract.ts';
-import type IContract from './blockchain/IContract.ts';
+import { newClient } from "../../utils/index.ts";
+import UsdnProtocolContract from "./blockchain/UsdnProtocolContract.ts";
+import type IUsdnProtocolContract from "./blockchain/UsdnProtocolContract.ts";
 
-export const usdnProtocolContract: IContract = new UsdnProtocolContract(
-    await newClient(),
-    process.env.USDN_PROTOCOL || '',
-);
+export const usdnProtocolContract: IUsdnProtocolContract =
+  new UsdnProtocolContract(await newClient(), process.env.USDN_PROTOCOL || "");
