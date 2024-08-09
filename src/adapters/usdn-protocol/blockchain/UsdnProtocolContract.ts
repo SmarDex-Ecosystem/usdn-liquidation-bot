@@ -13,9 +13,9 @@ export default class UsdnProtocolContract implements IContract {
   /** Client to use to communicate with the smart contract */
   private readonly blockchainClient: PublicClient;
   /** Address of usdnProtocol */
-  private readonly contractAddress: string;
+  private readonly contractAddress: `0x${string}`;
 
-  constructor(blockchainClient: PublicClient, contractAddress: string) {
+  constructor(blockchainClient: PublicClient, contractAddress: `0x${string}`) {
     this.blockchainClient = blockchainClient;
     this.contractAddress = contractAddress;
   }
