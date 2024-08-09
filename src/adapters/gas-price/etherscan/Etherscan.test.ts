@@ -25,7 +25,7 @@ describe('Etherscan', () => {
                 },
             };
 
-            (axios.get as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(validResponse);
+            vi.mocked(axios.get).mockResolvedValue(validResponse);
 
             const data = await etherscan.getGasPrice();
             expect(data).toEqual(validResponse.data);
@@ -43,7 +43,7 @@ describe('Etherscan', () => {
                 },
             };
 
-            (axios.get as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(invalidResponse);
+            vi.mocked(axios.get).mockResolvedValue(invalidResponse);
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(
                 `Error fetching gas oracle data: ${invalidResponse.data.message}`,
@@ -55,7 +55,7 @@ describe('Etherscan', () => {
             const etherscan = new Etherscan(apiKeyToken);
 
             const errorMessage = 'Network Error';
-            (axios.get as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
+            vi.mocked(axios.get).mockRejectedValue(new Error(errorMessage));
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(
                 `Error retrieving gas price from Etherscan: Error: ${errorMessage}`,
