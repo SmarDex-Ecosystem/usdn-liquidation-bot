@@ -1,34 +1,26 @@
-import type IEtherscan from '../../adapters/gas-price/etherscan/IEtherscan.ts';
-import type IViem from '../../adapters/gas-price/viem/IViem.ts';
-import type IGasPriceService from './IGasPriceService.ts';
+import type IGasPricedAdapter from "../../adapters/gas-price/IGasPricedAdapter.ts";
+import type IGasPriceService from "./IGasPriceService.ts";
 
 export default class GasPriceService implements IGasPriceService {
-    private viem: IViem;
-    private etherscan: IEtherscan;
+  private primaryGasPriceAdapter: IGasPricedAdapter;
+  private fallbackGasPriceAdapter: IGasPricedAdapter;
 
-    constructor(viem: IViem, etherscan: IEtherscan) {
-        this.viem = viem;
-        this.etherscan = etherscan;
+  constructor(
+    primaryGasPriceAdapter: IGasPricedAdapter,
+    fallbackGasPriceAdapter: IGasPricedAdapter
+  ) {
+    this.primaryGasPriceAdapter = primaryGasPriceAdapter;
+    this.fallbackGasPriceAdapter = fallbackGasPriceAdapter;
+  }
+
+  /** @inheritdoc */
+  public async getGasPrice() {
+    try {
+      return this.primaryGasPriceAdapter.getGasPrice();
+    } catch (error) {
+      console.error(`Primary gas price source failed: ${error}`);
     }
 
-    /** @inheritdoc */
-    public async getGasPrice() {
-        try {
-            const etherscanResult = await this.etherscan.getGasPrice();
-            return {
-                average: BigInt(etherscanResult.result.SafeGasPrice) * BigInt(1000000000),
-                high: BigInt(etherscanResult.result.FastGasPrice) * BigInt(1000000000),
-                baseFee:
-                    BigInt(Math.ceil(Number.parseFloat(etherscanResult.result.suggestBaseFee.toString())).toString()) *
-                    BigInt(1000000000),
-            };
-        } catch {
-            const viemResult = await this.viem.getGasPrice();
-            return {
-                average: viemResult.average,
-                high: viemResult.high,
-                baseFee: 0n,
-            };
-        }
-    }
+    return this.fallbackGasPriceAdapter.getGasPrice();
+  }
 }
