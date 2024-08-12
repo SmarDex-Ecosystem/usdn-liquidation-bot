@@ -1,8 +1,19 @@
 import axios from 'axios';
-import type IEtherscan from './IEtherscan.ts';
-import type { EtherscanData } from './types.ts';
+import type IGasPricedAdapter from '../IGasPricedAdapter.ts';
 
-export default class Etherscan implements IEtherscan {
+type EtherscanData = {
+    status: string;
+    message: string;
+    result: {
+        LastBlock: number;
+        SafeGasPrice: number;
+        ProposeGasPrice: number;
+        FastGasPrice: number;
+        suggestBaseFee: number;
+        gasUsedRatio: string;
+    };
+};
+export default class Etherscan implements IGasPricedAdapter {
     private apiKeyToken: string | null = null;
 
     constructor(YourApiKeyToken: string) {
@@ -17,7 +28,10 @@ export default class Etherscan implements IEtherscan {
             if (response.data.status !== '1') {
                 throw new Error(`Error fetching gas oracle data: ${response.data.message}`);
             }
-            return response.data;
+            return {
+                high: BigInt(response.data.result.FastGasPrice) * 10n ** 9n,
+                baseFee: BigInt(response.data.result.suggestBaseFee) * 10n ** 9n,
+            };
         } catch (error) {
             throw new Error(`Error retrieving gas price from Etherscan: ${error}`);
         }

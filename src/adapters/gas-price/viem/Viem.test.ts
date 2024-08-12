@@ -1,44 +1,53 @@
-import { PublicClient } from 'viem';
+import { http, createPublicClient } from 'viem';
+import { mainnet } from 'viem/chains';
 import { describe, expect, it, vi } from 'vitest';
-import GasPrice from './Viem.ts';
+import Viem from './Viem.ts';
 
-// Mocking viem and PublicClient
+// Mocking the viem and PublicClient
 vi.mock('viem', () => {
-    const getGasPrice = vi.fn();
     return {
-        PublicClient: vi.fn(() => ({
-            getGasPrice,
+        createPublicClient: vi.fn(() => ({
+            getGasPrice: vi.fn(),
         })),
+        http: vi.fn(),
+        PublicClient: vi.fn(),
     };
 });
 
 // Mock implementation of newClient
-const newClient = vi.fn(() => new PublicClient());
+const newClient = vi.fn(() =>
+    Promise.resolve(
+        createPublicClient({
+            chain: mainnet,
+            transport: http(),
+        }),
+    ),
+);
 
-describe('GasPrice', () => {
+describe('Viem', () => {
     describe('getGasPrice', () => {
         it('should return valid data', async () => {
             // Mocking the getGasPrice method of the PublicClient instance
             const validGasPrice = 100000n;
             const mockedClientInstance = await newClient();
-            mockedClientInstance.getGasPrice.mockResolvedValue(validGasPrice);
+            (mockedClientInstance.getGasPrice as vi.Mock).mockResolvedValue(validGasPrice);
 
-            const gasPrice = new GasPrice(mockedClientInstance);
-            const data = await gasPrice.getGasPrice();
-            expect(data.average).toEqual(100000n);
+            const viem = new Viem(mockedClientInstance);
+            const data = await viem.getGasPrice();
             expect(data.high).toEqual(200000n);
+            expect(data.baseFee).toEqual(0n);
         });
 
         it('should return valid 0n', async () => {
             // Mocking the getGasPrice method of the PublicClient instance to return 0n
             const validGasPrice = 0n;
             const mockedClientInstance = await newClient();
-            mockedClientInstance.getGasPrice.mockResolvedValue(validGasPrice);
+            (mockedClientInstance.getGasPrice as vi.Mock).mockResolvedValue(validGasPrice);
 
-            const gasPrice = new GasPrice(mockedClientInstance);
-            const data = await gasPrice.getGasPrice();
-            expect(data.average).toEqual(0n);
+            const viem = new Viem(mockedClientInstance);
+            const data = await viem.getGasPrice();
             expect(data.high).toEqual(0n);
+            expect(data.baseFee).toEqual(0n);
         });
     });
 });

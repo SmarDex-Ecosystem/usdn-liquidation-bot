@@ -28,7 +28,10 @@ describe('Etherscan', () => {
             vi.mocked(axios.get).mockResolvedValue(validResponse);
 
             const data = await etherscan.getGasPrice();
-            expect(data).toEqual(validResponse.data);
+            expect(data).toEqual({
+                high: 150n * 10n ** 9n,
+                baseFee: 150n * 10n ** 9n,
+            });
         });
 
         it("should throw an error when status is not '1'", async () => {
@@ -45,9 +48,7 @@ describe('Etherscan', () => {
 
             vi.mocked(axios.get).mockResolvedValue(invalidResponse);
 
-            await expect(etherscan.getGasPrice()).rejects.toThrow(
-                `Error fetching gas oracle data: ${invalidResponse.data.message}`,
-            );
+            await expect(etherscan.getGasPrice()).rejects.toThrow('Error fetching gas oracle data: Error message');
         });
 
         it('should throw an error when axios throws an exception', async () => {

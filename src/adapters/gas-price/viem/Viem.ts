@@ -1,7 +1,7 @@
 import type { PublicClient } from 'viem';
-import type IViem from './IViem.ts';
+import type IGasPricedAdapter from '../IGasPricedAdapter.ts';
 
-export default class Viem implements IViem {
+export default class Viem implements IGasPricedAdapter {
     private client: PublicClient;
 
     constructor(newClient: PublicClient) {
@@ -13,8 +13,8 @@ export default class Viem implements IViem {
         const gasPrice = await this.client.getGasPrice();
 
         return {
-            average: gasPrice,
             high: gasPrice * BigInt(2),
+            baseFee: 0n,
         };
     }
 }
