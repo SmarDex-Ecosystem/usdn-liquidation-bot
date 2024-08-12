@@ -26,14 +26,14 @@ export default class Etherscan implements IGasPrice {
         try {
             const response = await axios.get<EtherscanData>(url);
             if (response.data.status !== '1') {
-                throw new Error(`Error fetching gas oracle data: ${response.data.message}`);
+                throw new Error(response.data.message);
             }
             return {
                 high: BigInt(response.data.result.FastGasPrice) * 10n ** 9n,
                 baseFee: BigInt(response.data.result.suggestBaseFee) * 10n ** 9n,
             };
         } catch (error) {
-            throw new Error(`Error retrieving gas price from Etherscan: ${error}`);
+            throw new Error(`Failed to fetch gas price: ${(error as Error).message}`);
         }
     }
 }

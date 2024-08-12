@@ -52,7 +52,9 @@ describe('Etherscan', () => {
 
             vi.mocked(axios.get).mockResolvedValue(invalidResponse);
 
-            await expect(etherscan.getGasPrice()).rejects.toThrow('Error fetching gas oracle data: Error message');
+            await expect(etherscan.getGasPrice()).rejects.toThrow(
+                `Failed to fetch gas price: ${invalidResponse.data.message}`,
+            );
         });
 
         it('should throw an error when axios throws an exception', async () => {
@@ -62,9 +64,7 @@ describe('Etherscan', () => {
             const errorMessage = 'Network Error';
             vi.mocked(axios.get).mockRejectedValue(new Error(errorMessage));
 
-            await expect(etherscan.getGasPrice()).rejects.toThrow(
-                `Error retrieving gas price from Etherscan: Error: ${errorMessage}`,
-            );
+            await expect(etherscan.getGasPrice()).rejects.toThrow(`Failed to fetch gas price: ${errorMessage}`);
         });
     });
 });
