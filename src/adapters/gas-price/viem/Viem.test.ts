@@ -1,6 +1,6 @@
 import { http, createPublicClient } from 'viem';
 import { mainnet } from 'viem/chains';
-import { describe, expect, it, vi } from 'vitest';
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import Viem from './Viem.ts';
 
 // Mocking the viem and PublicClient
@@ -25,12 +25,16 @@ const newClient = vi.fn(() =>
 );
 
 describe('Viem', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     describe('getGasPrice', () => {
         it('should return valid data', async () => {
             // Mocking the getGasPrice method of the PublicClient instance
             const validGasPrice = 100000n;
             const mockedClientInstance = await newClient();
-            (mockedClientInstance.getGasPrice as vi.Mock).mockResolvedValue(validGasPrice);
+            (mockedClientInstance.getGasPrice as Mock).mockResolvedValue(validGasPrice);
 
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
@@ -42,7 +46,7 @@ describe('Viem', () => {
             // Mocking the getGasPrice method of the PublicClient instance to return 0n
             const validGasPrice = 0n;
             const mockedClientInstance = await newClient();
-            (mockedClientInstance.getGasPrice as vi.Mock).mockResolvedValue(validGasPrice);
+            (mockedClientInstance.getGasPrice as Mock).mockResolvedValue(validGasPrice);
 
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
