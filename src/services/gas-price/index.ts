@@ -1,5 +1,5 @@
-import Etherscan from '../../adapters/gas-price/etherscan/Etherscan.ts';
 import type IGasPrice from '../../adapters/gas-price/IGasPrice.ts';
+import Etherscan from '../../adapters/gas-price/etherscan/Etherscan.ts';
 import Viem from '../../adapters/gas-price/viem/Viem.ts';
 import { newClient } from '../../utils/index.ts';
 import GasPriceService from './GasPriceService.ts';
