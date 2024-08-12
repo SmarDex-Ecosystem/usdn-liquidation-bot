@@ -2,7 +2,7 @@ import type { PublicClient } from 'viem';
 import type IContract from './IUsdnProtocolContract.ts';
 import { abi } from './UsdnProtocolFallback.ts';
 
-type AbiFunctionNames = (typeof abi)[number] extends {
+export type AbiFunctionName = (typeof abi)[number] extends {
     type: 'function';
     name: infer T;
 }
@@ -31,14 +31,14 @@ export default class UsdnProtocolContract implements IContract {
     }
 
     /** Handles interaction with the contract and returns the result */
-    private async handleContractInteraction(functionName: AbiFunctionNames) {
+    private async handleContractInteraction(functionName: AbiFunctionName) {
         try {
             return this.blockchainClient.readContract({
                 address: this.contractAddress as '0x${string}',
                 abi: abi,
                 functionName,
             });
-        } catch (error) {
+        } catch {
             throw new Error(`Error while executing ${functionName}`);
         }
     }

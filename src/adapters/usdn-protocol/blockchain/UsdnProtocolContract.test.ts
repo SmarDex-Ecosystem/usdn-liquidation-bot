@@ -1,23 +1,31 @@
-import { PublicClient } from 'viem';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createPublicClient, http } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UsdnProtocolContract from './UsdnProtocolContract.ts';
+import { mainnet } from 'viem/chains';
 
-// Mocking viem and PublicClient
-vi.mock('viem', () => ({
-    PublicClient: vi.fn(() => ({
-        readContract: vi.fn(),
-        multicall: vi.fn(),
-    })),
-}));
+// Mocking viem and PublicClient with partial mocking
+vi.mock('viem', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...(actual as object),
+        PublicClient: vi.fn(() => ({
+            readContract: vi.fn(),
+            multicall: vi.fn(),
+        })),
+    };
+});
 
 // Test setup
 const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
-const mockPublicClient = new PublicClient();
+const mockPublicClient = createPublicClient({
+    chain: mainnet,
+    transport: http(),
+});
 const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');
 const mockMulticall = vi.spyOn(mockPublicClient, 'multicall');
 
 describe('UsdnProtocolContract', () => {
-    afterEach(() => {
+    beforeEach(() => {
         vi.clearAllMocks();
     });
 
@@ -38,9 +46,7 @@ describe('UsdnProtocolContract', () => {
 
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
-            await expect(contract.getHighestPopulatedTick()).rejects.toThrow(
-                'Error while executing getHighestPopulatedTick',
-            );
+            await expect(contract.getHighestPopulatedTick()).rejects.toThrow('Contract call failed');
         });
     });
 
@@ -67,9 +73,23 @@ describe('UsdnProtocolContract', () => {
 
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
-            // Expecting the result to be an array with an error object
+            // Expect the promise to reject with the specific error
+            await expect(contract.multicall()).rejects.toThrow('Multicall failed');
+        });
+
+        it('should handle partial failure of multicall', async () => {
+            // Mocking the multicall method to return partial failure
+            const partialFailureResults = [
+                {
+                    error: new Error('Function call failed'),
+                    status: 'failure',
+                },
+            ];
+            mockMulticall.mockResolvedValue(partialFailureResults);
+
+            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
             const result = await contract.multicall();
-            expect(result).toEqual([{ error: new Error('Multicall failed'), status: 'failure' }]);
+            expect(result).toEqual(partialFailureResults);
         });
     });
 });
