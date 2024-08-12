@@ -30,6 +30,7 @@
     "dependencies": {
         "@pythnetwork/hermes-client": "^1.0.4",
         "@redstone-finance/sdk": "^0.5.4",
-        "dotenv": "^16.4.5"
+        "dotenv": "^16.4.5",
+        "viem": "^2.19.3"
     }
 }

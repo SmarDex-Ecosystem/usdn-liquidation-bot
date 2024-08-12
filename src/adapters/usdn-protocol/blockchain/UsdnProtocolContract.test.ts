@@ -1,89 +1,75 @@
-import { PublicClient } from "viem";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import UsdnProtocolContract from "./UsdnProtocolContract.ts";
+import { PublicClient } from 'viem';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import UsdnProtocolContract from './UsdnProtocolContract.ts';
 
 // Mocking viem and PublicClient
-vi.mock("viem", () => ({
-  PublicClient: vi.fn(() => ({
-    readContract: vi.fn(),
-    multicall: vi.fn(),
-  })),
+vi.mock('viem', () => ({
+    PublicClient: vi.fn(() => ({
+        readContract: vi.fn(),
+        multicall: vi.fn(),
+    })),
 }));
 
 // Test setup
-const mockContractAddress = "0x1234567890abcdef1234567890abcdef12345678";
+const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
 const mockPublicClient = new PublicClient();
-const mockReadContract = vi.spyOn(mockPublicClient, "readContract");
-const mockMulticall = vi.spyOn(mockPublicClient, "multicall");
+const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');
+const mockMulticall = vi.spyOn(mockPublicClient, 'multicall');
 
-describe("UsdnProtocolContract", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  describe("getHighestPopulatedTick", () => {
-    it("should return the highest populated tick", async () => {
-      // Mocking the readContract method of the PublicClient instance
-      const expectedTick = 42n;
-      mockReadContract.mockResolvedValue(expectedTick);
-
-      const contract = new UsdnProtocolContract(
-        mockPublicClient,
-        mockContractAddress
-      );
-      const result = await contract.getHighestPopulatedTick();
-      expect(result).toEqual(expectedTick);
+describe('UsdnProtocolContract', () => {
+    afterEach(() => {
+        vi.clearAllMocks();
     });
 
-    it("should throw an error when the contract call fails", async () => {
-      // Mocking the readContract method to throw an error
-      mockReadContract.mockRejectedValue(new Error("Contract call failed"));
+    describe('getHighestPopulatedTick', () => {
+        it('should return the highest populated tick', async () => {
+            // Mocking the readContract method of the PublicClient instance
+            const expectedTick = 42n;
+            mockReadContract.mockResolvedValue(expectedTick);
 
-      const contract = new UsdnProtocolContract(
-        mockPublicClient,
-        mockContractAddress
-      );
+            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
+            const result = await contract.getHighestPopulatedTick();
+            expect(result).toEqual(expectedTick);
+        });
 
-      await expect(contract.getHighestPopulatedTick()).rejects.toThrow(
-        "Error while executing getHighestPopulatedTick"
-      );
-    });
-  });
+        it('should throw an error when the contract call fails', async () => {
+            // Mocking the readContract method to throw an error
+            mockReadContract.mockRejectedValue(new Error('Contract call failed'));
 
-  describe("multicall", () => {
-    it("should return results from multicall", async () => {
-      // Mocking the multicall method of the PublicClient instance
-      const expectedResults = [
-        {
-          functionName: "getHighestPopulatedTick",
-          result: 42n,
-          status: "success",
-        },
-      ];
-      mockMulticall.mockResolvedValue(expectedResults);
+            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
-      const contract = new UsdnProtocolContract(
-        mockPublicClient,
-        mockContractAddress
-      );
-      const result = await contract.multicall();
-      expect(result).toEqual(expectedResults);
+            await expect(contract.getHighestPopulatedTick()).rejects.toThrow(
+                'Error while executing getHighestPopulatedTick',
+            );
+        });
     });
 
-    it("should handle errors correctly when multicall fails", async () => {
-      // Mocking the multicall method to throw an error
-      mockMulticall.mockRejectedValue(new Error("Multicall failed"));
+    describe('multicall', () => {
+        it('should return results from multicall', async () => {
+            // Mocking the multicall method of the PublicClient instance
+            const expectedResults = [
+                {
+                    functionName: 'getHighestPopulatedTick',
+                    result: 42n,
+                    status: 'success',
+                },
+            ];
+            mockMulticall.mockResolvedValue(expectedResults);
 
-      const contract = new UsdnProtocolContract(
-        mockPublicClient,
-        mockContractAddress
-      );
+            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
+            const result = await contract.multicall();
+            expect(result).toEqual(expectedResults);
+        });
 
-      // Expecting the result to be an array with an error object
-      const result = await contract.multicall();
-      expect(result).toEqual([
-        { error: new Error("Multicall failed"), status: "failure" },
-      ]);
+        it('should handle errors correctly when multicall fails', async () => {
+            // Mocking the multicall method to throw an error
+            mockMulticall.mockRejectedValue(new Error('Multicall failed'));
+
+            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
+
+            // Expecting the result to be an array with an error object
+            const result = await contract.multicall();
+            expect(result).toEqual([{ error: new Error('Multicall failed'), status: 'failure' }]);
+        });
     });
-  });
 });
