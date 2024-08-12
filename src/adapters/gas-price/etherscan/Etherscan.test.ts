@@ -1,10 +1,14 @@
 import axios from 'axios';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Etherscan from './Etherscan.js';
 
 vi.mock('axios');
 
 describe('Etherscan', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     describe('getGasPrice', () => {
         it('should return valid data', async () => {
             const apiKeyToken = 'your_api_key';

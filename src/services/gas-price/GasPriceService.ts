@@ -1,7 +1,7 @@
-import type IGasPricedAdapter from '../../adapters/gas-price/IGasPricedAdapter.ts';
-import type IGasPriceService from './IGasPriceService.ts';
+import type IGasPricedAdapter from '../../adapters/gas-price/IGasPrice.ts';
+import type IGasPrice from '../../adapters/gas-price/IGasPrice.ts';
 
-export default class GasPriceService implements IGasPriceService {
+export default class GasPriceService implements IGasPrice {
     private primaryGasPriceAdapter: IGasPricedAdapter;
     private fallbackGasPriceAdapter: IGasPricedAdapter;
 

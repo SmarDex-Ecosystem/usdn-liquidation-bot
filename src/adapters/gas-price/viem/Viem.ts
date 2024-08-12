@@ -1,7 +1,6 @@
 import type { PublicClient } from 'viem';
-import type IGasPricedAdapter from '../IGasPricedAdapter.ts';
-
-export default class Viem implements IGasPricedAdapter {
+import type IGasPrice from '../IGasPrice.ts';
+export default class Viem implements IGasPrice {
     private client: PublicClient;
 
     constructor(newClient: PublicClient) {
