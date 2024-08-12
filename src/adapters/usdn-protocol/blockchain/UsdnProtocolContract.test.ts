@@ -1,7 +1,7 @@
-import { createPublicClient, http } from 'viem';
+import { http, createPublicClient } from 'viem';
+import { mainnet } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UsdnProtocolContract from './UsdnProtocolContract.ts';
-import { mainnet } from 'viem/chains';
 
 // Mocking the PublicClient methods
 vi.mock('viem', async (importOriginal) => {
@@ -27,6 +27,19 @@ const mockMulticall = vi.spyOn(mockPublicClient, 'multicall');
 describe('UsdnProtocolContract', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+    });
+
+    describe('constructor', () => {
+        it('should throw an error for an invalid Ethereum address', () => {
+            const invalidAddress = '0xINVALID_ADDRESS';
+            expect(() => new UsdnProtocolContract(mockPublicClient, invalidAddress)).toThrow(
+                'Invalid Ethereum address.',
+            );
+        });
+
+        it('should not throw an error for a valid Ethereum address', () => {
+            expect(() => new UsdnProtocolContract(mockPublicClient, mockContractAddress)).not.toThrow();
+        });
     });
 
     describe('getHighestPopulatedTick', () => {
