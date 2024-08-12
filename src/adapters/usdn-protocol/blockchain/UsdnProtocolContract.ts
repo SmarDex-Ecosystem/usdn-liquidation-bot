@@ -45,32 +45,24 @@ export default class UsdnProtocolContract {
 
     /** Handles interaction with the contract and returns the result */
     private async handleContractInteraction(functionName: AbiFunctionName) {
-        try {
-            return this.blockchainClient.readContract({
-                address: this.contractAddress as `0x${string}`,
-                abi: abi,
-                functionName,
-            });
-        } catch {
-            throw new Error(`Error while executing ${functionName}`);
-        }
+        return this.blockchainClient.readContract({
+            address: this.contractAddress as `0x${string}`,
+            abi: abi,
+            functionName,
+        });
     }
 
     /** Handles multicall interactions with the contract */
     private async handleMulticall<T extends AbiFunctionName>(
         calls: { functionName: AbiFunctionName; args?: AbiFunctionArgs<T> }[],
     ) {
-        try {
-            const contracts = calls.map((call) => ({
-                address: this.contractAddress as `0x${string}`,
-                abi: abi,
-                functionName: call.functionName,
-                args: [call.args],
-            }));
+        const contracts = calls.map((call) => ({
+            address: this.contractAddress as `0x${string}`,
+            abi: abi,
+            functionName: call.functionName,
+            args: [call.args],
+        }));
 
-            return this.blockchainClient.multicall({ contracts });
-        } catch (error) {
-            return [{ error, status: 'failure' }];
-        }
+        return this.blockchainClient.multicall({ contracts });
     }
 }

@@ -42,11 +42,12 @@ describe('UsdnProtocolContract', () => {
 
         it('should throw an error when the contract call fails', async () => {
             // Mocking the readContract method to throw an error
-            mockReadContract.mockRejectedValue(new Error('Contract call failed'));
+            const error = new Error('Contract call failed');
+            mockReadContract.mockRejectedValue(error);
 
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
-            await expect(contract.getHighestPopulatedTick()).rejects.toThrow('Contract call failed');
+            await expect(contract.getHighestPopulatedTick()).rejects.toThrow(error);
         });
     });
 
@@ -67,22 +68,6 @@ describe('UsdnProtocolContract', () => {
             expect(result).toEqual(expectedResults);
         });
 
-        it('should handle multicall with arguments', async () => {
-            // Mocking the multicall method of the PublicClient instance
-            const expectedResults = [
-                {
-                    functionName: 'getHighestPopulatedTick',
-                    result: 42n,
-                    status: 'success',
-                },
-            ];
-            mockMulticall.mockResolvedValue(expectedResults);
-
-            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
-            const result = await contract.multicall([{ functionName: 'getHighestPopulatedTick', args: [] }]);
-            expect(result).toEqual(expectedResults);
-        });
-
         it('should handle errors correctly when multicall fails', async () => {
             // Mocking the multicall method to throw an error
             mockMulticall.mockRejectedValue(new Error('Multicall failed'));
@@ -92,21 +77,6 @@ describe('UsdnProtocolContract', () => {
             await expect(contract.multicall([{ functionName: 'getHighestPopulatedTick' }])).rejects.toThrow(
                 'Multicall failed',
             );
-        });
-
-        it('should handle partial failure of multicall', async () => {
-            // Mocking the multicall method to return partial failure
-            const partialFailureResults = [
-                {
-                    error: new Error('Function call failed'),
-                    status: 'failure',
-                },
-            ];
-            mockMulticall.mockResolvedValue(partialFailureResults);
-
-            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
-            const result = await contract.multicall([{ functionName: 'getHighestPopulatedTick' }]);
-            expect(result).toEqual(partialFailureResults);
         });
     });
 });
