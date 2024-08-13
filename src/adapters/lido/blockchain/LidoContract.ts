@@ -1,4 +1,4 @@
-import { isAddress, type PublicClient } from 'viem';
+import { type PublicClient, isAddress } from 'viem';
 import { abi } from './WstETHAbi.ts';
 
 export default class LidoContract {
