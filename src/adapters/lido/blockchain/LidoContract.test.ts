@@ -1,6 +1,6 @@
 import { http, createPublicClient } from 'viem';
 import { mainnet } from 'viem/chains';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import LidoContract from './LidoContract.ts';
 
 // Mocking the PublicClient methods
@@ -22,8 +22,9 @@ const mockPublicClient = createPublicClient({
 const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');
 
 describe('LidoContract', () => {
-    beforeEach(() => {
+    afterEach(() => {
         vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     describe('constructor', () => {
