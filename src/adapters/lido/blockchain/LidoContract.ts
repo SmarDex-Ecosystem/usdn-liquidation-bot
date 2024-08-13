@@ -1,21 +1,6 @@
 import type { PublicClient } from 'viem';
 import { abi } from './WstETHAbi.ts';
 
-export type AbiFunctionName = (typeof abi)[number] extends {
-    type: 'function';
-    name: infer T;
-}
-    ? T
-    : never;
-
-export type AbiFunctionArgs<T extends AbiFunctionName> = (typeof abi)[number] extends {
-    type: 'function';
-    name: T;
-    inputs: infer I;
-}
-    ? { [K in keyof I]: I[K] extends { type: infer U } ? U : never }
-    : never;
-
 export default class LidoContract {
     /** Client to use to communicate with the smart contract */
     private readonly blockchainClient: PublicClient;
