@@ -1,5 +1,5 @@
 import type { PublicClient } from 'viem';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ChainlinkPriceFeedContract from './ChainlinkPriceFeedContract.ts';
 
 const mockedClient = {
@@ -9,9 +9,28 @@ const mockedClient = {
 const validChainlinkData: [bigint, bigint, bigint, bigint, bigint] = [69420n, 3000n * 10n ** 8n, 0n, 42069n, 0n];
 
 describe('ChainlinkPriceFeedContract', () => {
+    beforeEach(() => {
+        vi.stubEnv('CHAINLINK_USD_ETH_FEED', '0x1230000000000000000000000000000000000123');
+    });
     afterEach(() => {
         vi.clearAllMocks();
         vi.resetAllMocks();
+        vi.unstubAllEnvs();
+    });
+
+    describe('constructor', () => {
+        it('should revert if the CHAINLINK_USD_ETH_FEED env var is not set', async () => {
+            vi.stubEnv('CHAINLINK_USD_ETH_FEED', '');
+            expect(() => new ChainlinkPriceFeedContract(mockedClient)).to.throw(
+                'CHAINLINK_USD_ETH_FEED env variable is not a valid address',
+            );
+        });
+        it('should revert if the CHAINLINK_USD_ETH_FEED env var is not a valid ethereum address', async () => {
+            vi.stubEnv('CHAINLINK_USD_ETH_FEED', 'not-an-address');
+            expect(() => new ChainlinkPriceFeedContract(mockedClient)).to.throw(
+                'CHAINLINK_USD_ETH_FEED env variable is not a valid address',
+            );
+        });
     });
 
     describe('getLatestRoundData', () => {

@@ -1,4 +1,4 @@
-import type { PublicClient } from 'viem';
+import { isAddress, type PublicClient } from 'viem';
 import chainlinkPriceFeedABI from './abi.ts';
 import type { RoundData } from './types.ts';
 
@@ -10,6 +10,13 @@ export default class ChainlinkPriceFeedContract {
 
     constructor(blockchainClient: PublicClient) {
         this.blockchainClient = blockchainClient;
+
+        const priceFeedAddress = process.env.CHAINLINK_USD_ETH_FEED;
+        if (!priceFeedAddress || !isAddress(priceFeedAddress)) {
+            throw new Error('CHAINLINK_USD_ETH_FEED env variable is not a valid address');
+        }
+
+        this.priceFeedAddress = priceFeedAddress;
     }
 
     /**
