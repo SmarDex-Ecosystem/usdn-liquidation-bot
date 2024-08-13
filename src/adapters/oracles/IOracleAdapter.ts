@@ -1,6 +1,6 @@
 import type { OraclePriceData, OraclePriceUpdateCallback } from './types.ts';
 
-/** Allow to communicate with an oracle */
+/** Allow to get price data from an oracle */
 export default interface IOracleAdapter {
     /**
      * Get the latest price data from the oracle

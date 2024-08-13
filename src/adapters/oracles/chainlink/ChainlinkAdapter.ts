@@ -5,11 +5,25 @@ import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateC
 import type ChainlinkPriceFeedContract from './blockchain/ChainlinkPriceFeedContract.ts';
 import type { RoundData } from './blockchain/types.ts';
 
+/** Adapter to get price data from the Chainlink's on-chain oracle */
 export default class ChainlinkAdapter implements IOracleAdapter {
-    private contract;
+    private contract: ChainlinkPriceFeedContract;
 
+    /**
+     * @param contract A client to communicate with the Chainlink's price feed's contract
+     */
     constructor(contract: ChainlinkPriceFeedContract) {
         this.contract = contract;
+    }
+
+    /**
+     * Create a signature with the round data
+     * @param roundData The round data for the signature
+     * @returns The signature for the provided data
+     */
+    private getSignature(roundData: RoundData) {
+        // should be equal to abi.encode(uint80(roundId))
+        return encodeAbiParameters([{ name: 'roundId', type: 'uint80' }], [roundData.roundId]);
     }
 
     /** @inheritdoc */
@@ -24,8 +38,7 @@ export default class ChainlinkAdapter implements IOracleAdapter {
         return {
             price: roundData.price,
             decimals: roundData.decimals,
-            // should be equal to abi.encode(uint80(roundId))
-            signature: encodeAbiParameters([{ name: 'roundId', type: 'uint80' }], [roundData.roundId]),
+            signature: this.getSignature(roundData),
         };
     }
 
@@ -45,8 +58,7 @@ export default class ChainlinkAdapter implements IOracleAdapter {
         return {
             price: roundData.price,
             decimals: roundData.decimals,
-            // should be equal to abi.encode(uint80(roundId))
-            signature: encodeAbiParameters([{ name: 'roundId', type: 'uint80' }], [roundData.roundId]),
+            signature: this.getSignature(roundData),
         };
     }
 

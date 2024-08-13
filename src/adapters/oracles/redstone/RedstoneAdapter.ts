@@ -3,6 +3,7 @@ import { sleep } from '../../../utils/index.ts';
 import type IOracleAdapter from '../IOracleAdapter.ts';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
 
+/** Adapter to get price data from the Redstone oracle */
 export default class RedstoneAdapter implements IOracleAdapter {
     private readonly PRICE_DECIMALS = 8;
     private readonly MIN_UNIQUE_SIGNERS_COUNT = 3;
