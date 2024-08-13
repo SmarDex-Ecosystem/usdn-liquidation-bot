@@ -1,4 +1,4 @@
-import type { PublicClient } from 'viem';
+import { isAddress, type PublicClient } from 'viem';
 import { abi } from './WstETHAbi.ts';
 
 export default class LidoContract {
@@ -8,7 +8,7 @@ export default class LidoContract {
     private readonly contractAddress: `0x${string}`;
 
     constructor(blockchainClient: PublicClient, contractAddress: `0x${string}`) {
-        if (!/^0x[a-fA-F0-9]{40}$/.test(contractAddress)) {
+        if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address.');
         }
         this.blockchainClient = blockchainClient;
