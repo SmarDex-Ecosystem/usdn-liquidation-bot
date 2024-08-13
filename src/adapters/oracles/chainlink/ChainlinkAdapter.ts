@@ -84,8 +84,8 @@ export default class ChainlinkAdapter implements IOracleAdapter {
             let priceData: OraclePriceData;
             try {
                 priceData = await this.getLatestPrice();
-            } catch (e) {
-                console.error(`Failed to parse Chainlink price data: ${(e as Error).message}`);
+            } catch (error) {
+                console.error(`Failed to parse Chainlink price data: ${error}`);
                 await sleep(10000);
                 continue;
             }
