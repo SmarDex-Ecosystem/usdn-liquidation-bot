@@ -1,9 +1,9 @@
 import { chainlinkAdapter, pythAdapter, redstoneAdapter } from './adapters/oracles/index.ts';
 
-const helloWorld = async () => {
-    console.log('redstone', await redstoneAdapter.getLatestPrice());
-    console.log('pyth', await pythAdapter.getLatestPrice());
-    console.log('chainlink', await chainlinkAdapter.getLatestPrice());
+const main = async () => {
+    console.log('Latest Redstone price ', await redstoneAdapter.getLatestPrice());
+    console.log('Latest Pyth price     ', await pythAdapter.getLatestPrice());
+    console.log('Latest Chainlink price', await chainlinkAdapter.getLatestPrice());
 
     pythAdapter.subscribeToPriceUpdates((priceData) => {
         console.log(`Received an update for 🟩 Pyth ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`);
@@ -24,4 +24,4 @@ const helloWorld = async () => {
     return 'Hello, World!';
 };
 
-helloWorld();
+main();

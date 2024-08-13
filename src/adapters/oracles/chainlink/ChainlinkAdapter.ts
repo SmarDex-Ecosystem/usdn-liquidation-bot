@@ -1,9 +1,9 @@
 import { encodeAbiParameters } from 'viem';
+import { sleep } from '../../../utils/index.ts';
 import type IOracleAdapter from '../IOracleAdapter.js';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.js';
 import type ChainlinkPriceFeedContract from './blockchain/ChainlinkPriceFeedContract.ts';
 import type { RoundData } from './blockchain/types.ts';
-import { sleep } from '../../../utils/index.ts';
 
 export default class ChainlinkAdapter implements IOracleAdapter {
     private contract;

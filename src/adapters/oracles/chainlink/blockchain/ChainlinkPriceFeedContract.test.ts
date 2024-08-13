@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PublicClient } from 'viem';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import ChainlinkPriceFeedContract from './ChainlinkPriceFeedContract.ts';
 
 const mockedClient = {
