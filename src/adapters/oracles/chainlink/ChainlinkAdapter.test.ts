@@ -1,8 +1,10 @@
 import { encodeAbiParameters } from 'viem';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ChainlinkAdapter from './ChainlinkAdapter.js';
 import type ChainlinkPriceFeedContract from './blockchain/ChainlinkPriceFeedContract.ts';
 import type { RoundData } from './blockchain/types.ts';
+
+vi.mock('../../../utils/index.ts');
 
 const mockedContract = (await vi.importMock(
     './blockchain/ChainlinkPriceFeedContract.ts',
@@ -81,11 +83,68 @@ describe('ChainlinkAdapter', () => {
     });
 
     describe('subscribeToPriceUpdate', () => {
-        it('should throw an error as price subscription is not supported for Chainlink', async () => {
+        beforeEach(async () => {
+            const mockedUtils = await import('../../../utils/index.ts');
+            vi.mocked(mockedUtils).sleep = vi.fn();
+        });
+
+        it('should execute the callback on the first iteration', async () => {
+            mockedContract.getLatestRoundData = vi.fn().mockImplementation(() => {
+                // stop the polling after the first iteration
+                process.emit('SIGINT');
+                return validChainlinkData;
+            });
+
+            const callback = vi.fn();
             const chainlinkAdapter = new ChainlinkAdapter(mockedContract);
-            await expect(chainlinkAdapter.subscribeToPriceUpdates(() => {})).to.rejects.toThrowError(
-                'Price subscription is not supported for Chainlink',
-            );
+            await chainlinkAdapter.subscribeToPriceUpdates(callback);
+            expect(callback).toHaveBeenCalledOnce();
+        });
+
+        it('should execute the callback only when the round ID changes', async () => {
+            const newRoundData = { ...validChainlinkData, roundId: validChainlinkData.roundId + 1n };
+            mockedContract.getLatestRoundData = vi
+                .fn()
+                .mockImplementationOnce(() => {
+                    return validChainlinkData;
+                })
+                .mockImplementationOnce(() => {
+                    return validChainlinkData;
+                })
+                .mockImplementation(() => {
+                    return newRoundData;
+                })
+                .mockImplementation(() => {
+                    // stop the polling after the fourth iteration
+                    process.emit('SIGINT');
+                    return newRoundData;
+                });
+
+            const callback = vi.fn();
+            const chainlinkAdapter = new ChainlinkAdapter(mockedContract);
+            await chainlinkAdapter.subscribeToPriceUpdates(callback);
+            expect(callback).toHaveBeenCalledTimes(2);
+        });
+
+        it('should not execute the callback, not throw an error and continue to poll if the price fetching fails', async () => {
+            mockedContract.getLatestRoundData = vi
+                .fn()
+                .mockImplementationOnce(() => {
+                    return validChainlinkData;
+                })
+                .mockImplementationOnce(() => {
+                    throw new Error();
+                })
+                .mockImplementationOnce(() => {
+                    // stop the polling after the first iteration
+                    process.emit('SIGTERM');
+                    return { ...validChainlinkData, roundId: validChainlinkData.roundId + 1n };
+                });
+
+            const callback = vi.fn();
+            const chainlinkAdapter = new ChainlinkAdapter(mockedContract);
+            await chainlinkAdapter.subscribeToPriceUpdates(callback);
+            expect(callback).toHaveBeenCalledTimes(2);
         });
     });
 });
