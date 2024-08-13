@@ -1,10 +1,12 @@
 import { encodeAbiParameters } from 'viem';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ChainlinkAdapter from './ChainlinkAdapter.js';
-import type ChainlinkPriceFeedContract from './blockchain/Contract.ts';
+import type ChainlinkPriceFeedContract from './blockchain/ChainlinkPriceFeedContract.ts';
 import type { RoundData } from './blockchain/types.ts';
 
-const mockedContract = (await vi.importMock('./blockchain/Contract.ts')) as unknown as ChainlinkPriceFeedContract;
+const mockedContract = (await vi.importMock(
+    './blockchain/ChainlinkPriceFeedContract.ts',
+)) as unknown as ChainlinkPriceFeedContract;
 const validChainlinkData: RoundData = {
     price: 3000n * 10n ** 8n,
     timestamp: 42069n,
