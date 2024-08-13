@@ -6,7 +6,7 @@ export default class ChainlinkPriceFeedContract {
     /** Client to use to communicate with the smart contract */
     private blockchainClient: PublicClient;
     /** Address for the ETH/USD price feed */
-    private priceFeedAddress: `0x${string}` = '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419';
+    private priceFeedAddress: `0x${string}`;
 
     constructor(blockchainClient: PublicClient) {
         this.blockchainClient = blockchainClient;
