@@ -20,8 +20,6 @@ const main = async () => {
             `Received an update for 🟦 Chainlink ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`,
         );
     });
-
-    return 'Hello, World!';
 };
 
 main();
