@@ -1,4 +1,4 @@
-import { isAddress, type PublicClient } from 'viem';
+import { type PublicClient, isAddress } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
 
 export type AbiFunctionName = (typeof abi)[number] extends {
