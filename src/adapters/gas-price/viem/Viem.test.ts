@@ -1,13 +1,13 @@
 import { http, createPublicClient } from 'viem';
 import { mainnet } from 'viem/chains';
-import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import Viem from './Viem.ts';
 
 // Mocking the viem and PublicClient
 vi.mock('viem', () => {
     return {
         createPublicClient: vi.fn(() => ({
-            getGasPrice: vi.fn(),
+            estimateFeesPerGas: vi.fn(),
         })),
         http: vi.fn(),
         PublicClient: vi.fn(),
@@ -31,27 +31,33 @@ describe('Viem', () => {
 
     describe('getGasPrice', () => {
         it('should return valid data', async () => {
-            // Mocking the getGasPrice method of the PublicClient instance
-            const validGasPrice = 100000n;
+            // Mocking the estimateFeesPerGas method of the PublicClient instance
+            const mockedGasPrice = {
+                maxPriorityFeePerGas: 200000n,
+                maxFeePerGas: 300000n,
+            };
             const mockedClientInstance = await newClient();
-            (mockedClientInstance.getGasPrice as Mock).mockResolvedValue(validGasPrice);
+            (mockedClientInstance.estimateFeesPerGas as Mock).mockResolvedValue(mockedGasPrice);
 
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
-            expect(data.high).toEqual(200000n);
-            expect(data.baseFee).toEqual(0n);
+            expect(data.fastPriorityFee).toEqual(mockedGasPrice.maxPriorityFeePerGas);
+            expect(data.suggestBaseFee).toEqual(mockedGasPrice.maxFeePerGas);
         });
 
-        it('should return valid 0n', async () => {
-            // Mocking the getGasPrice method of the PublicClient instance to return 0n
-            const validGasPrice = 0n;
+        it('should return valid 0n when estimateFeesPerGas returns zeros', async () => {
+            // Mocking the estimateFeesPerGas method to return 0n values
+            const mockedGasPrice = {
+                maxPriorityFeePerGas: 0n,
+                maxFeePerGas: 0n,
+            };
             const mockedClientInstance = await newClient();
-            (mockedClientInstance.getGasPrice as Mock).mockResolvedValue(validGasPrice);
+            (mockedClientInstance.estimateFeesPerGas as Mock).mockResolvedValue(mockedGasPrice);
 
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
-            expect(data.high).toEqual(0n);
-            expect(data.baseFee).toEqual(0n);
+            expect(data.fastPriorityFee).toEqual(0n);
+            expect(data.suggestBaseFee).toEqual(0n);
         });
     });
 });

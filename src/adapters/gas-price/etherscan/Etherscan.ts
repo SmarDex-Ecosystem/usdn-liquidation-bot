@@ -29,9 +29,10 @@ export default class Etherscan implements IGasPrice {
             if (response.data.status !== '1') {
                 throw new Error(response.data.message);
             }
+            const baseFee = parseGwei(response.data.result.suggestBaseFee.toString());
             return {
-                high: parseGwei(response.data.result.FastGasPrice.toString()),
-                baseFee: parseGwei(response.data.result.suggestBaseFee.toString()),
+                fastPriorityFee: parseGwei(response.data.result.FastGasPrice.toString()) - baseFee,
+                suggestBaseFee: baseFee,
             };
         } catch (error) {
             throw new Error(`Failed to fetch gas price: ${(error as Error).message}`);

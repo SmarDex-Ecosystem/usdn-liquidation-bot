@@ -13,13 +13,13 @@ describe('GasPriceService', () => {
     let mockedFallbackAdapter: Viem;
 
     const validPrimaryResponse = {
-        high: 150n,
-        baseFee: 50n,
+        fastPriorityFee: 150n,
+        suggestBaseFee: 50n,
     };
 
     const fallbackAdapterResponse = {
-        high: 200n,
-        baseFee: 0n,
+        fastPriorityFee: 200n,
+        suggestBaseFee: 340n,
     };
 
     beforeEach(async () => {
@@ -33,14 +33,14 @@ describe('GasPriceService', () => {
             try {
                 const primaryData = await mockedPrimaryAdapter.getGasPrice();
                 return {
-                    high: primaryData.high,
-                    baseFee: primaryData.baseFee,
+                    fastPriorityFee: primaryData.fastPriorityFee,
+                    suggestBaseFee: primaryData.suggestBaseFee,
                 };
             } catch {
                 const fallbackData = await mockedFallbackAdapter.getGasPrice();
                 return {
-                    high: fallbackData.high,
-                    baseFee: fallbackData.baseFee,
+                    fastPriorityFee: fallbackData.fastPriorityFee,
+                    suggestBaseFee: fallbackData.suggestBaseFee,
                 };
             }
         });
@@ -54,8 +54,8 @@ describe('GasPriceService', () => {
         it('should return gas price from the primary adapter if successful', async () => {
             const data = await gasPriceService.getGasPrice();
             expect(data).toEqual({
-                high: validPrimaryResponse.high,
-                baseFee: validPrimaryResponse.baseFee,
+                fastPriorityFee: validPrimaryResponse.fastPriorityFee,
+                suggestBaseFee: validPrimaryResponse.suggestBaseFee,
             });
         });
 
@@ -64,8 +64,8 @@ describe('GasPriceService', () => {
 
             const data = await gasPriceService.getGasPrice();
             expect(data).toEqual({
-                high: fallbackAdapterResponse.high,
-                baseFee: fallbackAdapterResponse.baseFee,
+                fastPriorityFee: fallbackAdapterResponse.fastPriorityFee,
+                suggestBaseFee: fallbackAdapterResponse.suggestBaseFee,
             });
         });
     });

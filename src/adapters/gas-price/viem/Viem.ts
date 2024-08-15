@@ -9,11 +9,11 @@ export default class Viem implements IGasPrice {
 
     /** @inheritDoc */
     async getGasPrice() {
-        const gasPrice = await this.client.getGasPrice();
+        const gasPrice = await this.client.estimateFeesPerGas();
 
         return {
-            high: gasPrice * BigInt(2),
-            baseFee: 0n,
+            fastPriorityFee: gasPrice.maxPriorityFeePerGas,
+            suggestBaseFee: gasPrice.maxFeePerGas,
         };
     }
 }
