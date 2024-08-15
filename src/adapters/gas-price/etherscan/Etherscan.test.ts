@@ -23,7 +23,7 @@ describe('Etherscan', () => {
                         SafeGasPrice: 100,
                         ProposeGasPrice: 120,
                         FastGasPrice: 150,
-                        suggestBaseFee: 140,
+                        suggestedBaseFee: 140,
                         gasUsedRatio: '150',
                     },
                 },
@@ -34,7 +34,7 @@ describe('Etherscan', () => {
             const data = await etherscan.getGasPrice();
             expect(data).toEqual({
                 fastPriorityFee: 150n * 10n ** 9n - 140n * 10n ** 9n,
-                suggestBaseFee: 140n * 10n ** 9n,
+                suggestedBaseFee: 140n * 10n ** 9n,
             });
         });
 

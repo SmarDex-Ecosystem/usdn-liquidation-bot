@@ -3,8 +3,8 @@ import type IGasPrice from '../IGasPrice.ts';
 export default class Viem implements IGasPrice {
     private client: PublicClient;
 
-    constructor(newClient: PublicClient) {
-        this.client = newClient;
+    constructor(getBlockchainClient: PublicClient) {
+        this.client = getBlockchainClient;
     }
 
     /** @inheritDoc */
@@ -13,7 +13,7 @@ export default class Viem implements IGasPrice {
 
         return {
             fastPriorityFee: gasPrice.maxPriorityFeePerGas,
-            suggestBaseFee: gasPrice.maxFeePerGas,
+            suggestedBaseFee: gasPrice.maxFeePerGas,
         };
     }
 }

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Etherscan from '../../adapters/gas-price/etherscan/Etherscan.ts';
 import Viem from '../../adapters/gas-price/viem/Viem.ts';
-import { newClient } from '../../utils/index.ts';
+import { getBlockchainClient } from '../../utils/index.ts';
 import { gasPriceService } from './index.ts';
 
 vi.mock('../../adapters/gas-price/etherscan/Etherscan');
@@ -14,17 +14,17 @@ describe('GasPriceService', () => {
 
     const validPrimaryResponse = {
         fastPriorityFee: 150n,
-        suggestBaseFee: 50n,
+        suggestedBaseFee: 50n,
     };
 
     const fallbackAdapterResponse = {
         fastPriorityFee: 200n,
-        suggestBaseFee: 340n,
+        suggestedBaseFee: 340n,
     };
 
     beforeEach(async () => {
         mockedPrimaryAdapter = new Etherscan('');
-        mockedFallbackAdapter = new Viem(await newClient());
+        mockedFallbackAdapter = new Viem(getBlockchainClient());
 
         vi.spyOn(mockedPrimaryAdapter, 'getGasPrice').mockResolvedValue(validPrimaryResponse);
         vi.spyOn(mockedFallbackAdapter, 'getGasPrice').mockResolvedValue(fallbackAdapterResponse);
@@ -34,13 +34,13 @@ describe('GasPriceService', () => {
                 const primaryData = await mockedPrimaryAdapter.getGasPrice();
                 return {
                     fastPriorityFee: primaryData.fastPriorityFee,
-                    suggestBaseFee: primaryData.suggestBaseFee,
+                    suggestedBaseFee: primaryData.suggestedBaseFee,
                 };
             } catch {
                 const fallbackData = await mockedFallbackAdapter.getGasPrice();
                 return {
                     fastPriorityFee: fallbackData.fastPriorityFee,
-                    suggestBaseFee: fallbackData.suggestBaseFee,
+                    suggestedBaseFee: fallbackData.suggestedBaseFee,
                 };
             }
         });
@@ -55,7 +55,7 @@ describe('GasPriceService', () => {
             const data = await gasPriceService.getGasPrice();
             expect(data).toEqual({
                 fastPriorityFee: validPrimaryResponse.fastPriorityFee,
-                suggestBaseFee: validPrimaryResponse.suggestBaseFee,
+                suggestedBaseFee: validPrimaryResponse.suggestedBaseFee,
             });
         });
 
@@ -65,7 +65,7 @@ describe('GasPriceService', () => {
             const data = await gasPriceService.getGasPrice();
             expect(data).toEqual({
                 fastPriorityFee: fallbackAdapterResponse.fastPriorityFee,
-                suggestBaseFee: fallbackAdapterResponse.suggestBaseFee,
+                suggestedBaseFee: fallbackAdapterResponse.suggestedBaseFee,
             });
         });
     });

@@ -14,14 +14,12 @@ vi.mock('viem', () => {
     };
 });
 
-// Mock implementation of newClient
-const newClient = vi.fn(() =>
-    Promise.resolve(
-        createPublicClient({
-            chain: mainnet,
-            transport: http(),
-        }),
-    ),
+// Mock implementation of getBlockchainClient
+const getBlockchainClient = vi.fn(() =>
+    createPublicClient({
+        chain: mainnet,
+        transport: http(),
+    }),
 );
 
 describe('Viem', () => {
@@ -36,13 +34,13 @@ describe('Viem', () => {
                 maxPriorityFeePerGas: 200000n,
                 maxFeePerGas: 300000n,
             };
-            const mockedClientInstance = await newClient();
+            const mockedClientInstance = getBlockchainClient();
             (mockedClientInstance.estimateFeesPerGas as Mock).mockResolvedValue(mockedGasPrice);
 
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
             expect(data.fastPriorityFee).toEqual(mockedGasPrice.maxPriorityFeePerGas);
-            expect(data.suggestBaseFee).toEqual(mockedGasPrice.maxFeePerGas);
+            expect(data.suggestedBaseFee).toEqual(mockedGasPrice.maxFeePerGas);
         });
 
         it('should return valid 0n when estimateFeesPerGas returns zeros', async () => {
@@ -51,13 +49,13 @@ describe('Viem', () => {
                 maxPriorityFeePerGas: 0n,
                 maxFeePerGas: 0n,
             };
-            const mockedClientInstance = await newClient();
+            const mockedClientInstance = getBlockchainClient();
             (mockedClientInstance.estimateFeesPerGas as Mock).mockResolvedValue(mockedGasPrice);
 
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
             expect(data.fastPriorityFee).toEqual(0n);
-            expect(data.suggestBaseFee).toEqual(0n);
+            expect(data.suggestedBaseFee).toEqual(0n);
         });
     });
 });

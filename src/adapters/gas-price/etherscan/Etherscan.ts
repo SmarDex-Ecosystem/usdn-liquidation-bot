@@ -10,7 +10,7 @@ type EtherscanData = {
         SafeGasPrice: number;
         ProposeGasPrice: number;
         FastGasPrice: number;
-        suggestBaseFee: number;
+        suggestedBaseFee: number;
         gasUsedRatio: string;
     };
 };
@@ -29,10 +29,10 @@ export default class Etherscan implements IGasPrice {
             if (response.data.status !== '1') {
                 throw new Error(response.data.message);
             }
-            const baseFee = parseGwei(response.data.result.suggestBaseFee.toString());
+            const baseFee = parseGwei(response.data.result.suggestedBaseFee.toString());
             return {
                 fastPriorityFee: parseGwei(response.data.result.FastGasPrice.toString()) - baseFee,
-                suggestBaseFee: baseFee,
+                suggestedBaseFee: baseFee,
             };
         } catch (error) {
             throw new Error(`Failed to fetch gas price: ${(error as Error).message}`);
