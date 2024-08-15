@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type IGasPrice from '../IGasPrice.ts';
+import type IGasPriceAdapter from '../IGasPriceAdapter.ts';
 import { parseGwei } from 'viem';
 
 type EtherscanData = {
@@ -14,7 +14,7 @@ type EtherscanData = {
         gasUsedRatio: string;
     };
 };
-export default class Etherscan implements IGasPrice {
+export default class Etherscan implements IGasPriceAdapter {
     private apiKey: string | null = null;
 
     constructor(apiKey: string) {
