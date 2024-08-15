@@ -1,16 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import Etherscan from '../../adapters/gas-price/etherscan/Etherscan.ts';
-import Viem from '../../adapters/gas-price/viem/Viem.ts';
-import { getBlockchainClient } from '../../utils/index.ts';
 import { gasPriceService } from './index.ts';
+import type IGasPriceAdapter from '../../adapters/gas-price/IGasPriceAdapter.ts';
 
 vi.mock('../../adapters/gas-price/etherscan/Etherscan');
 vi.mock('../../adapters/gas-price/viem/Viem');
 vi.mock('../../utils/index');
 
 describe('GasPriceService', () => {
-    let mockedPrimaryAdapter: Etherscan;
-    let mockedFallbackAdapter: Viem;
+    let mockedPrimaryAdapter: IGasPriceAdapter;
+    let mockedFallbackAdapter: IGasPriceAdapter;
 
     const validPrimaryResponse = {
         fastPriorityFee: 150n,
@@ -23,8 +21,8 @@ describe('GasPriceService', () => {
     };
 
     beforeEach(async () => {
-        mockedPrimaryAdapter = new Etherscan('');
-        mockedFallbackAdapter = new Viem(getBlockchainClient());
+        mockedPrimaryAdapter = { getGasPrice: vi.fn() };
+        mockedFallbackAdapter = { getGasPrice: vi.fn() };
 
         vi.spyOn(mockedPrimaryAdapter, 'getGasPrice').mockResolvedValue(validPrimaryResponse);
         vi.spyOn(mockedFallbackAdapter, 'getGasPrice').mockResolvedValue(fallbackAdapterResponse);
