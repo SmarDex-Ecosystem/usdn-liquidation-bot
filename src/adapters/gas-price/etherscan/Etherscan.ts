@@ -15,15 +15,15 @@ type EtherscanData = {
     };
 };
 export default class Etherscan implements IGasPrice {
-    private apiKeyToken: string | null = null;
+    private apiKey: string | null = null;
 
-    constructor(YourApiKeyToken: string) {
-        this.apiKeyToken = YourApiKeyToken;
+    constructor(apiKey: string) {
+        this.apiKey = apiKey;
     }
 
     /** @inheritdoc */
     async getGasPrice() {
-        const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKeyToken}`;
+        const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKey}`;
         try {
             const response = await axios.get<EtherscanData>(url);
             if (response.data.status !== '1') {
