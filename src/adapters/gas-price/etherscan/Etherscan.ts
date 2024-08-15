@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type IGasPrice from '../IGasPrice.ts';
+import { parseGwei } from 'viem';
 
 type EtherscanData = {
     status: string;
@@ -29,8 +30,8 @@ export default class Etherscan implements IGasPrice {
                 throw new Error(response.data.message);
             }
             return {
-                high: BigInt(response.data.result.FastGasPrice) * 10n ** 9n,
-                baseFee: BigInt(response.data.result.suggestBaseFee) * 10n ** 9n,
+                high: parseGwei(response.data.result.FastGasPrice.toString()),
+                baseFee: parseGwei(response.data.result.suggestBaseFee.toString()),
             };
         } catch (error) {
             throw new Error(`Failed to fetch gas price: ${(error as Error).message}`);
