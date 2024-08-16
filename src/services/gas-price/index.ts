@@ -6,5 +6,5 @@ import GasPriceService from './GasPriceService.ts';
 
 export const gasPriceService: IGasPriceAdapter = new GasPriceService(
     new Etherscan(process.env.ETHERSCAN_API_KEY || ''),
-    new Viem(await getBlockchainClient()),
+    new Viem(getBlockchainClient()),
 );
