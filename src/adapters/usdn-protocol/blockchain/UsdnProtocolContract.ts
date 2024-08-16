@@ -1,20 +1,7 @@
-import { type PublicClient, isAddress } from 'viem';
+import { type ContractFunctionParameters, type PublicClient, isAddress } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
 
-export type AbiFunctionName = (typeof abi)[number] extends {
-    type: 'function';
-    name: infer T;
-}
-    ? T
-    : never;
-
-export type AbiFunctionArgs<T extends AbiFunctionName> = (typeof abi)[number] extends {
-    type: 'function';
-    name: T;
-    inputs: infer I;
-}
-    ? { [K in keyof I]: I[K] extends { type: infer U } ? U : never }
-    : never;
+export type FunctionCall = Omit<ContractFunctionParameters<typeof abi>, 'abi' | 'address'>;
 
 export default class UsdnProtocolContract {
     /** Client to use to communicate with the smart contract */
@@ -34,7 +21,9 @@ export default class UsdnProtocolContract {
      * @returns Result of the function call
      */
     async getHighestPopulatedTick() {
-        return this.handleContractInteraction('getHighestPopulatedTick');
+        return this.handleContractInteraction({
+            functionName: 'getHighestPopulatedTick',
+        });
     }
 
     /**
@@ -42,30 +31,26 @@ export default class UsdnProtocolContract {
      * @param calls List of function names and their arguments to call
      * @returns Result of the multicall
      */
-    async multicall<T extends AbiFunctionName>(calls: { functionName: T; args?: AbiFunctionArgs<T> }[]) {
+    async multicall(calls: FunctionCall[]) {
         return this.handleMulticall(calls);
     }
 
     /** Handles interaction with the contract and returns the result */
-    private async handleContractInteraction(functionName: AbiFunctionName) {
+    private async handleContractInteraction(call: FunctionCall) {
         return this.blockchainClient.readContract({
-            address: this.contractAddress as `0x${string}`,
+            ...call,
+            address: this.contractAddress,
             abi: abi,
-            functionName,
         });
     }
 
     /** Handles multicall interactions with the contract */
-    private async handleMulticall<T extends AbiFunctionName>(
-        calls: { functionName: AbiFunctionName; args?: AbiFunctionArgs<T> }[],
-    ) {
+    private async handleMulticall(calls: FunctionCall[]) {
         const contracts = calls.map((call) => ({
-            address: this.contractAddress as `0x${string}`,
+            ...call,
+            address: this.contractAddress,
             abi: abi,
-            functionName: call.functionName,
-            args: [call.args],
         }));
-
         return this.blockchainClient.multicall({ contracts });
     }
 }
