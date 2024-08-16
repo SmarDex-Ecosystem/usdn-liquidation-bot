@@ -17,11 +17,12 @@
     "license": "UNLICENSED",
     "devDependencies": {
         "@biomejs/biome": "1.8.3",
+        "@types/axios": "^0.14.0",
         "@vitest/coverage-v8": "^2.0.2",
         "nodemon": "^3.0.1",
         "ts-node": "^10.9.1",
         "tsup": "^7.2.0",
-        "vitest": "^2.0.2"
+        "vitest": "^2.0.5"
     },
     "namespace": "@usdn",
     "dockerize": true,
@@ -29,7 +30,8 @@
     "dependencies": {
         "@pythnetwork/hermes-client": "^1.0.4",
         "@redstone-finance/sdk": "^0.5.4",
+        "axios": "^1.7.3",
         "dotenv": "^16.4.5",
-        "viem": "^2.19.4"
+        "viem": "^2.17.10"
     }
 }

@@ -7,7 +7,7 @@ export async function sleep(milliseconds: number) {
     });
 }
 
-export async function newClient() {
+export function getBlockchainClient() {
     const rpcUrl = process.env.RPC_URL;
     if (!rpcUrl) {
         throw new Error('RPC URL not set');
