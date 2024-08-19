@@ -4,13 +4,16 @@
     "description": "Service to automate liquidation of USDN long positions",
     "main": "dist/index.js",
     "type": "module",
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "dev": "nodemon -r dotenv/config --exec 'node --loader ts-node/esm' src/index.ts",
         "test": "vitest run --typecheck",
         "test:watch": "vitest",
         "build": "tsup src/index.ts --clean",
-        "format": "biome check --write ."
+        "format": "biome check --write .",
+        "coverage": "vitest run --coverage"
     },
     "keywords": [],
     "author": "RA2 TECH SA <contact@ra2.tech> (https://ra2.tech)",
@@ -21,7 +24,7 @@
         "nodemon": "^3.0.1",
         "ts-node": "^10.9.1",
         "tsup": "^7.2.0",
-        "vitest": "^2.0.2"
+        "vitest": "^2.0.5"
     },
     "namespace": "@usdn",
     "dockerize": true,
