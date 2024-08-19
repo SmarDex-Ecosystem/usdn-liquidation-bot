@@ -9,6 +9,9 @@ export default class UsdnProtocolContract {
     /** Address of usdnProtocol */
     private readonly contractAddress: `0x${string}`;
 
+    /** The highest populated tick */
+    public highestPopulatedTickStored = 0;
+
     constructor(blockchainClient: PublicClient, contractAddress: `0x${string}`) {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address.');
@@ -52,5 +55,20 @@ export default class UsdnProtocolContract {
             abi: abi,
         }));
         return this.blockchainClient.multicall({ contracts });
+    }
+
+    /** Watch an Event */
+    watchEvent() {
+        return this.blockchainClient.watchContractEvent({
+            address: this.contractAddress,
+            abi: abi,
+            eventName: 'HighestPopulatedTickUpdated',
+            onLogs: (logs) => {
+                if (logs.length > 0) {
+                    const tick = logs[logs.length - 1] as { args: { tick: number } };
+                    this.highestPopulatedTickStored = tick.args?.tick;
+                }
+            },
+        });
     }
 }
