@@ -1,9 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, afterAll, describe, expect, it, vi } from 'vitest';
 import Etherscan from './Etherscan.js';
 
 describe('Etherscan', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+    });
+
+    afterAll(() => {
+        vi.unstubAllGlobals();
     });
 
     describe('getGasPrice', () => {
