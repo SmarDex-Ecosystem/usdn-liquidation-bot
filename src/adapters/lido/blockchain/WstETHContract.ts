@@ -1,7 +1,7 @@
 import { type PublicClient, isAddress } from 'viem';
 import { abi } from './WstETHAbi.ts';
 
-export default class LidoContract {
+export default class WstETHContract {
     /** Client to use to communicate with the smart contract */
     private readonly blockchainClient: PublicClient;
     /** Address of usdnProtocol */

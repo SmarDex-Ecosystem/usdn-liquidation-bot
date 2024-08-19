@@ -1,7 +1,7 @@
 import { http, createPublicClient } from 'viem';
 import { mainnet } from 'viem/chains';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import LidoContract from './LidoContract.ts';
+import WstETHContract from './WstETHContract.ts';
 
 // Mocking the PublicClient methods
 vi.mock('viem', async (importOriginal) => {
@@ -21,7 +21,7 @@ const mockPublicClient = createPublicClient({
 });
 const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');
 
-describe('LidoContract', () => {
+describe('WstETHContract', () => {
     afterEach(() => {
         vi.clearAllMocks();
         vi.resetAllMocks();
@@ -30,11 +30,11 @@ describe('LidoContract', () => {
     describe('constructor', () => {
         it('should throw an error for an invalid Ethereum address', () => {
             const invalidAddress = '0xINVALID_ADDRESS';
-            expect(() => new LidoContract(mockPublicClient, invalidAddress)).toThrow('Invalid Ethereum address.');
+            expect(() => new WstETHContract(mockPublicClient, invalidAddress)).toThrow('Invalid Ethereum address.');
         });
 
         it('should not throw an error for a valid Ethereum address', () => {
-            expect(() => new LidoContract(mockPublicClient, mockContractAddress)).not.toThrow();
+            expect(() => new WstETHContract(mockPublicClient, mockContractAddress)).not.toThrow();
         });
     });
 
@@ -44,7 +44,7 @@ describe('LidoContract', () => {
             const expectedRatio = 12578n;
             mockReadContract.mockResolvedValue(expectedRatio);
 
-            const contract = new LidoContract(mockPublicClient, mockContractAddress);
+            const contract = new WstETHContract(mockPublicClient, mockContractAddress);
             const result = await contract.getStETHPerToken();
             expect(result).toEqual(expectedRatio);
         });
@@ -54,7 +54,7 @@ describe('LidoContract', () => {
             const error = new Error('Contract call failed');
             mockReadContract.mockRejectedValue(error);
 
-            const contract = new LidoContract(mockPublicClient, mockContractAddress);
+            const contract = new WstETHContract(mockPublicClient, mockContractAddress);
 
             await expect(contract.getStETHPerToken()).rejects.toThrow(error);
         });

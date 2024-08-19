@@ -1,4 +1,4 @@
 import { getBlockchainClient } from '../../utils/index.ts';
-import LidoContract from './blockchain/LidoContract.ts';
+import WstETHContract from './blockchain/WstETHContract.ts';
 
-export const lidoContract = new LidoContract(getBlockchainClient(), process.env.WSTETH as `0x${string}`);
+export const wstETHContract = new WstETHContract(getBlockchainClient(), process.env.WSTETH as `0x${string}`);
