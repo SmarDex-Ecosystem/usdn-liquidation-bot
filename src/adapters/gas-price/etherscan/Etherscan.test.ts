@@ -86,5 +86,28 @@ describe('Etherscan', () => {
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(`Failed to fetch gas price: ${errorMessage}`);
         });
+
+        it('should throw an error when fetch return ok=false', async () => {
+            const apiKeyToken = 'your_api_key';
+            const etherscan = new Etherscan(apiKeyToken);
+
+            const statusText = '45879';
+
+            // Mock the global fetch function
+            vi.stubGlobal(
+                'fetch',
+                vi.fn(() =>
+                    Promise.resolve({
+                        ok: false,
+                        statusText: statusText,
+                        json: () => Promise.resolve(),
+                    }),
+                ),
+            );
+
+            await expect(etherscan.getGasPrice()).rejects.toThrow(
+                `Failed to fetch gas price: Network response was not ok: ${statusText}`,
+            );
+        });
     });
 });
