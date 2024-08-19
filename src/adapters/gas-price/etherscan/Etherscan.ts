@@ -1,6 +1,5 @@
-import axios from 'axios';
-import { parseGwei } from 'viem';
 import type IGasPriceAdapter from '../IGasPriceAdapter.ts';
+import { parseGwei } from 'viem';
 
 type EtherscanData = {
     status: string;
@@ -25,13 +24,19 @@ export default class Etherscan implements IGasPriceAdapter {
     async getGasPrice() {
         const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKey}`;
         try {
-            const response = await axios.get<EtherscanData>(url);
-            if (response.data.status !== '1') {
-                throw new Error(response.data.message);
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
             }
-            const baseFee = parseGwei(response.data.result.suggestedBaseFee.toString());
+            const data: EtherscanData = await response.json();
+
+            if (data.status !== '1') {
+                throw new Error(data.message);
+            }
+
+            const baseFee = parseGwei(data.result.suggestedBaseFee.toString());
             return {
-                fastPriorityFee: parseGwei(response.data.result.FastGasPrice.toString()) - baseFee,
+                fastPriorityFee: parseGwei(data.result.FastGasPrice.toString()) - baseFee,
                 suggestedBaseFee: baseFee,
             };
         } catch (error) {
