@@ -1,6 +1,6 @@
 import axios from 'axios';
-import type IGasPriceAdapter from '../IGasPriceAdapter.ts';
 import { parseGwei } from 'viem';
+import type IGasPriceAdapter from '../IGasPriceAdapter.ts';
 
 type EtherscanData = {
     status: string;
