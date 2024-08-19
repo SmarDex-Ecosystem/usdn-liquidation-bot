@@ -112,7 +112,7 @@ describe('RedstoneAdapter', () => {
             vi.mocked(mockedUtils).sleep = vi.fn();
         });
 
-        it('should execute the callback on price update', async () => {
+        it('should execute the callback on the first iteration', async () => {
             const mockedSdk = await import('@redstone-finance/sdk');
             vi.mocked(mockedSdk).requestDataPackages = vi.fn().mockImplementation(async () => {
                 // stop the polling after the first iteration

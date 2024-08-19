@@ -2,6 +2,7 @@ import { HermesClient, type PriceUpdate } from '@pythnetwork/hermes-client';
 import type IOracleAdapter from '../IOracleAdapter.ts';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
 
+/** Adapter to get price data from the Pyth oracle */
 export default class PythAdapter implements IOracleAdapter {
     /** ID of the price feed of ETH/USD in the Pyth oracle */
     private readonly PRICE_FEED_ID = '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace';
@@ -10,7 +11,6 @@ export default class PythAdapter implements IOracleAdapter {
 
     constructor() {
         const hermesUrl = process.env.HERMES_URL;
-        console.log(hermesUrl);
         if (hermesUrl === undefined || hermesUrl === '') {
             throw new Error('Environment variable HERMES_URL not set');
         }
@@ -74,7 +74,7 @@ export default class PythAdapter implements IOracleAdapter {
                 );
             }
         } catch (error) {
-            throw new Error('Failed to get data from Pyth');
+            throw new OraclePriceFetchingError('Failed to get data from Pyth');
         }
 
         return priceUpdates;

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type IGasPriceAdapter from '../IGasPriceAdapter.ts';
 import { parseGwei } from 'viem';
 
@@ -6,11 +5,11 @@ type EtherscanData = {
     status: string;
     message: string;
     result: {
-        LastBlock: number;
-        SafeGasPrice: number;
-        ProposeGasPrice: number;
-        FastGasPrice: number;
-        suggestedBaseFee: number;
+        LastBlock: string;
+        SafeGasPrice: string;
+        ProposeGasPrice: string;
+        FastGasPrice: string;
+        suggestBaseFee: string;
         gasUsedRatio: string;
     };
 };
@@ -25,17 +24,23 @@ export default class Etherscan implements IGasPriceAdapter {
     async getGasPrice() {
         const url = `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${this.apiKey}`;
         try {
-            const response = await axios.get<EtherscanData>(url);
-            if (response.data.status !== '1') {
-                throw new Error(response.data.message);
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
             }
-            const baseFee = parseGwei(response.data.result.suggestedBaseFee.toString());
+
+            const data: EtherscanData = await response.json();
+            if (data.status !== '1') {
+                throw new Error(data.message);
+            }
+
+            const baseFee = parseGwei(data.result.suggestBaseFee);
             return {
-                fastPriorityFee: parseGwei(response.data.result.FastGasPrice.toString()) - baseFee,
+                fastPriorityFee: parseGwei(data.result.FastGasPrice) - baseFee,
                 suggestedBaseFee: baseFee,
             };
         } catch (error) {
-            throw new Error(`Failed to fetch gas price: ${(error as Error).message}`);
+            throw new Error(`Failed to fetch gas price: ${error}`);
         }
     }
 }
