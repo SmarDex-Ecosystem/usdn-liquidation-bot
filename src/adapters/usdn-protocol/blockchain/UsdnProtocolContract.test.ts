@@ -52,6 +52,7 @@ describe('UsdnProtocolContract', () => {
 
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
             const result = await contract.getHighestPopulatedTick();
+            expect(contract.highestPopulatedTick).toBe(expectedTick);
             expect(result).toEqual(expectedTick);
         });
 
@@ -63,6 +64,7 @@ describe('UsdnProtocolContract', () => {
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
             await expect(contract.getHighestPopulatedTick()).rejects.toThrow(error);
+            expect(contract.highestPopulatedTick).toBe(0);
         });
     });
 
@@ -106,9 +108,9 @@ describe('UsdnProtocolContract', () => {
                 return unwatchMock;
             });
 
-            contract.watchEvent();
+            contract.watchEvent('HighestPopulatedTickUpdated');
 
-            expect(contract.highestPopulatedTickStored).toBe(8965);
+            expect(contract.highestPopulatedTick).toBe(8965);
             expect(unwatchMock).not.toHaveBeenCalled();
         });
 
@@ -130,14 +132,14 @@ describe('UsdnProtocolContract', () => {
 
                 return unwatchMock;
             });
-            const unwatch = contract.watchEvent();
-            expect(contract.highestPopulatedTickStored).toBe(8965);
+            const unwatch = contract.watchEvent('HighestPopulatedTickUpdated');
+            expect(contract.highestPopulatedTick).toBe(8965);
 
             await new Promise((resolve) => setTimeout(resolve, 3000));
-            expect(contract.highestPopulatedTickStored).toBe(464);
+            expect(contract.highestPopulatedTick).toBe(464);
             unwatch();
 
-            expect(contract.highestPopulatedTickStored).toBe(464);
+            expect(contract.highestPopulatedTick).toBe(464);
             expect(unwatchMock).toHaveBeenCalled();
         });
     });

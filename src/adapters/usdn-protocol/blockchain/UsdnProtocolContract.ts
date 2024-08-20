@@ -1,4 +1,4 @@
-import { type ContractFunctionParameters, type PublicClient, isAddress } from 'viem';
+import { type ContractEventName, type ContractFunctionParameters, type PublicClient, isAddress } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
 
 export type FunctionCall = Omit<ContractFunctionParameters<typeof abi>, 'abi' | 'address'>;
@@ -10,7 +10,7 @@ export default class UsdnProtocolContract {
     private readonly contractAddress: `0x${string}`;
 
     /** The highest populated tick */
-    public highestPopulatedTickStored = 0;
+    public highestPopulatedTick = 0;
 
     constructor(blockchainClient: PublicClient, contractAddress: `0x${string}`) {
         if (!isAddress(contractAddress)) {
@@ -24,9 +24,11 @@ export default class UsdnProtocolContract {
      * @returns Result of the function call
      */
     async getHighestPopulatedTick() {
-        return this.handleContractInteraction({
+        const newHighestPopulatedTick = await this.handleContractInteraction({
             functionName: 'getHighestPopulatedTick',
         });
+        this.highestPopulatedTick = newHighestPopulatedTick;
+        return newHighestPopulatedTick;
     }
 
     /**
@@ -57,16 +59,21 @@ export default class UsdnProtocolContract {
         return this.blockchainClient.multicall({ contracts });
     }
 
-    /** Watch an Event */
-    watchEvent() {
+    /**
+     * Watches any event emitted by the contract
+     * @dev To stop watching the event, call the returned function
+     * @param eventName Name of the event to watch
+     * @returns The function to stop watching the event
+     */
+    watchEvent(eventName: ContractEventName<typeof abi>) {
         return this.blockchainClient.watchContractEvent({
             address: this.contractAddress,
             abi: abi,
-            eventName: 'HighestPopulatedTickUpdated',
+            eventName: eventName,
             onLogs: (logs) => {
                 if (logs.length > 0) {
                     const tick = logs[logs.length - 1] as { args: { tick: number } };
-                    this.highestPopulatedTickStored = tick.args?.tick;
+                    this.highestPopulatedTick = tick.args?.tick;
                 }
             },
         });
