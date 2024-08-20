@@ -22,9 +22,9 @@ const mockPublicClient = createPublicClient({
     chain: mainnet,
     transport: http(),
 });
-const mockWatchContractEvent = vi.spyOn(mockPublicClient, 'watchContractEvent');
 const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');
 const mockMulticall = vi.spyOn(mockPublicClient, 'multicall');
+const mockWatchContractEvent = vi.spyOn(mockPublicClient, 'watchContractEvent');
 
 describe('UsdnProtocolContract', () => {
     beforeEach(() => {
