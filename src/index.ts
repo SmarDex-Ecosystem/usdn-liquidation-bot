@@ -45,7 +45,8 @@ const validatePendingActions = async () => {
             continue;
         }
 
-        const priceData = await chainlinkAdapter.getPriceAtTimestamp(pendingAction.timestamp);
+        const validationDelay = 20 * 60;
+        const priceData = await chainlinkAdapter.getPriceAtTimestamp(pendingAction.timestamp + validationDelay);
         pendingActionsData.push(priceData.signature as `0x${string}`);
     }
 
@@ -95,6 +96,9 @@ const unwatch = client.watchBlockNumber({
         liquidate(blockNumber);
         lastBlockNumber = blockNumber;
         console.log('------------------------------------ - -----------------------------------');
+    },
+    onError(error) {
+        throw new Error(`Cannot continue watching block numbers: ${error}`);
     },
 });
 
