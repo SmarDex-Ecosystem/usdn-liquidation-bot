@@ -1,10 +1,10 @@
 import { createPublicClient, createWalletClient, http, webSocket } from 'viem';
 import { chainlinkAdapter, pythAdapter } from './adapters/oracles/index.ts';
-import { gasPriceService } from './services/gas-price/index.ts';
 import type { OraclePriceData } from './adapters/oracles/types.ts';
 import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import UsdnProtocolContract from './adapters/blockchain/usdn/contract/UsdnProtocolContract.ts';
+import Viem from './adapters/gas-price/viem/Viem.ts';
 
 /* --------------------------- create read client --------------------------- */
 const client = createPublicClient({
@@ -26,15 +26,14 @@ const wallet = createWalletClient({
 });
 
 /* --------------------------- instantiate classes -------------------------- */
-const usdnProtocol = new UsdnProtocolContract(client, wallet, gasPriceService);
+const gasPriceAdapter = new Viem(client);
+const usdnProtocol = new UsdnProtocolContract(client, wallet, gasPriceAdapter);
 
 /* ---------------------------------- data ---------------------------------- */
-
 const lowestPriceForBlock = new Map<bigint, OraclePriceData>();
 let lastBlockNumber = 0n;
 
 /* -------------------------------- functions ------------------------------- */
-
 const validatePendingActions = async () => {
     const [pendingActions, rawIndices] = await usdnProtocol.getActionablePendingActions();
     const pendingActionsData: `0x${string}`[] = [];
