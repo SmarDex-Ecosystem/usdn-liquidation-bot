@@ -45,8 +45,8 @@ const validatePendingActions = async () => {
             continue;
         }
 
-        const validationDelay = 20 * 60;
-        const priceData = await chainlinkAdapter.getPriceAtTimestamp(pendingAction.timestamp + validationDelay);
+        const lowLatencyDelay = 20 * 60;
+        const priceData = await chainlinkAdapter.getPriceAtTimestamp(pendingAction.timestamp + lowLatencyDelay);
         pendingActionsData.push(priceData.signature as `0x${string}`);
     }
 
@@ -102,7 +102,17 @@ const unwatch = client.watchBlockNumber({
     },
 });
 
+/* ---------------------------- Graceful Shutdown --------------------------- */
+
 process.on('SIGINT', () => {
+    unwatch();
+    client.transport.getRpcClient().then((rpc) => {
+        rpc.socket.close();
+        console.log('Viem websocket closed');
+    });
+});
+
+process.on('SIGTERM', () => {
     unwatch();
     client.transport.getRpcClient().then((rpc) => {
         rpc.socket.close();
