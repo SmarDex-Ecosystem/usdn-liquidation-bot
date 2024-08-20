@@ -108,7 +108,7 @@ describe('UsdnProtocolContract', () => {
                 return unwatchMock;
             });
 
-            contract.watchEvent('HighestPopulatedTickUpdated');
+            contract.watchEvent();
 
             expect(contract.highestPopulatedTick).toBe(8965);
             expect(unwatchMock).not.toHaveBeenCalled();
@@ -132,7 +132,7 @@ describe('UsdnProtocolContract', () => {
 
                 return unwatchMock;
             });
-            const unwatch = contract.watchEvent('HighestPopulatedTickUpdated');
+            const unwatch = contract.watchEvent();
             expect(contract.highestPopulatedTick).toBe(8965);
 
             await new Promise((resolve) => setTimeout(resolve, 3000));

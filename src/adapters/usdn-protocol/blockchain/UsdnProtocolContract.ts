@@ -1,4 +1,4 @@
-import { type ContractEventName, type ContractFunctionParameters, type PublicClient, isAddress } from 'viem';
+import { type ContractFunctionParameters, type PublicClient, isAddress } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
 
 export type FunctionCall = Omit<ContractFunctionParameters<typeof abi>, 'abi' | 'address'>;
@@ -65,11 +65,11 @@ export default class UsdnProtocolContract {
      * @param eventName Name of the event to watch
      * @returns The function to stop watching the event
      */
-    watchEvent(eventName: ContractEventName<typeof abi>) {
+    watchEvent() {
         return this.blockchainClient.watchContractEvent({
             address: this.contractAddress,
             abi: abi,
-            eventName: eventName,
+            eventName: 'HighestPopulatedTickUpdated',
             onLogs: (logs) => {
                 if (logs.length > 0) {
                     const tick = logs[logs.length - 1] as { args: { tick: number } };
