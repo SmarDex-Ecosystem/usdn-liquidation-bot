@@ -142,5 +142,21 @@ describe('UsdnProtocolContract', () => {
             expect(contract.highestPopulatedTick).toBe(464);
             expect(unwatchMock).toHaveBeenCalled();
         });
+
+        it('should throw an error when tick is undefined in the event log', async () => {
+            const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
+
+            const unwatchMock = vi.fn();
+
+            mockWatchContractEvent.mockImplementation(({ onLogs }) => {
+                onLogs([{ args: { tick: undefined } }] as unknown as Log[]);
+                return unwatchMock;
+            });
+
+            expect(() => contract.watchEvent()).toThrowError(
+                'HighestPopulatedTickUpdated event with invalid tick in TX hash',
+            );
+            expect(unwatchMock).not.toHaveBeenCalled();
+        });
     });
 });

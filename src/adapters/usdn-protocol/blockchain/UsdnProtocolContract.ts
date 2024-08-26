@@ -72,8 +72,14 @@ export default class UsdnProtocolContract {
             eventName: 'HighestPopulatedTickUpdated',
             onLogs: (logs) => {
                 if (logs.length > 0) {
-                    const tick = logs[logs.length - 1] as { args: { tick: number } };
-                    this.highestPopulatedTick = tick.args?.tick;
+                    const log = logs[logs.length - 1];
+                    if (log.args.tick === undefined) {
+                        throw new Error(
+                            `HighestPopulatedTickUpdated event with invalid tick in TX hash ${log.transactionHash}`,
+                        );
+                    }
+
+                    this.highestPopulatedTick = log.args.tick;
                 }
             },
         });
