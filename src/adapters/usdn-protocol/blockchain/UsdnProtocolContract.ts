@@ -24,11 +24,10 @@ export default class UsdnProtocolContract {
      * @returns Result of the function call
      */
     async getHighestPopulatedTick() {
-        const newHighestPopulatedTick = await this.handleContractInteraction({
+        this.highestPopulatedTick = await this.handleContractInteraction({
             functionName: 'getHighestPopulatedTick',
         });
-        this.highestPopulatedTick = newHighestPopulatedTick;
-        return newHighestPopulatedTick;
+        return this.highestPopulatedTick;
     }
 
     /**
