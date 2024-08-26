@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { gasPriceService } from './index.ts';
 import type IGasPriceAdapter from '../../adapters/gas-price/IGasPriceAdapter.ts';
+import { gasPriceService } from './index.ts';
 
 vi.mock('../../adapters/gas-price/etherscan/Etherscan');
 vi.mock('../../adapters/gas-price/viem/Viem');
