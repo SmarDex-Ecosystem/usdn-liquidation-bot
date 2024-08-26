@@ -60,12 +60,11 @@ export default class UsdnProtocolContract {
     }
 
     /**
-     * Watches any event emitted by the contract
+     * Watches for updates of the highest populated tick and update the `highestPopulatedTick` variable when needed
      * @dev To stop watching the event, call the returned function
-     * @param eventName Name of the event to watch
      * @returns The function to stop watching the event
      */
-    watchEvent() {
+    watchForHighestTickUpdate() {
         return this.blockchainClient.watchContractEvent({
             address: this.contractAddress,
             abi: abi,

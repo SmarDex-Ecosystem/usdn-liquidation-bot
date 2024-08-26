@@ -97,7 +97,7 @@ describe('UsdnProtocolContract', () => {
         });
     });
 
-    describe('watchEvent', () => {
+    describe('watchForHighestTickUpdate', () => {
         it('should update highestPopulatedTick when the event is triggered', async () => {
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
@@ -108,7 +108,7 @@ describe('UsdnProtocolContract', () => {
                 return unwatchMock;
             });
 
-            contract.watchEvent();
+            contract.watchForHighestTickUpdate();
 
             expect(contract.highestPopulatedTick).toBe(8965);
             expect(unwatchMock).not.toHaveBeenCalled();
@@ -132,7 +132,7 @@ describe('UsdnProtocolContract', () => {
 
                 return unwatchMock;
             });
-            const unwatch = contract.watchEvent();
+            const unwatch = contract.watchForHighestTickUpdate();
             expect(contract.highestPopulatedTick).toBe(8965);
 
             await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -153,7 +153,7 @@ describe('UsdnProtocolContract', () => {
                 return unwatchMock;
             });
 
-            expect(() => contract.watchEvent()).toThrowError(
+            expect(() => contract.watchForHighestTickUpdate()).toThrowError(
                 'HighestPopulatedTickUpdated event with invalid tick in TX hash',
             );
             expect(unwatchMock).not.toHaveBeenCalled();
