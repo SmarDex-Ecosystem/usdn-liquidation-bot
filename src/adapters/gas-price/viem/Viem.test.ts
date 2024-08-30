@@ -1,6 +1,6 @@
 import { http, createPublicClient } from 'viem';
 import { mainnet } from 'viem/chains';
-import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import Viem from './Viem.ts';
 
 // Mocking the viem and PublicClient

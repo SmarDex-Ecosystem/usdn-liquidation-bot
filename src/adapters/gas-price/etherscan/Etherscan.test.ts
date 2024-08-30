@@ -1,12 +1,13 @@
-import axios from 'axios';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, afterAll, describe, expect, it, vi } from 'vitest';
 import Etherscan from './Etherscan.js';
-
-vi.mock('axios');
 
 describe('Etherscan', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+    });
+
+    afterAll(() => {
+        vi.unstubAllGlobals();
     });
 
     describe('getGasPrice', () => {
@@ -15,21 +16,28 @@ describe('Etherscan', () => {
             const etherscan = new Etherscan(apiKeyToken);
 
             const validResponse = {
-                data: {
-                    status: '1',
-                    message: 'OK',
-                    result: {
-                        LastBlock: 14856877,
-                        SafeGasPrice: 100,
-                        ProposeGasPrice: 120,
-                        FastGasPrice: 150,
-                        suggestedBaseFee: 140,
-                        gasUsedRatio: '150',
-                    },
+                status: '1',
+                message: 'OK',
+                result: {
+                    LastBlock: 14856877,
+                    SafeGasPrice: 100,
+                    ProposeGasPrice: 120,
+                    FastGasPrice: 150,
+                    suggestedBaseFee: 140,
+                    gasUsedRatio: '150',
                 },
             };
 
-            vi.mocked(axios.get).mockResolvedValue(validResponse);
+            // Mock the global fetch function
+            vi.stubGlobal(
+                'fetch',
+                vi.fn(() =>
+                    Promise.resolve({
+                        ok: true,
+                        json: () => Promise.resolve(validResponse),
+                    }),
+                ),
+            );
 
             const data = await etherscan.getGasPrice();
             expect(data).toEqual({
@@ -43,28 +51,63 @@ describe('Etherscan', () => {
             const etherscan = new Etherscan(apiKeyToken);
 
             const invalidResponse = {
-                data: {
-                    status: '0',
-                    message: 'Error message',
-                    result: null,
-                },
+                status: '0',
+                message: 'NOTOK',
+                result: null,
             };
 
-            vi.mocked(axios.get).mockResolvedValue(invalidResponse);
+            // Mock the global fetch function
+            vi.stubGlobal(
+                'fetch',
+                vi.fn(() =>
+                    Promise.resolve({
+                        ok: true,
+                        json: () => Promise.resolve(invalidResponse),
+                    }),
+                ),
+            );
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(
-                `Failed to fetch gas price: ${invalidResponse.data.message}`,
+                `Failed to fetch gas price: ${invalidResponse.message}`,
             );
         });
 
-        it('should throw an error when axios throws an exception', async () => {
+        it('should throw an error when fetch throws an exception', async () => {
             const apiKeyToken = 'your_api_key';
             const etherscan = new Etherscan(apiKeyToken);
 
             const errorMessage = 'Network Error';
-            vi.mocked(axios.get).mockRejectedValue(new Error(errorMessage));
+
+            // Mock the global fetch function to throw an error
+            vi.stubGlobal(
+                'fetch',
+                vi.fn(() => Promise.reject(new Error(errorMessage))),
+            );
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(`Failed to fetch gas price: ${errorMessage}`);
+        });
+
+        it('should throw an error when fetch return ok=false', async () => {
+            const apiKeyToken = 'your_api_key';
+            const etherscan = new Etherscan(apiKeyToken);
+
+            const statusText = '45879';
+
+            // Mock the global fetch function
+            vi.stubGlobal(
+                'fetch',
+                vi.fn(() =>
+                    Promise.resolve({
+                        ok: false,
+                        statusText: statusText,
+                        json: () => Promise.resolve(),
+                    }),
+                ),
+            );
+
+            await expect(etherscan.getGasPrice()).rejects.toThrow(
+                `Failed to fetch gas price: Network response was not ok: ${statusText}`,
+            );
         });
     });
 });
