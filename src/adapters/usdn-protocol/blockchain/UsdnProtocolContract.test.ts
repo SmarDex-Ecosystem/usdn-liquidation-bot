@@ -118,28 +118,22 @@ describe('UsdnProtocolContract', () => {
             const contract = new UsdnProtocolContract(mockPublicClient, mockContractAddress);
 
             const unwatchMock = vi.fn();
+            let triggerOnlogs = (logs: Log[]) => {};
 
             mockWatchContractEvent.mockImplementation(({ onLogs }) => {
-                onLogs([{ args: { tick: 258 } }, { args: { tick: 8965 } }] as unknown as Log[]);
-
-                setTimeout(() => {
-                    onLogs([{ args: { tick: 123 } }, { args: { tick: 464 } }] as unknown as Log[]);
-                }, 2000);
-
-                setTimeout(() => {
-                    onLogs([{ args: { tick: 123 } }, { args: { tick: 87164 } }] as unknown as Log[]);
-                }, 20000);
+                triggerOnlogs = (logs) => {
+                    onLogs(logs);
+                };
 
                 return unwatchMock;
             });
             const unwatch = contract.watchForHighestTickUpdate();
+            triggerOnlogs([{ args: { tick: 258 } }, { args: { tick: 8965 } }] as unknown as Log[]);
             expect(contract.highestPopulatedTick).toBe(8965);
 
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            triggerOnlogs([{ args: { tick: 8965 } }, { args: { tick: 464 } }] as unknown as Log[]);
             expect(contract.highestPopulatedTick).toBe(464);
             unwatch();
-
-            expect(contract.highestPopulatedTick).toBe(464);
             expect(unwatchMock).toHaveBeenCalled();
         });
 
