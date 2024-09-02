@@ -19,73 +19,65 @@ describe('LiquidationPriceHistory', () => {
 
     afterEach(() => {
         vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it('should initialize with an empty history', () => {
-        expect(liquidationPriceHistory.getHistory()).toEqual([]);
+        expect(liquidationPriceHistory.history).toEqual([]);
     });
 
     it('should add a new record when a price update is received', async () => {
-        vi.useFakeTimers();
         vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
             await callback(mockPriceData);
         });
 
-        await liquidationPriceHistory.startListening();
-        vi.advanceTimersByTime(1000);
-        const history = liquidationPriceHistory.getHistory();
+        await liquidationPriceHistory.watchNewPrice();
 
+        const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
         expect(history[0].price).toBe(mockPriceData.price);
         expect(history[0].signature).toBe(mockPriceData.signature);
-        expect(history[0].timestamp).toBeLessThanOrEqual(Date.now());
-        vi.useRealTimers();
+        expect(history[0].timestamp).toBeGreaterThanOrEqual(Date.now() - 3);
     });
 
     it('should clean up old records after the retention period', async () => {
-        vi.useFakeTimers();
         const oldTimestamp = Date.now() - 31000;
 
-        liquidationPriceHistory['history'].push({
+        liquidationPriceHistory.history.push({
             timestamp: oldTimestamp,
             price: BigInt(100),
             signature: 'old-signature',
         });
 
-        await liquidationPriceHistory.startListening();
-        vi.advanceTimersByTime(1000);
+        await liquidationPriceHistory.watchNewPrice();
 
-        const history = liquidationPriceHistory.getHistory();
+        const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(0);
-        vi.useRealTimers();
     });
 
     it('should keep records within the retention period', async () => {
-        vi.useFakeTimers();
         const currentTimestamp = Date.now();
 
-        liquidationPriceHistory['history'].push({
+        liquidationPriceHistory.history.push({
             timestamp: currentTimestamp,
             price: BigInt(100),
             signature: 'current-signature',
         });
 
-        await liquidationPriceHistory.startListening();
-        vi.advanceTimersByTime(1000);
+        await liquidationPriceHistory.watchNewPrice();
 
-        const history = liquidationPriceHistory.getHistory();
+        const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
         expect(history[0].timestamp).toBe(currentTimestamp);
-        vi.useRealTimers();
     });
 
-    it('should start a cleanup interval when startListening is called', async () => {
-        await liquidationPriceHistory.startListening();
+    it('should start a cleanup interval when watchNewPrice is called', async () => {
+        await liquidationPriceHistory.watchNewPrice();
         expect(liquidationPriceHistory.cleanupIntervalId).not.toBeNull();
     });
 
     it('should stop the cleanup interval when manually set to null', async () => {
-        await liquidationPriceHistory.startListening();
+        await liquidationPriceHistory.watchNewPrice();
         if (liquidationPriceHistory.cleanupIntervalId) {
             clearInterval(liquidationPriceHistory.cleanupIntervalId);
         }
@@ -95,12 +87,12 @@ describe('LiquidationPriceHistory', () => {
     });
 
     it('should not add records if subscribeToPriceUpdates is not called', async () => {
-        const history = liquidationPriceHistory.getHistory();
+        const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(0);
     });
 
     it('should return the record with the smallest price', () => {
-        liquidationPriceHistory['history'] = [
+        liquidationPriceHistory.history = [
             { timestamp: Date.now(), price: BigInt(500), signature: 'sig1' },
             { timestamp: Date.now(), price: BigInt(300), signature: 'sig2' },
             { timestamp: Date.now(), price: BigInt(400), signature: 'sig3' },
@@ -115,14 +107,14 @@ describe('LiquidationPriceHistory', () => {
         const timestamp = Date.now();
         const singleRecord = { timestamp, price: BigInt(100), signature: 'single-signature' };
 
-        liquidationPriceHistory['history'] = [singleRecord];
+        liquidationPriceHistory.history = [singleRecord];
 
         const result = liquidationPriceHistory.getSmallestPriceRecord();
         expect(result).toEqual(singleRecord);
     });
 
     it('should handle empty history gracefully', () => {
-        liquidationPriceHistory['history'] = [];
+        liquidationPriceHistory.history = [];
 
         const result = liquidationPriceHistory.getSmallestPriceRecord();
         expect(result).toBeNull();
@@ -149,11 +141,11 @@ describe('LiquidationPriceHistory', () => {
             }, 10000);
         });
 
-        await liquidationPriceHistory.startListening();
+        await liquidationPriceHistory.watchNewPrice();
 
         vi.advanceTimersByTime(20000);
 
-        let history = liquidationPriceHistory.getHistory();
+        let history = liquidationPriceHistory.history;
         expect(history).toHaveLength(2);
         expect(history.map((record) => record.price)).toContain(BigInt(500));
         expect(history.map((record) => record.price)).toContain(BigInt(300));
@@ -163,7 +155,7 @@ describe('LiquidationPriceHistory', () => {
 
         vi.advanceTimersByTime(50000);
 
-        history = liquidationPriceHistory.getHistory();
+        history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
         expect(history.map((record) => record.price)).toContain(BigInt(250));
         smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
@@ -172,7 +164,7 @@ describe('LiquidationPriceHistory', () => {
 
         vi.advanceTimersByTime(10000);
 
-        history = liquidationPriceHistory.getHistory();
+        history = liquidationPriceHistory.history;
         expect(history).toHaveLength(0);
         smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
         expect(smallestRecord).toBeNull();
