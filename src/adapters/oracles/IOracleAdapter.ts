@@ -1,15 +1,15 @@
 import type { OraclePriceData, OraclePriceUpdateCallback } from './types.ts';
 
-/** Allow to communicate with an oracle */
+/** Allow to get price data from an oracle */
 export default interface IOracleAdapter {
     /**
-     * Get the latest price and its signature from the oracle
+     * Get the latest price data from the oracle
      * @returns The latest price and its signature
      */
     getLatestPrice(): Promise<OraclePriceData>;
 
     /**
-     * Get the price and its signature from the oracle for the provided timestamp
+     * Get the closest price data from the oracle after the provided timestamp
      * @returns The price and its signature
      */
     getPriceAtTimestamp(timestamp: number): Promise<OraclePriceData>;
