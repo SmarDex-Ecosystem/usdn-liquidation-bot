@@ -31,7 +31,7 @@ describe('LiquidationPriceHistory', () => {
             await callback(mockPriceData);
         });
 
-        await liquidationPriceHistory.watchNewPrice();
+        await liquidationPriceHistory.watchNewPrices();
 
         const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
@@ -49,7 +49,7 @@ describe('LiquidationPriceHistory', () => {
             signature: 'old-signature',
         });
 
-        await liquidationPriceHistory.watchNewPrice();
+        await liquidationPriceHistory.watchNewPrices();
 
         const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(0);
@@ -64,20 +64,20 @@ describe('LiquidationPriceHistory', () => {
             signature: 'current-signature',
         });
 
-        await liquidationPriceHistory.watchNewPrice();
+        await liquidationPriceHistory.watchNewPrices();
 
         const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
         expect(history[0].timestamp).toBe(currentTimestamp);
     });
 
-    it('should start a cleanup interval when watchNewPrice is called', async () => {
-        await liquidationPriceHistory.watchNewPrice();
+    it('should start a cleanup interval when watchNewPrices is called', async () => {
+        await liquidationPriceHistory.watchNewPrices();
         expect(liquidationPriceHistory.cleanupIntervalId).not.toBeNull();
     });
 
     it('should stop the cleanup interval when manually set to null', async () => {
-        await liquidationPriceHistory.watchNewPrice();
+        await liquidationPriceHistory.watchNewPrices();
         if (liquidationPriceHistory.cleanupIntervalId) {
             clearInterval(liquidationPriceHistory.cleanupIntervalId);
         }
@@ -141,7 +141,7 @@ describe('LiquidationPriceHistory', () => {
             }, 10000);
         });
 
-        await liquidationPriceHistory.watchNewPrice();
+        await liquidationPriceHistory.watchNewPrices();
 
         vi.advanceTimersByTime(20000);
 

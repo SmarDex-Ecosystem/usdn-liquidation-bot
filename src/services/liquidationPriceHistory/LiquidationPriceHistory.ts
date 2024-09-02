@@ -24,7 +24,7 @@ export default class LiquidationPriceHistory {
         this.history = this.history.filter((record) => record.timestamp >= Date.now() - this.retentionPeriod);
     }
 
-    watchNewPrice() {
+    watchNewPrices() {
         if (this.cleanupIntervalId) {
             clearInterval(this.cleanupIntervalId);
         }
