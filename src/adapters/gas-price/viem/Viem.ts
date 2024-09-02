@@ -13,7 +13,7 @@ export default class Viem implements IGasPriceAdapter {
 
         return {
             fastPriorityFee: gasPrice.maxPriorityFeePerGas,
-            suggestedBaseFee: gasPrice.maxFeePerGas,
+            suggestBaseFee: gasPrice.maxFeePerGas,
         };
     }
 }

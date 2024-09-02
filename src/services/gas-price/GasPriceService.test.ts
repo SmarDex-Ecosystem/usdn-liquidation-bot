@@ -12,12 +12,12 @@ describe('GasPriceService', () => {
 
     const validPrimaryResponse = {
         fastPriorityFee: 150n,
-        suggestedBaseFee: 50n,
+        suggestBaseFee: 50n,
     };
 
     const fallbackAdapterResponse = {
         fastPriorityFee: 200n,
-        suggestedBaseFee: 340n,
+        suggestBaseFee: 340n,
     };
 
     beforeEach(async () => {
@@ -32,13 +32,13 @@ describe('GasPriceService', () => {
                 const primaryData = await mockedPrimaryAdapter.getGasPrice();
                 return {
                     fastPriorityFee: primaryData.fastPriorityFee,
-                    suggestedBaseFee: primaryData.suggestedBaseFee,
+                    suggestBaseFee: primaryData.suggestBaseFee,
                 };
             } catch {
                 const fallbackData = await mockedFallbackAdapter.getGasPrice();
                 return {
                     fastPriorityFee: fallbackData.fastPriorityFee,
-                    suggestedBaseFee: fallbackData.suggestedBaseFee,
+                    suggestBaseFee: fallbackData.suggestBaseFee,
                 };
             }
         });
@@ -53,7 +53,7 @@ describe('GasPriceService', () => {
             const data = await gasPriceService.getGasPrice();
             expect(data).toEqual({
                 fastPriorityFee: validPrimaryResponse.fastPriorityFee,
-                suggestedBaseFee: validPrimaryResponse.suggestedBaseFee,
+                suggestBaseFee: validPrimaryResponse.suggestBaseFee,
             });
         });
 
@@ -63,7 +63,7 @@ describe('GasPriceService', () => {
             const data = await gasPriceService.getGasPrice();
             expect(data).toEqual({
                 fastPriorityFee: fallbackAdapterResponse.fastPriorityFee,
-                suggestedBaseFee: fallbackAdapterResponse.suggestedBaseFee,
+                suggestBaseFee: fallbackAdapterResponse.suggestBaseFee,
             });
         });
     });

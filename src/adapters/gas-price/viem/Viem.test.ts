@@ -40,7 +40,7 @@ describe('Viem', () => {
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
             expect(data.fastPriorityFee).toEqual(mockedGasPrice.maxPriorityFeePerGas);
-            expect(data.suggestedBaseFee).toEqual(mockedGasPrice.maxFeePerGas);
+            expect(data.suggestBaseFee).toEqual(mockedGasPrice.maxFeePerGas);
         });
 
         it('should return valid 0n when estimateFeesPerGas returns zeros', async () => {
@@ -55,7 +55,7 @@ describe('Viem', () => {
             const viem = new Viem(mockedClientInstance);
             const data = await viem.getGasPrice();
             expect(data.fastPriorityFee).toEqual(0n);
-            expect(data.suggestedBaseFee).toEqual(0n);
+            expect(data.suggestBaseFee).toEqual(0n);
         });
     });
 });
