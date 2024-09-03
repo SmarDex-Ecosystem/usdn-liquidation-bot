@@ -1,9 +1,9 @@
-import type { PublicClient } from 'viem';
+import type { TestClient, WalletActions, PublicActions} from 'viem';
 import type IGasPriceAdapter from '../IGasPriceAdapter.ts';
 export default class Viem implements IGasPriceAdapter {
-    private client: PublicClient;
+    private client: TestClient & WalletActions & PublicActions;
 
-    constructor(getBlockchainClient: PublicClient) {
+    constructor(getBlockchainClient: TestClient & WalletActions & PublicActions) {
         this.client = getBlockchainClient;
     }
 

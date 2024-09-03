@@ -13,3 +13,9 @@ export type OraclePriceUpdateCallback = (priceData: OraclePriceData) => void;
 
 /** Error indicating that the response from the oracle does not contain the necessary information */
 export class OraclePriceFetchingError extends Error {}
+
+export type ParseAndValidatePrice = {
+    price: bigint;
+    neutralPrice: bigint;
+    timestamp: bigint;
+}

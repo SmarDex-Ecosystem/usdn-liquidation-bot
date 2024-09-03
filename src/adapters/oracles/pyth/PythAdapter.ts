@@ -44,12 +44,13 @@ export default class PythAdapter implements IOracleAdapter {
             throw new OraclePriceFetchingError('Pyth did not return a signature for their price');
         }
 
-        const { price: pythPrice, expo } = priceUpdates.parsed[0].price;
+        const { price: pythPrice, expo, publish_time} = priceUpdates.parsed[0].price;
 
         return {
             price: BigInt(pythPrice),
             decimals: expo * -1,
             signature: priceUpdates.binary.data[0],
+            publish_time
         };
     }
 
