@@ -22,90 +22,100 @@ describe('LiquidationPriceHistory', () => {
         vi.resetAllMocks();
     });
 
-    it('should initialize with an empty history', () => {
-        expect(liquidationPriceHistory.getHistory()).toEqual([]);
+    describe('Initialization', () => {
+        it('should initialize with an empty history', () => {
+            expect(liquidationPriceHistory.getHistory()).toEqual([]);
+        });
     });
 
-    it('should add a new record when a price update is received', async () => {
-        vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
-            callback(mockPriceData);
+    describe('Adding Records', () => {
+        it('should add a new record when a price update is received', async () => {
+            vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
+                callback(mockPriceData);
+            });
+
+            liquidationPriceHistory.watchNewPrices();
+
+            const history = liquidationPriceHistory.getHistory();
+            expect(history).toHaveLength(1);
+            expect(history[0].price).toBe(mockPriceData.price);
+            expect(history[0].signature).toBe(mockPriceData.signature);
+            expect(history[0].timestamp).toBeGreaterThanOrEqual(Date.now() - 3);
         });
 
-        liquidationPriceHistory.watchNewPrices();
-
-        const history = liquidationPriceHistory.getHistory();
-        expect(history).toHaveLength(1);
-        expect(history[0].price).toBe(mockPriceData.price);
-        expect(history[0].signature).toBe(mockPriceData.signature);
-        expect(history[0].timestamp).toBeGreaterThanOrEqual(Date.now() - 3);
-    });
-
-    it('should start a cleanup interval when watchNewPrices is called', async () => {
-        liquidationPriceHistory.watchNewPrices();
-        expect(liquidationPriceHistory.getCleanupIntervalId()).not.toBeNull();
-    });
-
-    it('should not add records if subscribeToPriceUpdates is not called', async () => {
-        const history = liquidationPriceHistory.getHistory();
-        expect(history).toHaveLength(0);
-    });
-
-    it('should handle empty history gracefully', () => {
-        liquidationPriceHistory.watchNewPrices();
-
-        const result = liquidationPriceHistory.getSmallestPriceRecord();
-        expect(result).toBeNull();
-    });
-
-    it('should handle multiple price updates over more than one minute and find the smallest price', async () => {
-        vi.useFakeTimers();
-        const priceUpdates = [
-            { price: BigInt(500), decimals: 18, signature: 'sig1' },
-            { price: BigInt(300), decimals: 18, signature: 'sig2' },
-            { price: BigInt(400), decimals: 18, signature: 'sig3' },
-            { price: BigInt(250), decimals: 18, signature: 'sig4' },
-        ];
-
-        vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
-            let index = 0;
-            const intervalId = setInterval(async () => {
-                if (index >= priceUpdates.length) {
-                    clearInterval(intervalId);
-                    return;
-                }
-                callback(priceUpdates[index]);
-                index++;
-            }, 10000);
+        it('should not add records if subscribeToPriceUpdates is not called', async () => {
+            const history = liquidationPriceHistory.getHistory();
+            expect(history).toHaveLength(0);
         });
+    });
 
-        liquidationPriceHistory.watchNewPrices();
+    describe('Cleanup Interval', () => {
+        it('should start a cleanup interval when watchNewPrices is called', async () => {
+            liquidationPriceHistory.watchNewPrices();
+            expect(liquidationPriceHistory.getCleanupIntervalId()).not.toBeNull();
+        });
+    });
 
-        vi.advanceTimersByTime(20000);
+    describe('Handling Empty History', () => {
+        it('should handle empty history gracefully', () => {
+            liquidationPriceHistory.watchNewPrices();
 
-        let history = liquidationPriceHistory.getHistory();
-        expect(history).toHaveLength(2);
-        expect(history.map((record: PriceRecord) => record.price)).toContain(BigInt(500));
-        expect(history.map((record: PriceRecord) => record.price)).toContain(BigInt(300));
-        let smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
-        expect(smallestRecord?.price).toBe(BigInt(300));
-        expect(smallestRecord?.signature).toBe('sig2');
+            const result = liquidationPriceHistory.getSmallestPriceRecord();
+            expect(result).toBeNull();
+        });
+    });
 
-        vi.advanceTimersByTime(50000);
+    describe('Finding Smallest Price Record', () => {
+        it('should handle multiple price updates over more than one minute and find the smallest price', async () => {
+            vi.useFakeTimers();
+            const priceUpdates = [
+                { price: BigInt(500), decimals: 18, signature: 'sig1' },
+                { price: BigInt(300), decimals: 18, signature: 'sig2' },
+                { price: BigInt(400), decimals: 18, signature: 'sig3' },
+                { price: BigInt(250), decimals: 18, signature: 'sig4' },
+            ];
 
-        history = liquidationPriceHistory.getHistory();
-        expect(history).toHaveLength(1);
-        expect(history.map((record: PriceRecord) => record.price)).toContain(BigInt(250));
-        smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
-        expect(smallestRecord?.price).toBe(BigInt(250));
-        expect(smallestRecord?.signature).toBe('sig4');
+            vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
+                let index = 0;
+                const intervalId = setInterval(async () => {
+                    if (index >= priceUpdates.length) {
+                        clearInterval(intervalId);
+                        return;
+                    }
+                    callback(priceUpdates[index]);
+                    index++;
+                }, 10000);
+            });
 
-        vi.advanceTimersByTime(10000);
+            liquidationPriceHistory.watchNewPrices();
 
-        history = liquidationPriceHistory.getHistory();
-        expect(history).toHaveLength(0);
-        smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
-        expect(smallestRecord).toBeNull();
+            vi.advanceTimersByTime(20000);
 
-        vi.useRealTimers();
+            let history = liquidationPriceHistory.getHistory();
+            expect(history).toHaveLength(2);
+            expect(history.map((record: PriceRecord) => record.price)).toContain(BigInt(500));
+            expect(history.map((record: PriceRecord) => record.price)).toContain(BigInt(300));
+            let smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
+            expect(smallestRecord?.price).toBe(BigInt(300));
+            expect(smallestRecord?.signature).toBe('sig2');
+
+            vi.advanceTimersByTime(50000);
+
+            history = liquidationPriceHistory.getHistory();
+            expect(history).toHaveLength(1);
+            expect(history.map((record: PriceRecord) => record.price)).toContain(BigInt(250));
+            smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
+            expect(smallestRecord?.price).toBe(BigInt(250));
+            expect(smallestRecord?.signature).toBe('sig4');
+
+            vi.advanceTimersByTime(10000);
+
+            history = liquidationPriceHistory.getHistory();
+            expect(history).toHaveLength(0);
+            smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
+            expect(smallestRecord).toBeNull();
+
+            vi.useRealTimers();
+        });
     });
 });
