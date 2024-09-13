@@ -1,4 +1,5 @@
 import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
+import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
 interface PriceRecord {
     timestamp: number;
@@ -16,7 +17,7 @@ export default class LiquidationPriceHistory {
         this.oracleAdapter = oracleAdapter;
     }
 
-    private addRecord(timestamp: number, priceData: { price: bigint; signature: string }) {
+    private addRecord(timestamp: number, priceData: OraclePriceData) {
         this.history.push({ timestamp, ...priceData });
     }
 

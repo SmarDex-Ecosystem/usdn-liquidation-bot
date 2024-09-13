@@ -28,10 +28,10 @@ describe('LiquidationPriceHistory', () => {
 
     it('should add a new record when a price update is received', async () => {
         vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
-            await callback(mockPriceData);
+            callback(mockPriceData);
         });
 
-        await liquidationPriceHistory.watchNewPrices();
+        liquidationPriceHistory.watchNewPrices();
 
         const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
@@ -49,7 +49,7 @@ describe('LiquidationPriceHistory', () => {
             signature: 'old-signature',
         });
 
-        await liquidationPriceHistory.watchNewPrices();
+        liquidationPriceHistory.watchNewPrices();
 
         const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(0);
@@ -64,7 +64,7 @@ describe('LiquidationPriceHistory', () => {
             signature: 'current-signature',
         });
 
-        await liquidationPriceHistory.watchNewPrices();
+        liquidationPriceHistory.watchNewPrices();
 
         const history = liquidationPriceHistory.history;
         expect(history).toHaveLength(1);
@@ -72,12 +72,12 @@ describe('LiquidationPriceHistory', () => {
     });
 
     it('should start a cleanup interval when watchNewPrices is called', async () => {
-        await liquidationPriceHistory.watchNewPrices();
+        liquidationPriceHistory.watchNewPrices();
         expect(liquidationPriceHistory.cleanupIntervalId).not.toBeNull();
     });
 
     it('should stop the cleanup interval when manually set to null', async () => {
-        await liquidationPriceHistory.watchNewPrices();
+        liquidationPriceHistory.watchNewPrices();
         if (liquidationPriceHistory.cleanupIntervalId) {
             clearInterval(liquidationPriceHistory.cleanupIntervalId);
         }
@@ -141,7 +141,7 @@ describe('LiquidationPriceHistory', () => {
             }, 10000);
         });
 
-        await liquidationPriceHistory.watchNewPrices();
+        liquidationPriceHistory.watchNewPrices();
 
         vi.advanceTimersByTime(20000);
 
