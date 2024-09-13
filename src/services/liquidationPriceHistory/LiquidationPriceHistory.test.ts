@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import LiquidationPriceHistory, { PriceRecord } from './LiquidationPriceHistory.ts';
+import LiquidationPriceHistory, { type PriceRecord } from './LiquidationPriceHistory.ts';
 import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
 
 describe('LiquidationPriceHistory', () => {
