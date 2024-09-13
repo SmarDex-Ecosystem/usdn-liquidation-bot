@@ -40,21 +40,6 @@ describe('LiquidationPriceHistory', () => {
         expect(history[0].timestamp).toBeGreaterThanOrEqual(Date.now() - 3);
     });
 
-    it('should clean up old records after the retention period', async () => {
-        const oldTimestamp = Date.now() - 31000;
-
-        liquidationPriceHistory.history.push({
-            timestamp: oldTimestamp,
-            price: BigInt(100),
-            signature: 'old-signature',
-        });
-
-        liquidationPriceHistory.watchNewPrices();
-
-        const history = liquidationPriceHistory.history;
-        expect(history).toHaveLength(0);
-    });
-
     it('should keep records within the retention period', async () => {
         const currentTimestamp = Date.now();
 

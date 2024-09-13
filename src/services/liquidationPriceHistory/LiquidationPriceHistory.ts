@@ -22,19 +22,33 @@ export default class LiquidationPriceHistory {
     }
 
     private cleanupOldRecords() {
-        this.history = this.history.filter((record) => record.timestamp >= Date.now() - this.retentionPeriod);
+        let index = 0;
+        for (
+            ;
+            index < this.history.length && this.history[index].timestamp < Date.now() - this.retentionPeriod;
+            index++
+        );
+        this.history = this.history.slice(index);
+    }
+
+    private handleExitSignals() {
+        if (this.cleanupIntervalId) {
+            clearInterval(this.cleanupIntervalId);
+        }
     }
 
     watchNewPrices() {
         if (this.cleanupIntervalId) {
-            clearInterval(this.cleanupIntervalId);
+            return;
         }
-        this.cleanupOldRecords();
         this.cleanupIntervalId = setInterval(() => this.cleanupOldRecords(), 1000);
 
         this.oracleAdapter.subscribeToPriceUpdates((priceData) => {
             this.addRecord(Date.now(), priceData);
         });
+
+        process.on('SIGTERM', this.handleExitSignals);
+        process.on('SIGINT', this.handleExitSignals);
     }
 
     public getSmallestPriceRecord() {
