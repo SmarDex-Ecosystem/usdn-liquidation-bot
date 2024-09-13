@@ -1,7 +1,7 @@
 import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
 import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
-interface PriceRecord {
+export interface PriceRecord {
     timestamp: number;
     price: bigint;
     signature: string;
@@ -10,8 +10,8 @@ interface PriceRecord {
 export default class LiquidationPriceHistory {
     private readonly oracleAdapter: IOracleAdapter;
     private readonly retentionPeriod = 30000;
-    public history: PriceRecord[] = [];
-    public cleanupIntervalId: NodeJS.Timeout | null = null;
+    private history: PriceRecord[] = [];
+    private cleanupIntervalId: NodeJS.Timeout | null = null;
 
     constructor(oracleAdapter: IOracleAdapter) {
         this.oracleAdapter = oracleAdapter;
@@ -22,13 +22,14 @@ export default class LiquidationPriceHistory {
     }
 
     private cleanupOldRecords() {
-        let index = 0;
-        for (
-            ;
-            index < this.history.length && this.history[index].timestamp < Date.now() - this.retentionPeriod;
-            index++
-        );
-        this.history = this.history.slice(index);
+        const validIndex = this.history.findIndex((record) => record.timestamp >= Date.now() - this.retentionPeriod);
+        if (validIndex === -1) {
+            this.history = [];
+        } else {
+            this.history = this.history.slice(validIndex);
+        }
+
+        return this.history;
     }
 
     private handleExitSignals() {
@@ -55,5 +56,13 @@ export default class LiquidationPriceHistory {
         if (this.history.length === 0) return null;
 
         return this.history.reduce((smallest, current) => (current.price < smallest.price ? current : smallest));
+    }
+
+    public getHistory() {
+        return this.history;
+    }
+
+    public getCleanupIntervalId() {
+        return this.cleanupIntervalId;
     }
 }
