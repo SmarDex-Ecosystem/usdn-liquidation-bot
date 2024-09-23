@@ -8,8 +8,8 @@ type EtherscanData = {
         LastBlock: string;
         SafeGasPrice: string;
         ProposeGasPrice: string;
-        FastGasPrice: string;
-        suggestBaseFee: string;
+        FastGasPrice: number;
+        suggestedBaseFee: number;
         gasUsedRatio: string;
     };
 };
@@ -34,9 +34,9 @@ export default class Etherscan implements IGasPriceAdapter {
                 throw new Error(data.message);
             }
 
-            const baseFee = parseGwei(data.result.suggestBaseFee);
+            const baseFee = parseGwei(data.result.suggestedBaseFee.toString());
             return {
-                fastPriorityFee: parseGwei(data.result.FastGasPrice) - baseFee,
+                fastPriorityFee: parseGwei(data.result.FastGasPrice.toString()) - baseFee,
                 suggestedBaseFee: baseFee,
             };
         } catch (error) {
