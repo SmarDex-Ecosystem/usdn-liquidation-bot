@@ -2,6 +2,7 @@ import { type Account, type PublicClient, type WalletClient, isAddress } from 'v
 import type { OraclePriceData } from '../../../oracles/types.ts';
 import { IUsdnProtocolAbi } from './abi.ts';
 import type IGasPriceAdapter from '../../../gas-price/IGasPriceAdapter.ts';
+import { sleep } from '../../../../utils/index.ts';
 
 export default class UsdnProtocolContract {
     private readClient: PublicClient;
@@ -21,6 +22,10 @@ export default class UsdnProtocolContract {
     }
 
     async liquidate(priceData: OraclePriceData): Promise<{ txHash: string; amount: bigint }> {
+        // to avoid error 0x45805f5d (PriceFeedNotFoundWithinRange)
+        // we wait half of the block time
+        await sleep(6000);
+
         const { request, result } = await this.readClient.simulateContract({
             abi: IUsdnProtocolAbi,
             address: this.usdnProtocolAddress,
