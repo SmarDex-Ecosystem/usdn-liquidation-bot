@@ -19,11 +19,11 @@ describe('Etherscan', () => {
                 status: '1',
                 message: 'OK',
                 result: {
-                    LastBlock: 14856877,
-                    SafeGasPrice: 100,
-                    ProposeGasPrice: 120,
-                    FastGasPrice: 150,
-                    suggestedBaseFee: 140,
+                    LastBlock: '14856877',
+                    SafeGasPrice: '100',
+                    ProposeGasPrice: '120',
+                    FastGasPrice: '150',
+                    suggestBaseFee: '140',
                     gasUsedRatio: '150',
                 },
             };
