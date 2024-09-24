@@ -19,11 +19,11 @@ describe('Etherscan', () => {
                 status: '1',
                 message: 'OK',
                 result: {
-                    LastBlock: 14856877,
-                    SafeGasPrice: 100,
-                    ProposeGasPrice: 120,
-                    FastGasPrice: 150,
-                    suggestedBaseFee: 140,
+                    LastBlock: '14856877',
+                    SafeGasPrice: '100',
+                    ProposeGasPrice: '120',
+                    FastGasPrice: '150',
+                    suggestBaseFee: '140',
                     gasUsedRatio: '150',
                 },
             };
@@ -68,7 +68,7 @@ describe('Etherscan', () => {
             );
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(
-                `Failed to fetch gas price: ${invalidResponse.message}`,
+                `Failed to fetch gas price: Error: ${invalidResponse.message}`,
             );
         });
 
@@ -84,7 +84,7 @@ describe('Etherscan', () => {
                 vi.fn(() => Promise.reject(new Error(errorMessage))),
             );
 
-            await expect(etherscan.getGasPrice()).rejects.toThrow(`Failed to fetch gas price: ${errorMessage}`);
+            await expect(etherscan.getGasPrice()).rejects.toThrow(`Failed to fetch gas price: Error: ${errorMessage}`);
         });
 
         it('should throw an error when fetch return ok=false', async () => {
@@ -106,7 +106,7 @@ describe('Etherscan', () => {
             );
 
             await expect(etherscan.getGasPrice()).rejects.toThrow(
-                `Failed to fetch gas price: Network response was not ok: ${statusText}`,
+                `Failed to fetch gas price: Error: Network response was not ok: ${statusText}`,
             );
         });
     });
