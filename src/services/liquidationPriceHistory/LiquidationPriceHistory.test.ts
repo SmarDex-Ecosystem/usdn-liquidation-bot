@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import LiquidationPriceHistory, { type PriceRecord } from './LiquidationPriceHistory.ts';
 import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
+import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
 describe('LiquidationPriceHistory', () => {
     let mockOracleAdapter: IOracleAdapter;
     let liquidationPriceHistory: LiquidationPriceHistory;
-    const mockPriceData = { price: BigInt(352100000000), decimals: 18, signature: 'mock-signature' };
+    const mockPriceData: OraclePriceData = { price: BigInt(352100000000), decimals: 18, signature: 'mock-signature' };
 
     beforeEach(() => {
         mockOracleAdapter = {
@@ -68,7 +69,7 @@ describe('LiquidationPriceHistory', () => {
     describe('Finding Smallest Price Record', () => {
         it('should handle multiple price updates over more than one minute and find the smallest price', async () => {
             vi.useFakeTimers();
-            const priceUpdates = [
+            const priceUpdates: OraclePriceData[] = [
                 { price: BigInt(500), decimals: 18, signature: 'sig1' },
                 { price: BigInt(300), decimals: 18, signature: 'sig2' },
                 { price: BigInt(400), decimals: 18, signature: 'sig3' },
