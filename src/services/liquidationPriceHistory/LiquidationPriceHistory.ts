@@ -10,8 +10,8 @@ export interface PriceRecord {
 export default class LiquidationPriceHistory {
     private readonly oracleAdapter: IOracleAdapter;
     private readonly retentionPeriod = 30000;
-    private history: PriceRecord[] = [];
-    private cleanupIntervalId: NodeJS.Timeout | null = null;
+    protected history: PriceRecord[] = [];
+    protected cleanupIntervalId: NodeJS.Timeout | null = null;
 
     constructor(oracleAdapter: IOracleAdapter) {
         this.oracleAdapter = oracleAdapter;
@@ -56,13 +56,5 @@ export default class LiquidationPriceHistory {
         if (this.history.length === 0) return null;
 
         return this.history.reduce((smallest, current) => (current.price < smallest.price ? current : smallest));
-    }
-
-    public getHistory() {
-        return this.history;
-    }
-
-    public getCleanupIntervalId() {
-        return this.cleanupIntervalId;
     }
 }
