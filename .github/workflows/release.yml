@@ -1,0 +1,21 @@
+name: Release Docker image
+
+on:
+  push:
+    branches:
+      - main
+      - feature/fast
+
+jobs:
+  publish:
+    name: Release Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Release Docker image
+        uses: Backend-RA2-Tech/composite-workflows/lerna-template/release@main
+        with:
+          packages-directory: ./
+          force-target-repository: usdn-backend
