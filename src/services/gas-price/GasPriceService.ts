@@ -9,7 +9,6 @@ export default class GasPriceService {
         this.fallbackGasPriceAdapter = fallbackGasPriceAdapter;
     }
 
-    /** @inheritdoc */
     public async getGasPrice() {
         try {
             return this.primaryGasPriceAdapter.getGasPrice();

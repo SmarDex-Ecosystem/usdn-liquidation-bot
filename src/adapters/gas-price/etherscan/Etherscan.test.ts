@@ -19,11 +19,11 @@ describe('Etherscan', () => {
                 status: '1',
                 message: 'OK',
                 result: {
-                    LastBlock: 14856877,
-                    SafeGasPrice: 100,
-                    ProposeGasPrice: 120,
-                    FastGasPrice: 150,
-                    suggestedBaseFee: 140,
+                    LastBlock: '14856877',
+                    SafeGasPrice: '100',
+                    ProposeGasPrice: '120',
+                    FastGasPrice: '150',
+                    suggestBaseFee: '140',
                     gasUsedRatio: '150',
                 },
             };
@@ -87,7 +87,7 @@ describe('Etherscan', () => {
             await expect(etherscan.getGasPrice()).rejects.toThrow(`Failed to fetch gas price: ${errorMessage}`);
         });
 
-        it('should throw an error when fetch return ok=false', async () => {
+        it('should throw an error when fetch returns ok=false', async () => {
             const apiKeyToken = 'your_api_key';
             const etherscan = new Etherscan(apiKeyToken);
 

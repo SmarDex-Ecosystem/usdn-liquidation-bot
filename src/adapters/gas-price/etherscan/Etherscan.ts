@@ -13,6 +13,7 @@ type EtherscanData = {
         gasUsedRatio: string;
     };
 };
+
 export default class Etherscan implements IGasPriceAdapter {
     private apiKey: string | null = null;
 
@@ -40,7 +41,8 @@ export default class Etherscan implements IGasPriceAdapter {
                 suggestedBaseFee: baseFee,
             };
         } catch (error) {
-            throw new Error(`Failed to fetch gas price: ${error}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            throw new Error(`Failed to fetch gas price: ${errorMessage}`);
         }
     }
 }
