@@ -38,7 +38,7 @@ export default class Etherscan implements IGasPriceAdapter {
             const baseFee = parseGwei(data.result.suggestBaseFee);
             return {
                 fastPriorityFee: parseGwei(data.result.FastGasPrice) - baseFee,
-                suggestBaseFee: baseFee,
+                suggestedBaseFee: baseFee,
             };
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);

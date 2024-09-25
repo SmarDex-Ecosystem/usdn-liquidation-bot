@@ -42,7 +42,7 @@ describe('Etherscan', () => {
             const data = await etherscan.getGasPrice();
             expect(data).toEqual({
                 fastPriorityFee: 150n * 10n ** 9n - 140n * 10n ** 9n,
-                suggestBaseFee: 140n * 10n ** 9n,
+                suggestedBaseFee: 140n * 10n ** 9n,
             });
         });
 
