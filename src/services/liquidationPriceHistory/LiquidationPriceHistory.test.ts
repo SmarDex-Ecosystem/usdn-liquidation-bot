@@ -37,7 +37,7 @@ describe('LiquidationPriceHistory', () => {
         vi.resetAllMocks();
     });
 
-    describe('Test watchNewPrices', () => {
+    describe('WatchNewPrices', () => {
         it('should initialize with an empty history', () => {
             expect(liquidationPriceHistory.getHistory()).toEqual([]);
         });
@@ -119,7 +119,7 @@ describe('LiquidationPriceHistory', () => {
         });
     });
 
-    describe('Test getSmallestPriceRecord', () => {
+    describe('GetSmallestPriceRecord', () => {
         it('should handle multiple price updates over more than one minute and find the smallest price', async () => {
             vi.useFakeTimers();
             const priceUpdates: OraclePriceData[] = [
