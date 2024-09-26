@@ -11,9 +11,24 @@ jobs:
     name: Release Docker image
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: write
+      id-token: write # Required for requesting AWS JWT
+      contents: write # Required for actions/checkout and push commit
+      pull-requests: write # Required for creating pull-requests
     steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
       - name: Release Docker image
         uses: Backend-RA2-Tech/composite-workflows/lerna-template/release@main
         with:
