@@ -13,7 +13,8 @@
         "test:watch": "vitest",
         "build": "tsup src/index.ts --clean",
         "format": "biome check --write .",
-        "coverage": "vitest run --coverage"
+        "coverage": "vitest run --coverage",
+        "release": "echo \"nothing to do: version handled by release-please\""
     },
     "keywords": [],
     "author": "RA2 TECH SA <contact@ra2.tech> (https://ra2.tech)",
