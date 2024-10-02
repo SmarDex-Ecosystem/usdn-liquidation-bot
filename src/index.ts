@@ -31,7 +31,7 @@ const usdnProtocol = new UsdnProtocolContract(client, wallet, gasPriceAdapter);
 
 /* ---------------------------------- data ---------------------------------- */
 const lowestPriceForBlock = new Map<bigint, OraclePriceData>();
-let lastBlockNumber = 0n;
+let lastBlockNumber = 1n;
 
 /* -------------------------------- functions ------------------------------- */
 const validatePendingActions = async () => {
