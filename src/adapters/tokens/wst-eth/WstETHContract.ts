@@ -1,13 +1,13 @@
-import { type PublicClient, isAddress } from 'viem';
+import { type Hex, type PublicClient, isAddress } from 'viem';
 import { abi } from './WstETHAbi.ts';
 
 export default class WstETHContract {
     /** Client to use to communicate with the smart contract */
     private readonly blockchainClient: PublicClient;
     /** Address of usdnProtocol */
-    private readonly contractAddress: `0x${string}`;
+    private readonly contractAddress: Hex;
 
-    constructor(blockchainClient: PublicClient, contractAddress: `0x${string}`) {
+    constructor(blockchainClient: PublicClient, contractAddress: Hex) {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address.');
         }
@@ -20,7 +20,7 @@ export default class WstETHContract {
      */
     async getStETHPerToken() {
         return this.blockchainClient.readContract({
-            address: this.contractAddress as `0x${string}`,
+            address: this.contractAddress as Hex,
             abi: abi,
             functionName: 'stEthPerToken',
         });
