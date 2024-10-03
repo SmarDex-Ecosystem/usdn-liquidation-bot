@@ -18,19 +18,6 @@ type PendingAction = {
     var7: bigint;
 };
 
-// Mocking viem's clients
-vi.mock('viem', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...(actual as object),
-        WalletClient: vi.fn().mockImplementation(() => ({
-            simulateContract: vi.fn(),
-            readContract: vi.fn(),
-            multicall: vi.fn(),
-        })),
-    };
-});
-
 // Test setup
 const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
 const mockBlockchainClient = getBlockchainClient();
