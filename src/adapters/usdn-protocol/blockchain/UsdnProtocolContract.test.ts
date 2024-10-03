@@ -1,4 +1,4 @@
-import { http, createPublicClient, createWalletClient, parseEther, zeroAddress } from 'viem';
+import { http, createPublicClient, createWalletClient, parseEther, zeroAddress, type Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UsdnProtocolContract from './UsdnProtocolContract.ts';
 import { anvil } from 'viem/chains';
@@ -6,8 +6,8 @@ import { anvil } from 'viem/chains';
 type PendingAction = {
     action: number;
     timestamp: number;
-    to: `0x${string}`;
-    validator: `0x${string}`;
+    to: Address;
+    validator: Address;
     securityDepositValue: bigint;
     var1: number;
     var2: bigint;

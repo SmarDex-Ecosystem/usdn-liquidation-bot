@@ -1,4 +1,5 @@
 import {
+    type Address,
     type Hex,
     type PublicClient,
     type ReadContractParameters,
@@ -16,9 +17,9 @@ export default class UsdnProtocolContract {
     /** Client to use to send transactions to the smart contract */
     private readonly walletClient: WalletClient;
     /** The address of the USDN Protocol's smart contract */
-    private readonly contractAddress: Hex;
+    private readonly contractAddress: Address;
 
-    constructor(contractAddress: Hex, blockchainClient: PublicClient, walletClient: WalletClient) {
+    constructor(contractAddress: Address, blockchainClient: PublicClient, walletClient: WalletClient) {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address for the USDN protocol');
         }
