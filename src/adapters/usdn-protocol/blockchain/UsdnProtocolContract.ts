@@ -70,41 +70,4 @@ export default class UsdnProtocolContract {
 
         return result;
     }
-
-    /** Calls the getHighestPopulatedTick function in the contract
-     * @returns Result of the function call
-     */
-    async getHighestPopulatedTick() {
-        return this.handleContractInteraction({
-            functionName: 'getHighestPopulatedTick',
-        });
-    }
-
-    /**
-     * Calls multiple functions in the contract and returns the result
-     * @param calls List of function names and their arguments to call
-     * @returns Result of the multicall
-     */
-    async multicall(calls: FunctionCall[]) {
-        return this.handleMulticall(calls);
-    }
-
-    /** Handles interaction with the contract and returns the result */
-    private async handleContractInteraction(call: FunctionCall) {
-        return this.blockchainClient.readContract({
-            ...call,
-            address: this.contractAddress,
-            abi: abi,
-        });
-    }
-
-    /** Handles multicall interactions with the contract */
-    private async handleMulticall(calls: FunctionCall[]) {
-        const contracts = calls.map((call) => ({
-            ...call,
-            address: this.contractAddress,
-            abi: abi,
-        }));
-        return this.blockchainClient.multicall({ contracts });
-    }
 }

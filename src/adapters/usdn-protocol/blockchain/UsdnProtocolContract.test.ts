@@ -36,7 +36,6 @@ const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
 const mockBlockchainClient = getBlockchainClient();
 const mockSimulateContract = vi.spyOn(mockBlockchainClient, 'simulateContract');
 const mockReadContract = vi.spyOn(mockBlockchainClient, 'readContract');
-const mockMulticall = vi.spyOn(mockBlockchainClient, 'multicall');
 
 describe('UsdnProtocolContract', () => {
     beforeEach(() => {
@@ -53,28 +52,6 @@ describe('UsdnProtocolContract', () => {
 
         it('should not throw an error for a valid Ethereum address', () => {
             expect(() => new UsdnProtocolContract(mockContractAddress, mockBlockchainClient)).not.toThrow();
-        });
-    });
-
-    describe('getHighestPopulatedTick', () => {
-        it('should return the highest populated tick', async () => {
-            // Mocking the readContract method of the PublicClient instance
-            const expectedTick = 42n;
-            mockReadContract.mockResolvedValue(expectedTick);
-
-            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
-            const result = await contract.getHighestPopulatedTick();
-            expect(result).toEqual(expectedTick);
-        });
-
-        it('should throw an error when the contract call fails', async () => {
-            // Mocking the readContract method to throw an error
-            const error = new Error('Contract call failed');
-            mockReadContract.mockRejectedValue(error);
-
-            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
-
-            await expect(contract.getHighestPopulatedTick()).rejects.toThrow(error);
         });
     });
 
@@ -140,35 +117,6 @@ describe('UsdnProtocolContract', () => {
                 [1n, 2n],
             );
             expect(validatedPendingActionsCount).toEqual(2n);
-        });
-    });
-
-    describe('multicall', () => {
-        it('should return results from multicall', async () => {
-            // Mocking the multicall method of the PublicClient instance
-            const expectedResults = [
-                {
-                    functionName: 'getHighestPopulatedTick',
-                    result: 42n,
-                    status: 'success',
-                },
-            ];
-            mockMulticall.mockResolvedValue(expectedResults);
-
-            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
-            const result = await contract.multicall([{ functionName: 'getHighestPopulatedTick' }]);
-            expect(result).toEqual(expectedResults);
-        });
-
-        it('should handle errors correctly when multicall fails', async () => {
-            // Mocking the multicall method to throw an error
-            mockMulticall.mockRejectedValue(new Error('Multicall failed'));
-
-            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
-
-            await expect(contract.multicall([{ functionName: 'getHighestPopulatedTick' }])).rejects.toThrow(
-                'Multicall failed',
-            );
         });
     });
 });
