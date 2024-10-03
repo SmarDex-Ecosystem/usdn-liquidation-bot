@@ -1,4 +1,4 @@
-import { isAddress, type PublicClient } from 'viem';
+import { type Hex, isAddress, type PublicClient } from 'viem';
 import chainlinkPriceFeedABI from './abi.ts';
 import type { RoundData } from './types.ts';
 
@@ -6,7 +6,7 @@ export default class ChainlinkPriceFeedContract {
     /** Client to use to communicate with the smart contract */
     private blockchainClient: PublicClient;
     /** Address for the ETH/USD price feed */
-    private priceFeedAddress: `0x${string}`;
+    private priceFeedAddress: Hex;
 
     constructor(blockchainClient: PublicClient) {
         this.blockchainClient = blockchainClient;
