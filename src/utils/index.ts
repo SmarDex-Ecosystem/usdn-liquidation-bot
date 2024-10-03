@@ -1,4 +1,5 @@
-import { http, createPublicClient } from 'viem';
+import { http, type Hex, publicActions, createWalletClient } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet } from 'viem/chains';
 
 /**
@@ -11,16 +12,29 @@ export async function sleep(milliseconds: number) {
     });
 }
 
+/**
+ * Creates a client to interact with the blockchain
+ *
+ * Requires RPC_URL (HTTP) and PRIVATE_KEY set in the environment variables
+ * @returns A public client to read data from the blockchain and sign transactions
+ */
 export function getBlockchainClient() {
     const rpcUrl = process.env.RPC_URL;
     if (!rpcUrl) {
-        throw new Error('RPC URL not set');
+        throw new Error('RPC_URL not set');
     }
 
-    const publicClient = createPublicClient({
-        chain: mainnet,
-        transport: http(rpcUrl),
-    });
+    const privateKey: string | undefined = process.env.PRIVATE_KEY;
+    if (!privateKey) {
+        throw new Error('Env var PRIVATE_KEY is not set');
+    }
 
-    return publicClient;
+    const account = privateKeyToAccount(privateKey as Hex);
+    const client = createWalletClient({
+        transport: http(process.env.RPC_URL),
+        chain: mainnet,
+        account: account,
+    }).extend(publicActions);
+
+    return client;
 }
