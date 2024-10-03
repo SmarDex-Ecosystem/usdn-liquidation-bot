@@ -1,7 +1,7 @@
 import { http, createPublicClient } from 'viem';
-import { mainnet } from 'viem/chains';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import WstETHContract from './WstETHContract.ts';
+import { anvil } from 'viem/chains';
 
 // Mocking the PublicClient methods
 vi.mock('viem', async (importOriginal) => {
@@ -16,7 +16,7 @@ vi.mock('viem', async (importOriginal) => {
 
 const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
 const mockPublicClient = createPublicClient({
-    chain: mainnet,
+    chain: anvil,
     transport: http(),
 });
 const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');

@@ -1,7 +1,7 @@
-import { http, createPublicClient, createWalletClient, parseEther, zeroAddress, type Address } from 'viem';
+import { parseEther, zeroAddress, type Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UsdnProtocolContract from './UsdnProtocolContract.ts';
-import { anvil } from 'viem/chains';
+import { getBlockchainClient } from '../../../utils/index.ts';
 
 type PendingAction = {
     action: number;
@@ -23,29 +23,20 @@ vi.mock('viem', async (importOriginal) => {
     const actual = await importOriginal();
     return {
         ...(actual as object),
-        PublicClient: vi.fn().mockImplementation(() => ({
-            readContract: vi.fn(),
-            multicall: vi.fn(),
-        })),
         WalletClient: vi.fn().mockImplementation(() => ({
             simulateContract: vi.fn(),
+            readContract: vi.fn(),
+            multicall: vi.fn(),
         })),
     };
 });
 
 // Test setup
 const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
-const mockPublicClient = createPublicClient({
-    chain: anvil,
-    transport: http(),
-});
-const mockWalletClient = createWalletClient({
-    chain: anvil,
-    transport: http(),
-});
-const mockSimulateContract = vi.spyOn(mockPublicClient, 'simulateContract');
-const mockReadContract = vi.spyOn(mockPublicClient, 'readContract');
-const mockMulticall = vi.spyOn(mockPublicClient, 'multicall');
+const mockBlockchainClient = getBlockchainClient();
+const mockSimulateContract = vi.spyOn(mockBlockchainClient, 'simulateContract');
+const mockReadContract = vi.spyOn(mockBlockchainClient, 'readContract');
+const mockMulticall = vi.spyOn(mockBlockchainClient, 'multicall');
 
 describe('UsdnProtocolContract', () => {
     beforeEach(() => {
@@ -55,15 +46,13 @@ describe('UsdnProtocolContract', () => {
     describe('constructor', () => {
         it('should throw an error for an invalid Ethereum address', () => {
             const invalidAddress = '0xINVALID_ADDRESS';
-            expect(() => new UsdnProtocolContract(invalidAddress, mockPublicClient, mockWalletClient)).toThrow(
+            expect(() => new UsdnProtocolContract(invalidAddress, mockBlockchainClient)).toThrow(
                 'Invalid Ethereum address for the USDN protocol',
             );
         });
 
         it('should not throw an error for a valid Ethereum address', () => {
-            expect(
-                () => new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient),
-            ).not.toThrow();
+            expect(() => new UsdnProtocolContract(mockContractAddress, mockBlockchainClient)).not.toThrow();
         });
     });
 
@@ -73,7 +62,7 @@ describe('UsdnProtocolContract', () => {
             const expectedTick = 42n;
             mockReadContract.mockResolvedValue(expectedTick);
 
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
             const result = await contract.getHighestPopulatedTick();
             expect(result).toEqual(expectedTick);
         });
@@ -83,7 +72,7 @@ describe('UsdnProtocolContract', () => {
             const error = new Error('Contract call failed');
             mockReadContract.mockRejectedValue(error);
 
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             await expect(contract.getHighestPopulatedTick()).rejects.toThrow(error);
         });
@@ -93,7 +82,7 @@ describe('UsdnProtocolContract', () => {
         it('should throw an error if the call fails', async () => {
             const error = new Error('Contract call failed');
             mockReadContract.mockRejectedValue(error);
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             await expect(contract.getActionablePendingActions()).rejects.toThrow(error);
         });
@@ -120,7 +109,7 @@ describe('UsdnProtocolContract', () => {
                 [12n, 0n, 42n] as bigint[],
             ];
             mockReadContract.mockResolvedValue(contractCallResult);
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             const { pendingActions, rawIndices } = await contract.getActionablePendingActions();
             expect(pendingActions).toEqual(contractCallResult[0]);
@@ -135,7 +124,7 @@ describe('UsdnProtocolContract', () => {
         it('should throw an error if the call fails', async () => {
             const error = new Error('Simulation failed');
             mockSimulateContract.mockRejectedValue(error);
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             await expect(contract.simulateValidateActionablePendingActions([], [])).rejects.toThrow(error);
         });
@@ -144,7 +133,7 @@ describe('UsdnProtocolContract', () => {
                 result: 2n,
                 request: {},
             } as any);
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             const validatedPendingActionsCount = await contract.simulateValidateActionablePendingActions(
                 ['0xPrice1', '0xPrice2'],
@@ -166,7 +155,7 @@ describe('UsdnProtocolContract', () => {
             ];
             mockMulticall.mockResolvedValue(expectedResults);
 
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
             const result = await contract.multicall([{ functionName: 'getHighestPopulatedTick' }]);
             expect(result).toEqual(expectedResults);
         });
@@ -175,7 +164,7 @@ describe('UsdnProtocolContract', () => {
             // Mocking the multicall method to throw an error
             mockMulticall.mockRejectedValue(new Error('Multicall failed'));
 
-            const contract = new UsdnProtocolContract(mockContractAddress, mockPublicClient, mockWalletClient);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             await expect(contract.multicall([{ functionName: 'getHighestPopulatedTick' }])).rejects.toThrow(
                 'Multicall failed',

@@ -1,13 +1,13 @@
-import { type Address, type PublicClient, isAddress } from 'viem';
+import { type Address, type PublicActions, isAddress } from 'viem';
 import { abi } from './WstETHAbi.ts';
 
 export default class WstETHContract {
     /** Client to use to communicate with the smart contract */
-    private readonly blockchainClient: PublicClient;
+    private readonly blockchainClient: PublicActions;
     /** Address of usdnProtocol */
     private readonly contractAddress: Address;
 
-    constructor(blockchainClient: PublicClient, contractAddress: Address) {
+    constructor(blockchainClient: PublicActions, contractAddress: Address) {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address.');
         }

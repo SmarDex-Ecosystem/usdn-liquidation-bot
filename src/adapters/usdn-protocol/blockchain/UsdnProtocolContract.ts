@@ -1,7 +1,7 @@
 import {
     type Address,
     type Hex,
-    type PublicClient,
+    type PublicActions,
     type ReadContractParameters,
     type WalletClient,
     isAddress,
@@ -12,21 +12,18 @@ import { abi } from './UsdnProtocolAbi.ts';
 export type FunctionCall = Omit<ReadContractParameters<typeof abi>, 'abi' | 'address'>;
 
 export default class UsdnProtocolContract {
-    /** Client to use to read data from the smart contract */
-    private readonly blockchainClient: PublicClient;
-    /** Client to use to send transactions to the smart contract */
-    private readonly walletClient: WalletClient;
+    /** Client to use to interact with the smart contract */
+    private readonly blockchainClient: WalletClient & PublicActions;
     /** The address of the USDN Protocol's smart contract */
     private readonly contractAddress: Address;
 
-    constructor(contractAddress: Address, blockchainClient: PublicClient, walletClient: WalletClient) {
+    constructor(contractAddress: Address, blockchainClient: WalletClient & PublicActions) {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address for the USDN protocol');
         }
 
         this.contractAddress = contractAddress;
         this.blockchainClient = blockchainClient;
-        this.walletClient = walletClient;
     }
 
     /**
@@ -60,7 +57,7 @@ export default class UsdnProtocolContract {
             abi,
             address: this.contractAddress,
             blockTag: 'pending',
-            account: this.walletClient.account,
+            account: this.blockchainClient.account,
             functionName: 'validateActionablePendingActions',
             args: [
                 {
