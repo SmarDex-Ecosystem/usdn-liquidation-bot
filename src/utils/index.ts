@@ -15,8 +15,8 @@ export async function sleep(milliseconds: number) {
 /**
  * Creates a client to interact with the blockchain
  *
- * Requires an RPC URL (HTTP) set in the environment variables
- * @returns A public client to read data from the blockchain
+ * Requires RPC_URL (HTTP) and PRIVATE_KEY set in the environment variables
+ * @returns A public client to read data from the blockchain and sign transactions
  */
 export function getBlockchainClient() {
     const rpcUrl = process.env.RPC_URL;
