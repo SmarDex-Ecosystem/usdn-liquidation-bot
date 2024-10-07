@@ -27,6 +27,7 @@ vi.mock('viem', async (importOriginal) => {
             simulateContract: vi.fn(),
             readContract: vi.fn(),
             multicall: vi.fn(),
+            writeContract: vi.fn(),
         })),
     };
 });
@@ -35,12 +36,14 @@ vi.mock('viem', async (importOriginal) => {
 const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
 const mockBlockchainClient = getBlockchainClient();
 const mockSimulateContract = vi.spyOn(mockBlockchainClient, 'simulateContract');
+const mockWriteContract = vi.spyOn(mockBlockchainClient, 'writeContract');
 const mockReadContract = vi.spyOn(mockBlockchainClient, 'readContract');
 const mockMulticall = vi.spyOn(mockBlockchainClient, 'multicall');
 
 describe('UsdnProtocolContract', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     describe('constructor', () => {
@@ -120,26 +123,48 @@ describe('UsdnProtocolContract', () => {
         });
     });
 
-    describe('simulateValidateActionablePendingActions', () => {
-        it('should throw an error if the call fails', async () => {
-            const error = new Error('Simulation failed');
-            mockSimulateContract.mockRejectedValue(error);
-            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
-
-            await expect(contract.simulateValidateActionablePendingActions([], [])).rejects.toThrow(error);
-        });
-        it('should throw an error if the call fails', async () => {
+    describe('validateActionablePendingActions', () => {
+        beforeEach(() => {
             mockSimulateContract.mockResolvedValue({
                 result: 2n,
                 request: {},
             } as any);
+        });
+
+        it('should throw an error if the simulation fails', async () => {
+            const error = new Error('Simulation failed');
+            mockSimulateContract.mockRejectedValue(error);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            const validatedPendingActionsCount = await contract.simulateValidateActionablePendingActions(
+            await expect(contract.validateActionablePendingActions([], [])).rejects.toThrow(error);
+        });
+        it('should throw an error if the tx fails', async () => {
+            const error = new Error('TX failed');
+            mockWriteContract.mockRejectedValue(error);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            await expect(contract.validateActionablePendingActions([], [])).rejects.toThrow(error);
+        });
+        it('should launch a TX if the result of the simulation is > 0', async () => {
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            const validatedPendingActionsCount = await contract.validateActionablePendingActions(
                 ['0xPrice1', '0xPrice2'],
                 [1n, 2n],
             );
             expect(validatedPendingActionsCount).toEqual(2n);
+            expect(mockWriteContract).toHaveBeenCalledOnce();
+        });
+        it('should not launch a TX if the result of the simulation is == 0', async () => {
+            mockSimulateContract.mockResolvedValue({
+                result: 0n,
+                request: {},
+            } as any);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            const validatedPendingActionsCount = await contract.validateActionablePendingActions([], []);
+            expect(validatedPendingActionsCount).toEqual(0n);
+            expect(mockWriteContract).toBeCalledTimes(0);
         });
     });
 

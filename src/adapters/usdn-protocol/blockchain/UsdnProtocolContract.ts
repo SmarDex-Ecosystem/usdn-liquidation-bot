@@ -49,11 +49,8 @@ export default class UsdnProtocolContract {
      * @param rawIndices The raw indices corresponding to the price data entries
      * @returns The amount of validated pending actions
      */
-    async simulateValidateActionablePendingActions(
-        priceData: readonly Hex[],
-        rawIndices: readonly bigint[],
-    ): Promise<bigint> {
-        const { result } = await this.blockchainClient.simulateContract({
+    async validateActionablePendingActions(priceData: readonly Hex[], rawIndices: readonly bigint[]): Promise<bigint> {
+        const { request, result } = await this.blockchainClient.simulateContract({
             abi,
             address: this.contractAddress,
             blockTag: 'pending',
@@ -67,6 +64,11 @@ export default class UsdnProtocolContract {
                 BigInt(rawIndices.length),
             ],
         });
+
+        if (result > 0) {
+            // TODO log the TX hash?
+            await this.blockchainClient.writeContract(request);
+        }
 
         return result;
     }
