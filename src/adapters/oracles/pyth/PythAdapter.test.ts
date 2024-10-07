@@ -50,7 +50,7 @@ describe('PythAdapter', () => {
             const data = await pythAdapter.getLatestPrice();
             expect(data.price).toEqual(BigInt(pythPriceUpdate.parsed[0].price.price));
             expect(data.decimals).toEqual(8);
-            expect(data.signature).toEqual(pythPriceUpdate.binary.data[0]);
+            expect(data.signature).toEqual(`0x${pythPriceUpdate.binary.data[0]}`);
         });
 
         it('should throw an error when the client throws an error', async () => {
@@ -115,7 +115,7 @@ describe('PythAdapter', () => {
             const data = await pythAdapter.getPriceAtTimestamp(42);
             expect(data.price).toEqual(BigInt(pythPriceUpdate.parsed[0].price.price));
             expect(data.decimals).toEqual(8);
-            expect(data.signature).toEqual(pythPriceUpdate.binary.data[0]);
+            expect(data.signature).toEqual(`0x${pythPriceUpdate.binary.data[0]}`);
         });
     });
 
@@ -138,7 +138,7 @@ describe('PythAdapter', () => {
             expect(callback).toHaveBeenCalledWith({
                 price: BigInt(pythPriceUpdate.parsed[0].price.price),
                 decimals: 8,
-                signature: pythPriceUpdate.binary.data[0],
+                signature: `0x${pythPriceUpdate.binary.data[0]}`,
             } as OraclePriceData);
         });
 

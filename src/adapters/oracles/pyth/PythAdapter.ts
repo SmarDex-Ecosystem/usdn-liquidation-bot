@@ -1,6 +1,7 @@
 import { HermesClient, type PriceUpdate } from '@pythnetwork/hermes-client';
 import type IOracleAdapter from '../IOracleAdapter.ts';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
+import type { Hex } from 'viem';
 
 /** Adapter to get price data from the Pyth oracle */
 export default class PythAdapter implements IOracleAdapter {
@@ -49,7 +50,7 @@ export default class PythAdapter implements IOracleAdapter {
         return {
             price: BigInt(pythPrice),
             decimals: expo * -1,
-            signature: priceUpdates.binary.data[0],
+            signature: `0x${priceUpdates.binary.data[0]}` as Hex,
         };
     }
 

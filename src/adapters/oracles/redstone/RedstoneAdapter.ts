@@ -2,6 +2,7 @@ import { type DataPackagesResponse, requestDataPackages } from '@redstone-financ
 import { sleep } from '../../../utils/index.ts';
 import type IOracleAdapter from '../IOracleAdapter.ts';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
+import type { Hex } from 'viem';
 
 /** Adapter to get price data from the Redstone oracle */
 export default class RedstoneAdapter implements IOracleAdapter {
@@ -54,7 +55,7 @@ export default class RedstoneAdapter implements IOracleAdapter {
         }
 
         const price = this.uint8ArrayToBigInt(data.dataPackage.dataPoints[0].value);
-        const signature = data.signature.compact;
+        const signature = data.signature.compact as Hex;
 
         return {
             price,
@@ -71,7 +72,7 @@ export default class RedstoneAdapter implements IOracleAdapter {
         }
 
         const price = this.uint8ArrayToBigInt(data.dataPackage.dataPoints[0].value);
-        const signature = data.signature.compact;
+        const signature = data.signature.compact as Hex;
 
         return {
             price,
