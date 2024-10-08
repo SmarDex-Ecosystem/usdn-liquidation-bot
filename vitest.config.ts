@@ -1,4 +1,7 @@
 import { defineConfig } from 'vitest/config';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.test' });
 
 export default defineConfig({
     test: {
@@ -7,6 +10,5 @@ export default defineConfig({
         coverage: {
             reporter: ['text', 'json', 'html'],
         },
-        setupFiles: 'dotenv/config',
     },
 });
