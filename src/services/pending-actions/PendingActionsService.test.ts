@@ -129,7 +129,7 @@ describe('PendingActionsService', () => {
                 // the first raw index should have been removed from the array
                 expect(validateActionablePendingActionsSpy.mock.lastCall?.[1]).toEqual(rawIndices.slice(1));
             });
-            it('and skip actions for which the price data fetching failed', async () => {
+            it('and early return if all price data fetching failed', async () => {
                 lowLatencyOracle.getPriceAtTimestamp = vi.fn().mockRejectedValue(new Error('Price fetching failed'));
                 highLatencyOracle.getPriceAtTimestamp = vi.fn().mockRejectedValue(new Error('Price fetching failed'));
                 getActionablePendingActionsSpy = vi
