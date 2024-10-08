@@ -3,11 +3,11 @@ import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/U
 import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
 
 export default class PendingActionsService {
-    /** Adapter to communicate wit the USDN Protocol's smart contract */
+    /** Adapter to communicate with the USDN Protocol's smart contract */
     private usdnProtocol;
     /** Oracle to use for actions within the low latency time frame */
     private lowLatencyOracleAdapter;
-    /** Oracle to use for actions outside the low latency time frame */
+    /** Oracle to use for actions outside the high latency time frame */
     private highLatencyOracleAdapter;
     /** Client to communicate with the blockchain */
     private blockchainClient;
