@@ -1,6 +1,6 @@
 import type { Hex, PublicActions, WalletActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
-import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
+import type { HighLatencyOracle, LowLatencyOracle } from '../../adapters/oracles/OracleAdapter.ts';
 
 export default class PendingActionsService {
     /** Adapter to communicate with the USDN Protocol's smart contract */
@@ -15,8 +15,8 @@ export default class PendingActionsService {
     constructor(
         usdnProtocol: UsdnProtocolContract,
         blockchainClient: WalletActions & PublicActions,
-        lowLatencyOracleAdapter: IOracleAdapter,
-        highLatencyOracleAdapter: IOracleAdapter,
+        lowLatencyOracleAdapter: LowLatencyOracle,
+        highLatencyOracleAdapter: HighLatencyOracle,
     ) {
         this.usdnProtocol = usdnProtocol;
         this.blockchainClient = blockchainClient;

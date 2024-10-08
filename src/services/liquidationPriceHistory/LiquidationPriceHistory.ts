@@ -1,4 +1,4 @@
-import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
+import type OracleAdapter from '../../adapters/oracles/OracleAdapter.ts';
 import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
 export interface PriceRecord {
@@ -8,12 +8,12 @@ export interface PriceRecord {
 }
 
 export default class LiquidationPriceHistory {
-    private readonly oracleAdapter: IOracleAdapter;
+    private readonly oracleAdapter: OracleAdapter;
     private readonly retentionPeriod = 30000;
     protected history: PriceRecord[] = [];
     protected cleanupIntervalId: NodeJS.Timeout | null = null;
 
-    constructor(oracleAdapter: IOracleAdapter) {
+    constructor(oracleAdapter: OracleAdapter) {
         this.oracleAdapter = oracleAdapter;
     }
 

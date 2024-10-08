@@ -1,24 +1,27 @@
 import { describe, it, vi, afterEach, beforeEach, expect } from 'vitest';
-import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
 import PendingActionsService from './PendingActionsService.ts';
 import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
 import { getBlockchainClient } from '../../utils/index.ts';
 import { type OnBlock, parseEther } from 'viem';
+import { OracleType, type HighLatencyOracle, type LowLatencyOracle } from '../../adapters/oracles/OracleAdapter.ts';
 
 const blockchainClient = getBlockchainClient();
 let newBlockCallback: OnBlock;
-const lowLatencyOracle: IOracleAdapter = {
+const lowLatencyOracle: LowLatencyOracle = {
+    TYPE: OracleType.LowLatency,
     VALIDATION_COST: 5n,
     subscribeToPriceUpdates: vi.fn(),
     getLatestPrice: vi.fn(),
     getPriceAtTimestamp: vi.fn(),
 };
-const highLatencyOracle: IOracleAdapter = {
+const highLatencyOracle: HighLatencyOracle = {
+    TYPE: OracleType.HighLatency,
     VALIDATION_COST: 0n,
     subscribeToPriceUpdates: vi.fn(),
     getLatestPrice: vi.fn(),
     getPriceAtTimestamp: vi.fn(),
 };
+
 let getActionablePendingActionsSpy = vi
     .spyOn(usdnProtocolContract, 'getActionablePendingActions')
     .mockImplementation(vi.fn());

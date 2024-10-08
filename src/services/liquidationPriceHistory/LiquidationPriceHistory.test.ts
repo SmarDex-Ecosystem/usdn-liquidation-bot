@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import LiquidationPriceHistory, { type PriceRecord } from './LiquidationPriceHistory.ts';
-import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
+import type OracleAdapter from '../../adapters/oracles/OracleAdapter.ts';
 import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
 class LiquidationPriceHistoryExtended extends LiquidationPriceHistory {
@@ -18,7 +18,7 @@ class LiquidationPriceHistoryExtended extends LiquidationPriceHistory {
 }
 
 describe('LiquidationPriceHistory', () => {
-    let mockOracleAdapter: IOracleAdapter;
+    let mockOracleAdapter: OracleAdapter;
     let liquidationPriceHistory: LiquidationPriceHistoryExtended;
     const mockPriceData: OraclePriceData = { price: BigInt(352100000000), decimals: 18, signature: '0xMock-signature' };
 
@@ -27,7 +27,7 @@ describe('LiquidationPriceHistory', () => {
             subscribeToPriceUpdates: vi.fn(),
             getLatestPrice: vi.fn(),
             getPriceAtTimestamp: vi.fn(),
-        } as unknown as IOracleAdapter;
+        } as unknown as OracleAdapter;
 
         liquidationPriceHistory = new LiquidationPriceHistoryExtended(mockOracleAdapter);
     });
