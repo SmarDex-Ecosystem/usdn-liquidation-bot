@@ -99,17 +99,12 @@ describe('UsdnProtocolContract', () => {
                         var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                     },
                     {
-                        action: 0, securityDepositValue: 0n, timestamp: 0,
-                        to: zeroAddress, validator: zeroAddress,
-                        var1: 0, var2: 0n, var3: 0n, var4: 0n, var5: 0n, var6: 0n, var7: 0n,
-                    },
-                    {
                         action: 4, securityDepositValue: parseEther('1'), timestamp: 1438226773,
                         to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
                         var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                     },
                 ] as PendingAction[],
-                [12n, 0n, 42n] as bigint[],
+                [12n, 42n] as bigint[],
             ];
             mockReadContract.mockResolvedValue(contractCallResult);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
