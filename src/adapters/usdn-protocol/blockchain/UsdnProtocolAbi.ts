@@ -94,6 +94,52 @@ export const abi = [
     },
     {
         type: 'function',
+        name: 'liquidate',
+        inputs: [
+            {
+                name: 'currentPriceData',
+                type: 'bytes',
+                internalType: 'bytes',
+            },
+        ],
+        outputs: [
+            {
+                name: 'liquidatedTicks_',
+                type: 'tuple[]',
+                internalType: 'struct IUsdnProtocolTypes.LiqTickInfo[]',
+                components: [
+                    {
+                        name: 'totalPositions',
+                        type: 'uint256',
+                        internalType: 'uint256',
+                    },
+                    {
+                        name: 'totalExpo',
+                        type: 'uint256',
+                        internalType: 'uint256',
+                    },
+                    {
+                        name: 'remainingCollateral',
+                        type: 'int256',
+                        internalType: 'int256',
+                    },
+                    {
+                        name: 'tickPrice',
+                        type: 'uint128',
+                        internalType: 'uint128',
+                    },
+                    {
+                        name: 'priceWithoutPenalty',
+                        type: 'uint128',
+                        internalType: 'uint128',
+                    },
+                ],
+            },
+        ],
+        stateMutability: 'payable',
+    },
+    {
+        type: 'function',
         name: 'validateActionablePendingActions',
         inputs: [
             {
