@@ -169,6 +169,23 @@ describe('UsdnProtocolContract', () => {
         });
     });
 
+    describe('simulateLiquidations', () => {
+        it('should throw an error if the simulation fails', async () => {
+            const error = new Error('simulation failed');
+            mockSimulateContract.mockRejectedValue(error);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            await expect(contract.simulateLiquidations('0xPriceSignature')).rejects.toThrow(error);
+        });
+        it('should return the amount of positions liquidated by the simulation', async () => {
+            mockSimulateContract.mockResolvedValue({ result: 42n } as any);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            const positionsLiquidatedCount = await contract.simulateLiquidations('0xPriceSignature');
+            expect(positionsLiquidatedCount).toEqual(42n);
+        });
+    });
+
     describe('multicall', () => {
         it('should return results from multicall', async () => {
             // Mocking the multicall method of the PublicClient instance

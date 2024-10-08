@@ -79,6 +79,24 @@ export default class UsdnProtocolContract {
         return result;
     }
 
+    /**
+     * Simulate a liquidation call with the provided price
+     * @param priceSignature The encoded price to use for liquidation checks
+     * @returns The amount of positions liquidated during the simulation
+     */
+    async simulateLiquidations(priceSignature: Hex) {
+        const { result } = await this.blockchainClient.simulateContract({
+            abi,
+            address: this.contractAddress,
+            blockTag: 'pending',
+            account: this.blockchainClient.account,
+            functionName: 'liquidate',
+            args: [priceSignature],
+        });
+
+        return result;
+    }
+
     /** Calls the getHighestPopulatedTick function in the contract
      * @returns Result of the function call
      */
