@@ -1,6 +1,6 @@
 import type { OraclePriceData, OraclePriceUpdateCallback } from './types.ts';
 
-export enum OracleType {
+enum OracleType {
     LowLatency = 0,
     HighLatency = 1,
 }
