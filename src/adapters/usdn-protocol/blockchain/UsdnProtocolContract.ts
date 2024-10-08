@@ -47,15 +47,21 @@ export default class UsdnProtocolContract {
      * Simulate the validation of pending actions with the current parameters and return the amount that it would validate
      * @param priceData The price data for each actions that can be validated
      * @param rawIndices The raw indices corresponding to the price data entries
+     * @param oracleFee The fee to send as value to pay for oracle price validations
      * @returns The amount of validated pending actions
      */
-    async validateActionablePendingActions(priceData: readonly Hex[], rawIndices: readonly bigint[]): Promise<bigint> {
+    async validateActionablePendingActions(
+        priceData: readonly Hex[],
+        rawIndices: readonly bigint[],
+        oracleFee: bigint,
+    ): Promise<bigint> {
         const { request, result } = await this.blockchainClient.simulateContract({
             abi,
             address: this.contractAddress,
             blockTag: 'pending',
             account: this.blockchainClient.account,
             functionName: 'validateActionablePendingActions',
+            value: oracleFee,
             args: [
                 {
                     priceData,

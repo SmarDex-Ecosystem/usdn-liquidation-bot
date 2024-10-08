@@ -2,6 +2,9 @@ import type { OraclePriceData, OraclePriceUpdateCallback } from './types.ts';
 
 /** Allow to get price data from an oracle */
 export default interface IOracleAdapter {
+    /** How much ether it costs (in wei) to use that oracle */
+    readonly VALIDATION_COST: bigint;
+
     /**
      * Get the latest price data from the oracle
      * @returns The latest price and its signature

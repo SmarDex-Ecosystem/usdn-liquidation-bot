@@ -9,6 +9,8 @@ export default class PythAdapter implements IOracleAdapter {
     private readonly PRICE_FEED_ID = '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace';
     /** Instance of the client to get data from Pyth */
     private connection;
+    /** @inheritdoc */
+    public readonly VALIDATION_COST = 1n;
 
     constructor() {
         const hermesUrl = process.env.HERMES_URL;

@@ -8,11 +8,13 @@ import { type OnBlock, parseEther } from 'viem';
 const blockchainClient = getBlockchainClient();
 let newBlockCallback: OnBlock;
 const lowLatencyOracle: IOracleAdapter = {
+    VALIDATION_COST: 5n,
     subscribeToPriceUpdates: vi.fn(),
     getLatestPrice: vi.fn(),
     getPriceAtTimestamp: vi.fn(),
 };
 const highLatencyOracle: IOracleAdapter = {
+    VALIDATION_COST: 0n,
     subscribeToPriceUpdates: vi.fn(),
     getLatestPrice: vi.fn(),
     getPriceAtTimestamp: vi.fn(),
@@ -128,6 +130,9 @@ describe('PendingActionsService', () => {
                 expect(validateActionablePendingActionsSpy).toHaveBeenCalledOnce();
                 // the first raw index should have been removed from the array
                 expect(validateActionablePendingActionsSpy.mock.lastCall?.[1]).toEqual(rawIndices.slice(1));
+                expect(validateActionablePendingActionsSpy.mock.lastCall?.[2]).toEqual(
+                    lowLatencyOracle.VALIDATION_COST * 2n,
+                );
             });
             it('and early return if all price data fetching failed', async () => {
                 lowLatencyOracle.getPriceAtTimestamp = vi.fn().mockRejectedValue(new Error('Price fetching failed'));

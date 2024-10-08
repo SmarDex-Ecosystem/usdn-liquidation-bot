@@ -120,10 +120,13 @@ describe('UsdnProtocolContract', () => {
 
     describe('validateActionablePendingActions', () => {
         beforeEach(() => {
-            mockSimulateContract.mockResolvedValue({
-                result: 2n,
-                request: {},
-            } as any);
+            mockSimulateContract.mockImplementation(
+                (args) =>
+                    ({
+                        result: 2n,
+                        request: args,
+                    }) as any,
+            );
         });
 
         it('should throw an error if the simulation fails', async () => {
@@ -131,14 +134,14 @@ describe('UsdnProtocolContract', () => {
             mockSimulateContract.mockRejectedValue(error);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            await expect(contract.validateActionablePendingActions([], [])).rejects.toThrow(error);
+            await expect(contract.validateActionablePendingActions([], [], 0n)).rejects.toThrow(error);
         });
         it('should throw an error if the tx fails', async () => {
             const error = new Error('TX failed');
             mockWriteContract.mockRejectedValue(error);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            await expect(contract.validateActionablePendingActions([], [])).rejects.toThrow(error);
+            await expect(contract.validateActionablePendingActions([], [], 0n)).rejects.toThrow(error);
         });
         it('should launch a TX if the result of the simulation is > 0', async () => {
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
@@ -146,9 +149,12 @@ describe('UsdnProtocolContract', () => {
             const validatedPendingActionsCount = await contract.validateActionablePendingActions(
                 ['0xPrice1', '0xPrice2'],
                 [1n, 2n],
+                42n,
             );
             expect(validatedPendingActionsCount).toEqual(2n);
             expect(mockWriteContract).toHaveBeenCalledOnce();
+            // the provided oracle fee should have been forwarded as TX value
+            expect(mockWriteContract.mock.calls[0][0].value).toEqual(42n);
         });
         it('should not launch a TX if the result of the simulation is == 0', async () => {
             mockSimulateContract.mockResolvedValue({
@@ -157,7 +163,7 @@ describe('UsdnProtocolContract', () => {
             } as any);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            const validatedPendingActionsCount = await contract.validateActionablePendingActions([], []);
+            const validatedPendingActionsCount = await contract.validateActionablePendingActions([], [], 0n);
             expect(validatedPendingActionsCount).toEqual(0n);
             expect(mockWriteContract).toBeCalledTimes(0);
         });

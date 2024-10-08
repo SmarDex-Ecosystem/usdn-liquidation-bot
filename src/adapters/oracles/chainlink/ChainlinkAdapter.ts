@@ -8,6 +8,8 @@ import type { RoundData } from './blockchain/types.ts';
 /** Adapter to get price data from the Chainlink's on-chain oracle */
 export default class ChainlinkAdapter implements IOracleAdapter {
     private contract: ChainlinkPriceFeedContract;
+    /** @inheritdoc */
+    public readonly VALIDATION_COST = 0n;
 
     /**
      * @param contract A client to communicate with the Chainlink's price feed's contract

@@ -9,6 +9,8 @@ export default class RedstoneAdapter implements IOracleAdapter {
     private readonly PRICE_DECIMALS = 8;
     private readonly MIN_UNIQUE_SIGNERS_COUNT = 3;
     private readonly PRICE_FEED_ID = 'ETH';
+    /** @inheritdoc */
+    public readonly VALIDATION_COST = 0n;
 
     /**
      * Convert an array of uint8 to a bigint

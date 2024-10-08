@@ -39,17 +39,19 @@ export default class PendingActionsService {
                 const priceSignaturePromises: Promise<Hex>[] = [];
                 // add the block time (12s) to account for the time spent in the mempool
                 const validationTimestamp = block.timestamp + 12n;
+                let oracleFee = 0n;
                 for (let i = 0; i < pendingActions.length; i++) {
                     const pendingAction = pendingActions[i];
                     const timestamp = pendingAction.timestamp + validationDelay;
                     // check which oracle adapter to use based on the age of the action
-                    const adapterToUse =
+                    const oracleToUse =
                         validationTimestamp <= pendingAction.timestamp + lowLatencyDelay
                             ? this.lowLatencyOracleAdapter
                             : this.highLatencyOracleAdapter;
 
+                    oracleFee += oracleToUse.VALIDATION_COST;
                     priceSignaturePromises.push(
-                        adapterToUse.getPriceAtTimestamp(timestamp).then(({ signature }) => signature),
+                        oracleToUse.getPriceAtTimestamp(timestamp).then(({ signature }) => signature),
                     );
                 }
 
@@ -75,7 +77,7 @@ export default class PendingActionsService {
                     return;
                 }
 
-                await this.usdnProtocol.validateActionablePendingActions(priceSignatures, rawIndicesToUse);
+                await this.usdnProtocol.validateActionablePendingActions(priceSignatures, rawIndicesToUse, oracleFee);
             },
         });
 
