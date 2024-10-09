@@ -3,19 +3,20 @@ import PendingActionsService from './PendingActionsService.ts';
 import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
 import { getBlockchainClient } from '../../utils/index.ts';
 import { type OnBlock, parseEther } from 'viem';
-import type { HighLatencyOracle, LowLatencyOracle } from '../../adapters/oracles/OracleAdapter.ts';
+import type { AHighLatencyOracle, ALowLatencyOracle } from '../../adapters/oracles/AOracleAdapter.ts';
+import { OracleType } from '../../adapters/oracles/types.ts';
 
 const blockchainClient = getBlockchainClient();
 let newBlockCallback: OnBlock;
-const lowLatencyOracle: LowLatencyOracle = {
-    TYPE: 0,
+const lowLatencyOracle: ALowLatencyOracle = {
+    TYPE: OracleType.LowLatency,
     VALIDATION_COST: 5n,
     subscribeToPriceUpdates: vi.fn(),
     getLatestPrice: vi.fn(),
     getPriceAtTimestamp: vi.fn(),
 };
-const highLatencyOracle: HighLatencyOracle = {
-    TYPE: 1,
+const highLatencyOracle: AHighLatencyOracle = {
+    TYPE: OracleType.HighLatency,
     VALIDATION_COST: 0n,
     subscribeToPriceUpdates: vi.fn(),
     getLatestPrice: vi.fn(),

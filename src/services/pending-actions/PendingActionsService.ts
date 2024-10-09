@@ -1,28 +1,18 @@
 import type { Hex, PublicActions, WalletActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
-import type { HighLatencyOracle, LowLatencyOracle } from '../../adapters/oracles/OracleAdapter.ts';
+import type { AHighLatencyOracle, ALowLatencyOracle } from '../../adapters/oracles/AOracleAdapter.ts';
 
 export default class PendingActionsService {
-    /** Adapter to communicate with the USDN Protocol's smart contract */
-    private usdnProtocol;
-    /** Oracle to use for actions within the low latency time frame */
-    private lowLatencyOracleAdapter;
-    /** Oracle to use for actions outside the high latency time frame */
-    private highLatencyOracleAdapter;
-    /** Client to communicate with the blockchain */
-    private blockchainClient;
-
     constructor(
-        usdnProtocol: UsdnProtocolContract,
-        blockchainClient: WalletActions & PublicActions,
-        lowLatencyOracleAdapter: LowLatencyOracle,
-        highLatencyOracleAdapter: HighLatencyOracle,
-    ) {
-        this.usdnProtocol = usdnProtocol;
-        this.blockchainClient = blockchainClient;
-        this.lowLatencyOracleAdapter = lowLatencyOracleAdapter;
-        this.highLatencyOracleAdapter = highLatencyOracleAdapter;
-    }
+        /** Adapter to communicate with the USDN Protocol's smart contract */
+        private readonly usdnProtocol: UsdnProtocolContract,
+        /** Client to communicate with the blockchain */
+        private readonly blockchainClient: WalletActions & PublicActions,
+        /** Oracle to use for actions within the low latency time frame */
+        private readonly lowLatencyOracleAdapter: ALowLatencyOracle,
+        /** Oracle to use for actions outside the high latency time frame */
+        private readonly highLatencyOracleAdapter: AHighLatencyOracle,
+    ) {}
 
     /** Watch for actionable pending actions at every block and validate them when there are any */
     watchActionablePendingActions() {

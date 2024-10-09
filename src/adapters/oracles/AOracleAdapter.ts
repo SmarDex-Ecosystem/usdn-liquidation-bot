@@ -1,12 +1,7 @@
-import type { OraclePriceData, OraclePriceUpdateCallback } from './types.ts';
-
-enum OracleType {
-    LowLatency = 0,
-    HighLatency = 1,
-}
+import { OracleType, type OraclePriceData, type OraclePriceUpdateCallback } from './types.ts';
 
 /** Allow to get price data from an oracle */
-export default abstract class OracleAdapter {
+export default abstract class AOracleAdapter {
     /** How much ether it costs (in wei) to use that oracle */
     readonly VALIDATION_COST: bigint = 0n;
 
@@ -29,12 +24,12 @@ export default abstract class OracleAdapter {
     abstract subscribeToPriceUpdates(callback: OraclePriceUpdateCallback): Promise<void>;
 }
 
-export abstract class LowLatencyOracle extends OracleAdapter {
+export abstract class ALowLatencyOracle extends AOracleAdapter {
     /** The type of oracle this adapter is */
     readonly TYPE = OracleType.LowLatency;
 }
 
-export abstract class HighLatencyOracle extends OracleAdapter {
+export abstract class AHighLatencyOracle extends AOracleAdapter {
     /** The type of oracle this adapter is */
     readonly TYPE = OracleType.HighLatency;
 }

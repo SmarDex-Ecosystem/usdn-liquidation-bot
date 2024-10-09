@@ -10,6 +10,11 @@ export type OraclePriceData = {
     signature: Hex;
 };
 
+export enum OracleType {
+    LowLatency = 0,
+    HighLatency = 1,
+}
+
 /** Callback that will be executed whenever the oracle update its price */
 export type OraclePriceUpdateCallback = (priceData: OraclePriceData) => void;
 
