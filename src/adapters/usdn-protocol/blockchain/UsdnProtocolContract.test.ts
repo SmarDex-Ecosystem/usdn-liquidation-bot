@@ -195,8 +195,8 @@ describe('UsdnProtocolContract', () => {
             mockWriteContract.mockResolvedValue('0xHash');
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            const { liquidatedPositionsAmount, hash } = await contract.liquidate('0xPriceSignature', oracleFee);
-            expect(liquidatedPositionsAmount).toEqual(3n);
+            const { liquidatedTicksAmount, hash } = await contract.liquidate('0xPriceSignature', oracleFee);
+            expect(liquidatedTicksAmount).toEqual(2);
             expect(hash).toEqual('0xHash');
             // the provided oracle fee should have been forwarded as TX value
             expect(mockWriteContract.mock.calls[0][0].value).toEqual(1n);
@@ -206,8 +206,8 @@ describe('UsdnProtocolContract', () => {
             mockWriteContract.mockResolvedValue('0xHash');
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            const { liquidatedPositionsAmount, hash } = await contract.liquidate('0xPriceSignature', 1n);
-            expect(liquidatedPositionsAmount).toEqual(0n);
+            const { liquidatedTicksAmount, hash } = await contract.liquidate('0xPriceSignature', 1n);
+            expect(liquidatedTicksAmount).toEqual(0);
             expect(hash).toBeUndefined();
             expect(mockWriteContract).toBeCalledTimes(0);
         });

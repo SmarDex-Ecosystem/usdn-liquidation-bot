@@ -87,7 +87,7 @@ export default class UsdnProtocolContract {
      * @returns The amount of positions liquidated during the simulation
      */
     async liquidate(priceSignature: Hex, oracleFee: bigint) {
-        const { result: liquidatedTicks, request } = await this.blockchainClient.simulateContract({
+        const { request, result: liquidatedTicks } = await this.blockchainClient.simulateContract({
             abi,
             address: this.contractAddress,
             blockTag: 'pending',
@@ -103,10 +103,7 @@ export default class UsdnProtocolContract {
         }
 
         return {
-            liquidatedPositionsAmount: liquidatedTicks.reduce(
-                (acc, liquidatedTick) => acc + liquidatedTick.totalPositions,
-                0n,
-            ),
+            liquidatedTicksAmount: liquidatedTicks.length,
             hash,
         };
     }
