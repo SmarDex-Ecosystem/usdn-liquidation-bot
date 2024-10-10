@@ -1,10 +1,12 @@
+import type { Hex } from 'viem';
 import type AOracleAdapter from '../../adapters/oracles/AOracleAdapter.ts';
 import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
 export interface PriceRecord {
     timestamp: number;
     price: bigint;
-    signature: string;
+    signature: Hex;
+    oracleFee: bigint;
 }
 
 export default class LiquidationPriceHistory {
@@ -17,8 +19,8 @@ export default class LiquidationPriceHistory {
         this.oracleAdapter = oracleAdapter;
     }
 
-    private addRecord(timestamp: number, priceData: OraclePriceData) {
-        this.history.push({ timestamp, ...priceData });
+    private addRecord(timestamp: number, priceData: OraclePriceData, oracleFee: bigint) {
+        this.history.push({ timestamp, oracleFee, ...priceData });
     }
 
     private cleanupOldRecords() {
@@ -45,14 +47,14 @@ export default class LiquidationPriceHistory {
         this.cleanupIntervalId = setInterval(() => this.cleanupOldRecords(), 1000);
 
         this.oracleAdapter.subscribeToPriceUpdates((priceData) => {
-            this.addRecord(Date.now(), priceData);
+            this.addRecord(Date.now(), priceData, this.oracleAdapter.VALIDATION_COST);
         });
 
         process.on('SIGTERM', this.handleExitSignals);
         process.on('SIGINT', this.handleExitSignals);
     }
 
-    public getSmallestPriceRecord() {
+    getSmallestPriceRecord() {
         if (this.history.length === 0) return null;
 
         return this.history.reduce((smallest, current) => (current.price < smallest.price ? current : smallest));
