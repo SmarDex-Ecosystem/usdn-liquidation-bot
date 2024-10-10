@@ -1,6 +1,5 @@
 import { http, type Hex, publicActions, createWalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { mainnet } from 'viem/chains';
 
 /**
  * Sleep for the specified amount of milliseconds
@@ -32,7 +31,6 @@ export function getBlockchainClient() {
     const account = privateKeyToAccount(privateKey as Hex);
     const client = createWalletClient({
         transport: http(process.env.RPC_URL),
-        chain: mainnet,
         account: account,
     }).extend(publicActions);
 

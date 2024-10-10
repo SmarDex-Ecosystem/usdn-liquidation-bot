@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import LiquidationPriceHistory, { type PriceRecord } from './LiquidationPriceHistory.ts';
-import type IOracleAdapter from '../../adapters/oracles/IOracleAdapter.ts';
+import type AOracleAdapter from '../../adapters/oracles/AOracleAdapter.ts';
 import type { OraclePriceData } from '../../adapters/oracles/types.ts';
 
 class LiquidationPriceHistoryExtended extends LiquidationPriceHistory {
@@ -18,16 +18,16 @@ class LiquidationPriceHistoryExtended extends LiquidationPriceHistory {
 }
 
 describe('LiquidationPriceHistory', () => {
-    let mockOracleAdapter: IOracleAdapter;
+    let mockOracleAdapter: AOracleAdapter;
     let liquidationPriceHistory: LiquidationPriceHistoryExtended;
-    const mockPriceData: OraclePriceData = { price: BigInt(352100000000), decimals: 18, signature: 'mock-signature' };
+    const mockPriceData: OraclePriceData = { price: BigInt(352100000000), decimals: 18, signature: '0xMock-signature' };
 
     beforeEach(() => {
         mockOracleAdapter = {
             subscribeToPriceUpdates: vi.fn(),
             getLatestPrice: vi.fn(),
             getPriceAtTimestamp: vi.fn(),
-        } as unknown as IOracleAdapter;
+        } as unknown as AOracleAdapter;
 
         liquidationPriceHistory = new LiquidationPriceHistoryExtended(mockOracleAdapter);
     });
@@ -77,10 +77,10 @@ describe('LiquidationPriceHistory', () => {
         it('should handle multiple price updates over more than one minute', async () => {
             vi.useFakeTimers();
             const priceUpdates: OraclePriceData[] = [
-                { price: BigInt(500), decimals: 18, signature: 'sig1' },
-                { price: BigInt(300), decimals: 18, signature: 'sig2' },
-                { price: BigInt(400), decimals: 18, signature: 'sig3' },
-                { price: BigInt(250), decimals: 18, signature: 'sig4' },
+                { price: BigInt(500), decimals: 18, signature: '0xSig1' },
+                { price: BigInt(300), decimals: 18, signature: '0xSig2' },
+                { price: BigInt(400), decimals: 18, signature: '0xSig3' },
+                { price: BigInt(250), decimals: 18, signature: '0xSig4' },
             ];
 
             vi.mocked(mockOracleAdapter.subscribeToPriceUpdates).mockImplementationOnce(async (callback) => {
@@ -123,10 +123,10 @@ describe('LiquidationPriceHistory', () => {
         it('should handle multiple price updates over more than one minute and find the smallest price', async () => {
             vi.useFakeTimers();
             const priceUpdates: OraclePriceData[] = [
-                { price: BigInt(500), decimals: 18, signature: 'sig1' },
-                { price: BigInt(300), decimals: 18, signature: 'sig2' },
-                { price: BigInt(400), decimals: 18, signature: 'sig3' },
-                { price: BigInt(250), decimals: 18, signature: 'sig4' },
+                { price: BigInt(500), decimals: 18, signature: '0xSig1' },
+                { price: BigInt(300), decimals: 18, signature: '0xSig2' },
+                { price: BigInt(400), decimals: 18, signature: '0xSig3' },
+                { price: BigInt(250), decimals: 18, signature: '0xSig4' },
             ];
 
             const initDate = Date.now();
@@ -137,7 +137,7 @@ describe('LiquidationPriceHistory', () => {
 
             const smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
             expect(smallestRecord?.price).toBe(BigInt(250));
-            expect(smallestRecord?.signature).toBe('sig4');
+            expect(smallestRecord?.signature).toBe('0xSig4');
         });
 
         it('should return null if history is empty', () => {

@@ -27,6 +27,7 @@ vi.mock('viem', async (importOriginal) => {
             simulateContract: vi.fn(),
             readContract: vi.fn(),
             multicall: vi.fn(),
+            writeContract: vi.fn(),
         })),
     };
 });
@@ -35,12 +36,14 @@ vi.mock('viem', async (importOriginal) => {
 const mockContractAddress = '0x1234567890abcdef1234567890abcdef12345678';
 const mockBlockchainClient = getBlockchainClient();
 const mockSimulateContract = vi.spyOn(mockBlockchainClient, 'simulateContract');
+const mockWriteContract = vi.spyOn(mockBlockchainClient, 'writeContract');
 const mockReadContract = vi.spyOn(mockBlockchainClient, 'readContract');
 const mockMulticall = vi.spyOn(mockBlockchainClient, 'multicall');
 
 describe('UsdnProtocolContract', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     describe('constructor', () => {
@@ -96,17 +99,12 @@ describe('UsdnProtocolContract', () => {
                         var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                     },
                     {
-                        action: 0, securityDepositValue: 0n, timestamp: 0,
-                        to: zeroAddress, validator: zeroAddress,
-                        var1: 0, var2: 0n, var3: 0n, var4: 0n, var5: 0n, var6: 0n, var7: 0n,
-                    },
-                    {
                         action: 4, securityDepositValue: parseEther('1'), timestamp: 1438226773,
                         to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
                         var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                     },
                 ] as PendingAction[],
-                [12n, 0n, 42n] as bigint[],
+                [12n, 42n] as bigint[],
             ];
             mockReadContract.mockResolvedValue(contractCallResult);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
@@ -120,26 +118,54 @@ describe('UsdnProtocolContract', () => {
         });
     });
 
-    describe('simulateValidateActionablePendingActions', () => {
-        it('should throw an error if the call fails', async () => {
+    describe('validateActionablePendingActions', () => {
+        beforeEach(() => {
+            mockSimulateContract.mockImplementation(
+                (args) =>
+                    ({
+                        result: 2n,
+                        request: args,
+                    }) as any,
+            );
+        });
+
+        it('should throw an error if the simulation fails', async () => {
             const error = new Error('Simulation failed');
             mockSimulateContract.mockRejectedValue(error);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            await expect(contract.simulateValidateActionablePendingActions([], [])).rejects.toThrow(error);
+            await expect(contract.validateActionablePendingActions([], [], 0n)).rejects.toThrow(error);
         });
-        it('should throw an error if the call fails', async () => {
+        it('should throw an error if the tx fails', async () => {
+            const error = new Error('TX failed');
+            mockWriteContract.mockRejectedValue(error);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            await expect(contract.validateActionablePendingActions([], [], 0n)).rejects.toThrow(error);
+        });
+        it('should launch a TX if the result of the simulation is > 0', async () => {
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
+            const validatedPendingActionsCount = await contract.validateActionablePendingActions(
+                ['0xPrice1', '0xPrice2'],
+                [1n, 2n],
+                42n,
+            );
+            expect(validatedPendingActionsCount).toEqual(2n);
+            expect(mockWriteContract).toHaveBeenCalledOnce();
+            // the provided oracle fee should have been forwarded as TX value
+            expect(mockWriteContract.mock.calls[0][0].value).toEqual(42n);
+        });
+        it('should not launch a TX if the result of the simulation is == 0', async () => {
             mockSimulateContract.mockResolvedValue({
-                result: 2n,
+                result: 0n,
                 request: {},
             } as any);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            const validatedPendingActionsCount = await contract.simulateValidateActionablePendingActions(
-                ['0xPrice1', '0xPrice2'],
-                [1n, 2n],
-            );
-            expect(validatedPendingActionsCount).toEqual(2n);
+            const validatedPendingActionsCount = await contract.validateActionablePendingActions([], [], 0n);
+            expect(validatedPendingActionsCount).toEqual(0n);
+            expect(mockWriteContract).toBeCalledTimes(0);
         });
     });
 
