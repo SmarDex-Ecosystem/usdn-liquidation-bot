@@ -44,18 +44,19 @@ export default class UsdnProtocolContract {
     }
 
     /**
-     * Simulate the validation of pending actions with the current parameters and return the amount that it would validate
+     * Simulate the validation of pending actions with the current parameters and launch a TX if the simulation
+     * indicates that pending actions would be validated by our action
      * @param priceData The price data for each actions that can be validated
      * @param rawIndices The raw indices corresponding to the price data entries
      * @param oracleFee The fee to send as value to pay for oracle price validations
-     * @returns The amount of validated pending actions
+     * @returns The amount of validated pending actions and the TX hash if that amount is > 0
      */
     async validateActionablePendingActions(
         priceData: readonly Hex[],
         rawIndices: readonly bigint[],
         oracleFee: bigint,
-    ): Promise<bigint> {
-        const { request, result } = await this.blockchainClient.simulateContract({
+    ) {
+        const { request, result: validatedActionsAmount } = await this.blockchainClient.simulateContract({
             abi,
             address: this.contractAddress,
             blockTag: 'pending',
@@ -71,12 +72,40 @@ export default class UsdnProtocolContract {
             ],
         });
 
-        if (result > 0) {
-            // TODO log the TX hash?
-            await this.blockchainClient.writeContract(request);
+        let hash: Hex | undefined;
+        if (validatedActionsAmount > 0n) {
+            hash = await this.blockchainClient.writeContract(request);
         }
 
-        return result;
+        return { validatedActionsAmount, hash };
+    }
+
+    /**
+     * Simulate a liquidation call with the provided price and launch a TX if it would result in liquidations
+     * @param priceSignature The encoded price to use for liquidating positions
+     * @param oracleFee The fee to send as value to pay for oracle price validations
+     * @returns The amount of positions liquidated during the simulation
+     */
+    async liquidate(priceSignature: Hex, oracleFee: bigint) {
+        const { request, result: liquidatedTicks } = await this.blockchainClient.simulateContract({
+            abi,
+            address: this.contractAddress,
+            blockTag: 'pending',
+            account: this.blockchainClient.account,
+            functionName: 'liquidate',
+            value: oracleFee,
+            args: [priceSignature],
+        });
+
+        let hash: Hex | undefined;
+        if (liquidatedTicks.length > 0) {
+            hash = await this.blockchainClient.writeContract(request);
+        }
+
+        return {
+            liquidatedTicksAmount: liquidatedTicks.length,
+            hash,
+        };
     }
 
     /** Calls the getHighestPopulatedTick function in the contract
