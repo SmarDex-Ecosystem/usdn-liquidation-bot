@@ -1,18 +1,19 @@
 import { encodeAbiParameters } from 'viem';
 import { sleep } from '../../../utils/index.ts';
-import type IOracleAdapter from '../IOracleAdapter.js';
+import { AHighLatencyOracle } from '../AOracleAdapter.ts';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.js';
 import type ChainlinkPriceFeedContract from './blockchain/ChainlinkPriceFeedContract.ts';
 import type { RoundData } from './blockchain/types.ts';
 
 /** Adapter to get price data from the Chainlink's on-chain oracle */
-export default class ChainlinkAdapter implements IOracleAdapter {
+export default class ChainlinkAdapter extends AHighLatencyOracle {
     private contract: ChainlinkPriceFeedContract;
 
     /**
      * @param contract A client to communicate with the Chainlink's price feed's contract
      */
     constructor(contract: ChainlinkPriceFeedContract) {
+        super();
         this.contract = contract;
     }
 

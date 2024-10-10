@@ -1,15 +1,19 @@
 import { HermesClient, type PriceUpdate } from '@pythnetwork/hermes-client';
-import type IOracleAdapter from '../IOracleAdapter.ts';
+import { ALowLatencyOracle } from '../AOracleAdapter.ts';
 import { type OraclePriceData, OraclePriceFetchingError, type OraclePriceUpdateCallback } from '../types.ts';
+import type { Hex } from 'viem';
 
 /** Adapter to get price data from the Pyth oracle */
-export default class PythAdapter implements IOracleAdapter {
+export default class PythAdapter extends ALowLatencyOracle {
     /** ID of the price feed of ETH/USD in the Pyth oracle */
     private readonly PRICE_FEED_ID = '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace';
     /** Instance of the client to get data from Pyth */
     private connection;
+    /** @inheritdoc */
+    public readonly VALIDATION_COST = 1n;
 
     constructor() {
+        super();
         const hermesUrl = process.env.HERMES_URL;
         if (hermesUrl === undefined || hermesUrl === '') {
             throw new Error('Environment variable HERMES_URL not set');
@@ -49,7 +53,7 @@ export default class PythAdapter implements IOracleAdapter {
         return {
             price: BigInt(pythPrice),
             decimals: expo * -1,
-            signature: priceUpdates.binary.data[0],
+            signature: `0x${priceUpdates.binary.data[0]}` as Hex,
         };
     }
 

@@ -1,5 +1,8 @@
 import { chainlinkAdapter, pythAdapter, redstoneAdapter } from './adapters/oracles/index.ts';
+import { usdnProtocolContract } from './adapters/usdn-protocol/index.ts';
 import { gasPriceService } from './services/gas-price/index.ts';
+import PendingActionsService from './services/pending-actions/PendingActionsService.ts';
+import { getBlockchainClient } from './utils/index.ts';
 
 const main = async () => {
     console.log('Latest Redstone price ', await redstoneAdapter.getLatestPrice());
@@ -23,6 +26,7 @@ const main = async () => {
     });
 
     console.log('Gas price', await gasPriceService.getGasPrice());
+    new PendingActionsService(usdnProtocolContract, getBlockchainClient(), pythAdapter, chainlinkAdapter);
 };
 
 main();
