@@ -24,7 +24,7 @@ export default class LiquidationsService {
         const unwatch = this.blockchainClient.watchBlockNumber({
             onBlockNumber: (blockNumber) => {
                 currentTimeout = setTimeout(
-                    () => {
+                    async () => {
                         currentTimeout = undefined;
                         const priceRecord = this.liquidationPriceHistory.getSmallestPriceRecord();
                         if (!priceRecord) {
@@ -32,7 +32,21 @@ export default class LiquidationsService {
                             return;
                         }
 
-                        this.usdnProtocol.liquidate(priceRecord.signature, priceRecord.oracleFee);
+                        const { hash, liquidatedTicksAmount } = await this.usdnProtocol.liquidate(
+                            priceRecord.signature,
+                            priceRecord.oracleFee,
+                        );
+
+                        const formattedPrice = +(priceRecord.price / 10n ** 6n).toString() / 100;
+                        if (liquidatedTicksAmount === 0) {
+                            console.debug(
+                                `[${+Date.now()}] No ticks to liquidate at block ${blockNumber} with price ${formattedPrice}`,
+                            );
+                        } else {
+                            console.log(
+                                `[${+Date.now()}] ${liquidatedTicksAmount} ticks to liquidate at block ${blockNumber} with price ${formattedPrice}, hash: ${hash}`,
+                            );
+                        }
                     },
                     blockTimeMs * 0.8, // wait for 80% of the block time before checking prices and submitting transactions
                 );

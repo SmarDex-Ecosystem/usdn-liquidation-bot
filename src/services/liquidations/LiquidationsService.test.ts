@@ -16,7 +16,9 @@ const watchNewPricesSpy = vi.spyOn(liquidationPriceHistory, 'watchNewPrices').mo
 const getSmallestPriceRecordSpy = vi
     .spyOn(liquidationPriceHistory, 'getSmallestPriceRecord')
     .mockImplementation(vi.fn());
-const liquidateSpy = vi.spyOn(usdnProtocolContract, 'liquidate').mockImplementation(vi.fn());
+const liquidateSpy = vi
+    .spyOn(usdnProtocolContract, 'liquidate')
+    .mockResolvedValue({ hash: undefined, liquidatedTicksAmount: 0 });
 
 describe('LiquidationPriceHistory', () => {
     beforeEach(() => {
@@ -31,7 +33,6 @@ describe('LiquidationPriceHistory', () => {
 
     afterEach(() => {
         vi.clearAllMocks();
-        vi.resetAllMocks();
     });
 
     describe('watchLiquidations', () => {

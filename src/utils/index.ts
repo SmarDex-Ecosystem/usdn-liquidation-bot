@@ -14,7 +14,9 @@ export async function sleep(milliseconds: number) {
 
 export function getBlockTime(chainId: number) {
     switch (chainId) {
-        case mainnet.id || sepolia.id:
+        case mainnet.id:
+            return 12;
+        case sepolia.id:
             return 12;
         default:
             throw new Error(`Unsupported chain ID ${chainId}`);
@@ -42,6 +44,7 @@ export function getBlockchainClient() {
     const client = createWalletClient({
         transport: http(process.env.RPC_URL),
         account: account,
+        pollingInterval: 2000,
     }).extend(publicActions);
 
     return client;

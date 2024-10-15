@@ -1,32 +1,23 @@
-import { chainlinkAdapter, pythAdapter, redstoneAdapter } from './adapters/oracles/index.ts';
+import { chainlinkAdapter, pythAdapter } from './adapters/oracles/index.ts';
 import { usdnProtocolContract } from './adapters/usdn-protocol/index.ts';
-import { gasPriceService } from './services/gas-price/index.ts';
+import { liquidationPriceHistory } from './services/liquidationPriceHistory/index.ts';
+import LiquidationsService from './services/liquidations/LiquidationsService.ts';
 import PendingActionsService from './services/pending-actions/PendingActionsService.ts';
 import { getBlockchainClient } from './utils/index.ts';
 
+const blockChainClient = getBlockchainClient();
+const pendingActionsService = new PendingActionsService(
+    usdnProtocolContract,
+    blockChainClient,
+    pythAdapter,
+    chainlinkAdapter,
+);
+const liquidationsService = new LiquidationsService(usdnProtocolContract, blockChainClient, liquidationPriceHistory);
+
 const main = async () => {
-    console.log('Latest Redstone price ', await redstoneAdapter.getLatestPrice());
-    console.log('Latest Pyth price     ', await pythAdapter.getLatestPrice());
-    console.log('Latest Chainlink price', await chainlinkAdapter.getLatestPrice());
-
-    pythAdapter.subscribeToPriceUpdates((priceData) => {
-        console.log(`Received an update for 🟩 Pyth ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`);
-    });
-
-    redstoneAdapter.subscribeToPriceUpdates((priceData) => {
-        console.log(
-            `Received an update for 🟥 Redstone ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`,
-        );
-    });
-
-    chainlinkAdapter.subscribeToPriceUpdates((priceData) => {
-        console.log(
-            `Received an update for 🟦 Chainlink ETH/USD: ${Number(priceData.price) / 10 ** priceData.decimals}`,
-        );
-    });
-
-    console.log('Gas price', await gasPriceService.getGasPrice());
-    new PendingActionsService(usdnProtocolContract, getBlockchainClient(), pythAdapter, chainlinkAdapter);
+    console.log(`Account that will sign transactions: ${blockChainClient.account.address}`);
+    pendingActionsService.watchActionablePendingActions();
+    liquidationsService.watchLiquidations();
 };
 
 main();

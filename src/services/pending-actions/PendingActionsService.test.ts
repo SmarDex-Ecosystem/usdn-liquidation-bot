@@ -28,7 +28,7 @@ let getActionablePendingActionsSpy = vi
     .mockImplementation(vi.fn());
 const validateActionablePendingActionsSpy = vi
     .spyOn(usdnProtocolContract, 'validateActionablePendingActions')
-    .mockImplementation(vi.fn());
+    .mockResolvedValue({ hash: '0x0', validatedActionsAmount: 0n });
 const pendingActionsService = new PendingActionsService(
     usdnProtocolContract,
     blockchainClient,
@@ -48,7 +48,6 @@ describe('PendingActionsService', () => {
     });
     afterEach(() => {
         vi.clearAllMocks();
-        vi.resetAllMocks();
     });
 
     describe('watchActionablePendingActions', () => {
