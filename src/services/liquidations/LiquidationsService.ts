@@ -1,6 +1,6 @@
 import type { PublicActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
-import type LiquidationPriceHistoryService from '../liquidationPriceHistory/LiquidationPriceHistory.ts';
+import type LiquidationPriceHistoryService from '../liquidation-price-history/LiquidationPriceHistory.ts';
 import { getBlockTime } from '../../utils/index.ts';
 
 export default class LiquidationsService {
