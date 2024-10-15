@@ -1,5 +1,6 @@
 import { http, type Hex, publicActions, createWalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
+import { mainnet, sepolia } from 'viem/chains';
 
 /**
  * Sleep for the specified amount of milliseconds
@@ -9,6 +10,15 @@ export async function sleep(milliseconds: number) {
     return new Promise((resolve) => {
         setTimeout(resolve, milliseconds);
     });
+}
+
+export function getBlockTime(chainId: number) {
+    switch (chainId) {
+        case mainnet.id || sepolia.id:
+            return 12;
+        default:
+            throw new Error(`Unsupported chain ID ${chainId}`);
+    }
 }
 
 /**

@@ -12,8 +12,8 @@ class LiquidationPriceHistoryExtended extends LiquidationPriceHistory {
         return this.cleanupIntervalId;
     }
 
-    public forceAddRecord(timestamp: number, priceData: OraclePriceData) {
-        this.history.push({ timestamp, ...priceData });
+    public forceAddRecord(timestamp: number, priceData: OraclePriceData, oracleFee: bigint) {
+        this.history.push({ timestamp, oracleFee, ...priceData });
     }
 }
 
@@ -24,10 +24,11 @@ describe('LiquidationPriceHistory', () => {
 
     beforeEach(() => {
         mockOracleAdapter = {
+            VALIDATION_COST: 1n,
             subscribeToPriceUpdates: vi.fn(),
             getLatestPrice: vi.fn(),
             getPriceAtTimestamp: vi.fn(),
-        } as unknown as AOracleAdapter;
+        };
 
         liquidationPriceHistory = new LiquidationPriceHistoryExtended(mockOracleAdapter);
     });
@@ -130,14 +131,15 @@ describe('LiquidationPriceHistory', () => {
             ];
 
             const initDate = Date.now();
-            liquidationPriceHistory.forceAddRecord(initDate - 230, priceUpdates[0]);
-            liquidationPriceHistory.forceAddRecord(initDate - 200, priceUpdates[1]);
-            liquidationPriceHistory.forceAddRecord(initDate, priceUpdates[2]);
-            liquidationPriceHistory.forceAddRecord(initDate + 100, priceUpdates[3]);
+            liquidationPriceHistory.forceAddRecord(initDate - 230, priceUpdates[0], 1n);
+            liquidationPriceHistory.forceAddRecord(initDate - 200, priceUpdates[1], 2n);
+            liquidationPriceHistory.forceAddRecord(initDate, priceUpdates[2], 3n);
+            liquidationPriceHistory.forceAddRecord(initDate + 100, priceUpdates[3], 4n);
 
             const smallestRecord = liquidationPriceHistory.getSmallestPriceRecord();
             expect(smallestRecord?.price).toBe(BigInt(250));
             expect(smallestRecord?.signature).toBe('0xSig4');
+            expect(smallestRecord?.oracleFee).toBe(4n);
         });
 
         it('should return null if history is empty', () => {

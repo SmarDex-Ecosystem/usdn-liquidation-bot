@@ -87,8 +87,8 @@ describe('UsdnProtocolContract', () => {
             mockSimulateContract.mockImplementation(
                 (args) =>
                     ({
-                        result: 2n,
                         request: args,
+                        result: 2n,
                     }) as any,
             );
         });
@@ -122,7 +122,7 @@ describe('UsdnProtocolContract', () => {
             expect(mockWriteContract.mock.calls[0][0].value).toEqual(42n);
         });
         it('should not launch a TX if the result of the simulation is == 0', async () => {
-            mockSimulateContract.mockResolvedValue({ result: 0n, request: {} } as any);
+            mockSimulateContract.mockResolvedValue({ request: {}, result: 0n } as any);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
             const { validatedActionsAmount, hash } = await contract.validateActionablePendingActions([], [], 0n);
@@ -141,7 +141,7 @@ describe('UsdnProtocolContract', () => {
             await expect(contract.liquidate('0xPriceSignature', 0n)).rejects.toThrow(error);
         });
         it('should throw an error if the TX launch fails', async () => {
-            mockSimulateContract.mockResolvedValue({ result: [{ totalPositions: 42n }], request: {} } as any);
+            mockSimulateContract.mockResolvedValue({ request: {}, result: [{ totalPositions: 42n }] } as any);
             const error = new Error('failed to launch TX');
             mockWriteContract.mockRejectedValue(error);
 
@@ -152,8 +152,8 @@ describe('UsdnProtocolContract', () => {
         it('should return the amount of positions liquidated by the simulation', async () => {
             const oracleFee = 1n;
             mockSimulateContract.mockResolvedValue({
-                result: [{ totalPositions: 1n }, { totalPositions: 2n }],
                 request: { value: oracleFee },
+                result: [{ totalPositions: 1n }, { totalPositions: 2n }],
             } as any);
             mockWriteContract.mockResolvedValue('0xHash');
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
