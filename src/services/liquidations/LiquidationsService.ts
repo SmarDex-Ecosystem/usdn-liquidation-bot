@@ -1,4 +1,4 @@
-import type { PublicActions } from 'viem';
+import type { Hex, PublicActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
 import type LiquidationPriceHistoryService from '../liquidationPriceHistory/LiquidationPriceHistory.ts';
 import { getBlockTime } from '../../utils/index.ts';
@@ -32,10 +32,25 @@ export default class LiquidationsService {
                             return;
                         }
 
-                        const { hash, liquidatedTicksAmount } = await this.usdnProtocol.liquidate(
-                            priceRecord.signature,
-                            priceRecord.oracleFee,
-                        );
+                        let hash: Hex | undefined;
+                        let liquidatedTicksAmount = 0;
+                        try {
+                            const result = await this.usdnProtocol.liquidate(
+                                priceRecord.signature,
+                                priceRecord.oracleFee,
+                            );
+                            hash = result.hash;
+                            liquidatedTicksAmount = result.liquidatedTicksAmount;
+                        } catch (error) {
+                            // 0x45805f5d can happen because of timing issues, we can just skip that block and try again on the next one
+                            if ((error as Error).toString().includes('0x45805f5d')) {
+                                console.warn(`[${+Date.now()}] Encountered error 0x45805f5d for block ${blockNumber}`);
+                                return;
+                            }
+
+                            // throw an error on any other error
+                            throw error;
+                        }
 
                         const formattedPrice = +(priceRecord.price / 10n ** 6n).toString() / 100;
                         if (liquidatedTicksAmount === 0) {
