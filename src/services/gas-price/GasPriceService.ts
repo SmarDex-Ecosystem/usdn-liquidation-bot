@@ -11,7 +11,7 @@ export default class GasPriceService {
 
     public async getGasPrice() {
         try {
-            return this.primaryGasPriceAdapter.getGasPrice();
+            return await this.primaryGasPriceAdapter.getGasPrice();
         } catch (error) {
             console.error(`Primary gas price source failed: ${error}`);
         }

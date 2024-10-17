@@ -1,47 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type IGasPriceAdapter from '../../adapters/gas-price/IGasPriceAdapter.ts';
-import { gasPriceService } from './index.ts';
+import GasPriceService from './GasPriceService.ts';
 
-vi.mock('../../adapters/gas-price/etherscan/Etherscan');
-vi.mock('../../adapters/gas-price/viem/Viem');
-vi.mock('../../utils/index');
+const mockedPrimaryAdapter: IGasPriceAdapter = { getGasPrice: vi.fn() };
+const mockedFallbackAdapter: IGasPriceAdapter = { getGasPrice: vi.fn() };
+const gasPriceService = new GasPriceService(mockedPrimaryAdapter, mockedFallbackAdapter);
+
+const primaryAdapterResponse = {
+    fastPriorityFee: 150n,
+    suggestedBaseFee: 50n,
+};
+
+const fallbackAdapterResponse = {
+    fastPriorityFee: 200n,
+    suggestedBaseFee: 340n,
+};
 
 describe('GasPriceService', () => {
-    let mockedPrimaryAdapter: IGasPriceAdapter;
-    let mockedFallbackAdapter: IGasPriceAdapter;
-
-    const validPrimaryResponse = {
-        fastPriorityFee: 150n,
-        suggestedBaseFee: 50n,
-    };
-
-    const fallbackAdapterResponse = {
-        fastPriorityFee: 200n,
-        suggestedBaseFee: 340n,
-    };
-
     beforeEach(async () => {
-        mockedPrimaryAdapter = { getGasPrice: vi.fn() };
-        mockedFallbackAdapter = { getGasPrice: vi.fn() };
-
-        vi.spyOn(mockedPrimaryAdapter, 'getGasPrice').mockResolvedValue(validPrimaryResponse);
+        vi.spyOn(mockedPrimaryAdapter, 'getGasPrice').mockResolvedValue(primaryAdapterResponse);
         vi.spyOn(mockedFallbackAdapter, 'getGasPrice').mockResolvedValue(fallbackAdapterResponse);
-
-        vi.spyOn(gasPriceService, 'getGasPrice').mockImplementation(async () => {
-            try {
-                const primaryData = await mockedPrimaryAdapter.getGasPrice();
-                return {
-                    fastPriorityFee: primaryData.fastPriorityFee,
-                    suggestedBaseFee: primaryData.suggestedBaseFee,
-                };
-            } catch {
-                const fallbackData = await mockedFallbackAdapter.getGasPrice();
-                return {
-                    fastPriorityFee: fallbackData.fastPriorityFee,
-                    suggestedBaseFee: fallbackData.suggestedBaseFee,
-                };
-            }
-        });
     });
 
     afterEach(() => {
@@ -49,22 +27,16 @@ describe('GasPriceService', () => {
     });
 
     describe('getGasPrice', () => {
-        it('should return gas price from the primary adapter if successful', async () => {
+        it('should return gas price from the primary adapter by default', async () => {
             const data = await gasPriceService.getGasPrice();
-            expect(data).toEqual({
-                fastPriorityFee: validPrimaryResponse.fastPriorityFee,
-                suggestedBaseFee: validPrimaryResponse.suggestedBaseFee,
-            });
+            expect(data).toEqual(primaryAdapterResponse);
         });
 
         it('should fall back to the secondary adapter if the primary adapter call fails', async () => {
-            vi.spyOn(mockedPrimaryAdapter, 'getGasPrice').mockRejectedValueOnce(new Error('Primary adapter failed'));
+            vi.spyOn(mockedPrimaryAdapter, 'getGasPrice').mockRejectedValue(new Error('Primary adapter failed'));
 
             const data = await gasPriceService.getGasPrice();
-            expect(data).toEqual({
-                fastPriorityFee: fallbackAdapterResponse.fastPriorityFee,
-                suggestedBaseFee: fallbackAdapterResponse.suggestedBaseFee,
-            });
+            expect(data).toEqual(fallbackAdapterResponse);
         });
     });
 });

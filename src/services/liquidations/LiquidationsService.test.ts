@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import LiquidationsService from './LiquidationsService.ts';
-import { liquidationPriceHistory } from '../liquidationPriceHistory/index.ts';
+import { liquidationPriceHistory } from '../liquidation-price-history/index.ts';
 import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
 import { getBlockchainClient, getBlockTime } from '../../utils/index.ts';
 import type { OnBlockNumberFn } from 'viem';
