@@ -24,7 +24,12 @@ export default class PendingActionsService {
                 const { pendingActions, rawIndices } = await this.usdnProtocol.getActionablePendingActions();
 
                 // return early if there are no pending actions
-                if (pendingActions.length === 0) return;
+                if (pendingActions.length === 0) {
+                    console.debug(
+                        `[${+Date.now()}] No pending actions for block ${block.number} at timestamp ${block.timestamp}`,
+                    );
+                    return;
+                }
 
                 const priceSignaturePromises: Promise<Hex>[] = [];
                 // add the block time (12s) to account for the time spent in the mempool
@@ -67,7 +72,17 @@ export default class PendingActionsService {
                     return;
                 }
 
-                await this.usdnProtocol.validateActionablePendingActions(priceSignatures, rawIndicesToUse, oracleFee);
+                const { hash, validatedActionsAmount } = await this.usdnProtocol.validateActionablePendingActions(
+                    priceSignatures,
+                    rawIndicesToUse,
+                    oracleFee,
+                );
+
+                if (validatedActionsAmount > 0) {
+                    console.log(
+                        `[${+Date.now()}] ${validatedActionsAmount} actions to validate at block ${block.number}, hash: ${hash}`,
+                    );
+                }
             },
         });
 

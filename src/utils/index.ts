@@ -1,4 +1,4 @@
-import { http, type Hex, publicActions, createWalletClient } from 'viem';
+import { http, type Hex, publicActions, createWalletClient, webSocket } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
@@ -14,7 +14,9 @@ export async function sleep(milliseconds: number) {
 
 export function getBlockTime(chainId: number) {
     switch (chainId) {
-        case mainnet.id || sepolia.id:
+        case mainnet.id:
+            return 12;
+        case sepolia.id:
             return 12;
         default:
             throw new Error(`Unsupported chain ID ${chainId}`);
@@ -28,11 +30,11 @@ export function getBlockTime(chainId: number) {
  * @returns A public client to read data from the blockchain and sign transactions
  */
 export function getBlockchainClient() {
-    const rpcUrl = process.env.RPC_URL;
-    if (!rpcUrl) {
+    if (!process.env.RPC_URL) {
         throw new Error('RPC_URL not set');
     }
 
+    const rpcUrl = new URL(process.env.RPC_URL);
     const privateKey: string | undefined = process.env.PRIVATE_KEY;
     if (!privateKey) {
         throw new Error('Env var PRIVATE_KEY is not set');
@@ -40,8 +42,9 @@ export function getBlockchainClient() {
 
     const account = privateKeyToAccount(privateKey as Hex);
     const client = createWalletClient({
-        transport: http(process.env.RPC_URL),
+        transport: rpcUrl.protocol === 'https:' ? http(rpcUrl.toString()) : webSocket(rpcUrl.toString()),
         account: account,
+        pollingInterval: 2000,
     }).extend(publicActions);
 
     return client;
