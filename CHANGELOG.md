@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.0](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/compare/v0.1.1...v0.2.0) (2024-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **pending-actions:** A PRIVATE_KEY environment variable is required for the simulation to work
+
+### Features
+
+* add env file and change config ([#26](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/26)) ([34a5c72](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/34a5c72af0cc8886d337aec06367cefe267e216d))
+* **gas-price-adapter:** add an adapter for the beaconcha.in gas price apiand use it for Sepolia ([#30](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/30)) ([c2ce3dc](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/c2ce3dc2dd300c5be27e17792a98e4f2bf11ea53))
+* launch watcher services on startup ([#29](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/29)) ([fed49b5](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/fed49b5f179ff672ba5151f1224547edcaa1d568))
+* **liquidations:** add a service that watches for new blocks and attempt liquidations ([#28](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/28)) ([498cf60](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/498cf60d464be49217f1e900a45328e4a687d0bf))
+* **pending-actions:** add a service to validate actionable pending actions ([#25](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/25)) ([91e22ab](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/91e22ab0bd0714e10bba9620528d7cbd850ab76a))
+* **pending-actions:** simulate pending actions validation ([#22](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/22)) ([841a26e](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/841a26efafa1fb4c2864f4b11c11afbb1e977fba))
+* refactor tests and clean unused functions ([#24](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/24)) ([122dcf3](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/122dcf33aef7a2a075d0e9dab4958f0ae73dcba0))
+* **usdn-protocol:** add a function to the adapter to simulate and launch a liquidations TX ([#27](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/27)) ([e1fdb89](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/e1fdb8989eea103ca4ad24a021aa7ff288026fe5))
+
 ## [0.1.1](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/compare/v0.1.0...v0.1.1) (2024-09-26)
 
 
