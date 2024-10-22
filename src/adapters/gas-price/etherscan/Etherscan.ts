@@ -14,6 +14,7 @@ type EtherscanData = {
     };
 };
 
+/** Gas price adapter for the API of Etherscan.io for the Ethereum network */
 export default class Etherscan implements IGasPriceAdapter {
     private apiKey: string | null = null;
 

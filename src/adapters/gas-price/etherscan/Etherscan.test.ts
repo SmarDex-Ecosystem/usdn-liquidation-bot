@@ -1,5 +1,5 @@
 import { beforeEach, afterAll, describe, expect, it, vi } from 'vitest';
-import Etherscan from './Etherscan.js';
+import Etherscan from './Etherscan.ts';
 
 describe('Etherscan', () => {
     beforeEach(() => {
