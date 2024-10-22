@@ -12,6 +12,11 @@ export async function sleep(milliseconds: number) {
     });
 }
 
+/**
+ * Returns the block time (in seconds) for the provided chain ID
+ * @param chainId The ID of the chain
+ * @returns The block time in seconds
+ */
 export function getBlockTime(chainId: number) {
     switch (chainId) {
         case mainnet.id:

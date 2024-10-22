@@ -10,5 +10,6 @@ export default defineConfig({
         coverage: {
             reporter: ['text', 'json', 'html'],
         },
+        setupFiles: ['./vitest.setup.ts'],
     },
 });
