@@ -4,6 +4,7 @@ WORKDIR /usr/app
 
 COPY ./package*.json ./
 COPY ./tsconfig*.json ./
+COPY ./tsup.config*.ts ./
 COPY ./src ./src
 
 # Copy .npmrc file (for CodeArtifact access)
@@ -32,4 +33,4 @@ WORKDIR /usr/app
 COPY --from=install /usr/app/dist ./dist
 COPY --from=install /usr/app/node_modules ./node_modules
 
-CMD ["node", "/usr/app/dist/index.cjs"]
+CMD ["node", "/usr/app/dist/index.mjs"]
