@@ -4,7 +4,6 @@ WORKDIR /usr/app
 
 COPY ./package*.json ./
 COPY ./tsconfig*.json ./
-COPY ./tsup.config*.ts ./
 COPY ./src ./src
 
 # Copy .npmrc file (for CodeArtifact access)
