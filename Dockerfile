@@ -32,4 +32,4 @@ WORKDIR /usr/app
 COPY --from=install /usr/app/dist ./dist
 COPY --from=install /usr/app/node_modules ./node_modules
 
-CMD ["node", "/usr/app/dist/index.cjs"]
+CMD ["node", "/usr/app/dist/index.mjs"]
