@@ -37,8 +37,8 @@ describe('Beaconchain', () => {
 
             const data = await beaconchain.getGasPrice();
             expect(data).toEqual({
-              fastPriorityFee: BigInt(validResponse.data.rapid - validResponse.data.standard),
-              suggestedBaseFee: standardFee + standardFee / 2n,
+                fastPriorityFee: BigInt(validResponse.data.rapid - validResponse.data.standard),
+                suggestedBaseFee: standardFee + standardFee / 2n,
             });
         });
 
