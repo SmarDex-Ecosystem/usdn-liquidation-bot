@@ -12,7 +12,7 @@ COPY ./src ./src
 
 # Edit project type
 RUN touch tmp.json
-RUN jq '.type = "commonjs"' package.json > tmp.json && mv tmp.json package.json
+RUN jq '.type = "commonJS"' package.json > tmp.json && mv tmp.json package.json
 
 # Copy .npmrc file (for CodeArtifact access)
 ARG NPMRC 
