@@ -30,7 +30,8 @@ export default class Beaconchain implements IGasPriceAdapter {
             const baseFee = BigInt(data.standard);
             return {
                 fastPriorityFee: BigInt(data.rapid) - baseFee,
-                suggestedBaseFee: baseFee,
+                // Use a value 50% higher than the standard fee as the suggested base fee to avoid underestimation
+                suggestedBaseFee: baseFee + baseFee / 2n,
             };
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
