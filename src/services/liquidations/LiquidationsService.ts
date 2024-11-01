@@ -31,11 +31,11 @@ export default class LiquidationsService {
         this.liquidationPriceHistory.watchNewPrices();
 
         while (this.isRunning) {
+            await sleep(5000);
             const blockNumber = await this.blockchainClient.getBlockNumber();
             const priceRecord = this.liquidationPriceHistory.getSmallestPriceRecord();
             if (!priceRecord) {
                 console.warn(`No price record for block ${blockNumber}`, this.isRunning);
-                await sleep(3000);
                 continue;
             }
 
@@ -66,8 +66,6 @@ export default class LiquidationsService {
                     `[${+Date.now()}] ${liquidatedTicksAmount} ticks to liquidate at block ${blockNumber} with price ${formattedPrice}, hash: ${hash}`,
                 );
             }
-
-            await sleep(5000);
         }
 
         console.log('LiquidationPriceService has shutdown');
