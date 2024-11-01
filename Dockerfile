@@ -1,10 +1,18 @@
 FROM node:20 AS install
 
+# Install jq
+RUN apt-get update
+RUN apt-get install jq -y
+
 WORKDIR /usr/app
 
 COPY ./package*.json ./
 COPY ./tsconfig*.json ./
 COPY ./src ./src
+
+# Edit project type
+RUN touch tmp.json
+RUN jq '.type = "commonJS"' package.json > tmp.json && mv tmp.json package.json
 
 # Copy .npmrc file (for CodeArtifact access)
 ARG NPMRC 
