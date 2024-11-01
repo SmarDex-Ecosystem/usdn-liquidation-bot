@@ -44,7 +44,7 @@ export default class LiquidationsService {
                         } catch (error) {
                             // 0x45805f5d can happen because of timing issues, we can just skip that block and try again on the next one
                             if ((error as Error).toString().includes('0x45805f5d')) {
-                                console.warn(`[${+Date.now()}] Encountered error 0x45805f5d for block ${blockNumber}`);
+                                console.log(`[${+Date.now()}] Encountered code 0x45805f5d for block ${blockNumber}`);
                                 return;
                             }
 
