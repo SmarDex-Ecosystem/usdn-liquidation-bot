@@ -1,7 +1,7 @@
 import { mainnet, sepolia } from 'viem/chains';
 import Etherscan from '../../adapters/gas-price/etherscan/Etherscan.ts';
 import Viem from '../../adapters/gas-price/viem/Viem.ts';
-import { getBlockchainClient } from '../../utils/index.ts';
+import { getBlockchainClient, tenderlyChainId } from '../../utils/index.ts';
 import GasPriceService from './GasPriceService.ts';
 import type IGasPriceAdapter from '../../adapters/gas-price/IGasPriceAdapter.ts';
 import Beaconchain from '../../adapters/gas-price/beaconchain/Beaconchain.ts';
@@ -11,6 +11,9 @@ const chainId = await blockChainClient.getChainId();
 
 let primaryGasAdapter: IGasPriceAdapter;
 switch (chainId) {
+    case tenderlyChainId:
+        primaryGasAdapter = new Etherscan(process.env.ETHERSCAN_API_KEY || '');
+        break;
     case mainnet.id:
         primaryGasAdapter = new Etherscan(process.env.ETHERSCAN_API_KEY || '');
         break;

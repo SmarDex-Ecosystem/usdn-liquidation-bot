@@ -2,6 +2,8 @@ import { http, type Hex, publicActions, createWalletClient, webSocket } from 'vi
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
+export const tenderlyChainId = 983659430532;
+
 /**
  * Sleep for the specified amount of milliseconds
  * @param milliseconds The amount of time (in milliseconds) to sleep
@@ -19,6 +21,8 @@ export async function sleep(milliseconds: number) {
  */
 export function getBlockTime(chainId: number) {
     switch (chainId) {
+        case tenderlyChainId:
+            return 5;
         case mainnet.id:
             return 12;
         case sepolia.id:
