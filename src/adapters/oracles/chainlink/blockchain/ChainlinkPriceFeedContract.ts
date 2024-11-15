@@ -88,7 +88,7 @@ export default class ChainlinkPriceFeedContract {
         let lastRound = await this.getLatestRoundData();
 
         // If latest round is below the provided timestamp, no round is recent enough
-        if (lastRound.timestamp < timestamp) {
+        if (lastRound.timestamp <= timestamp) {
             return null;
         }
 
