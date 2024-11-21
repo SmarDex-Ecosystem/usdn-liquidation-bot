@@ -5,6 +5,7 @@ import {
     type ReadContractParameters,
     type WalletClient,
     isAddress,
+    maxUint256,
     zeroAddress,
 } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
@@ -36,8 +37,11 @@ export default class UsdnProtocolContract {
             address: this.contractAddress,
             blockTag: 'pending',
             functionName: 'getActionablePendingActions',
-            // query for the 0 address so we get every actionable pending actions
-            args: [zeroAddress],
+            args: [
+                zeroAddress, // query for the 0 address so we get every actionable pending actions
+                0n, // no need to look ahead as we get the pending actions at every block
+                maxUint256, // fetch all the actionable pending actions at once
+            ],
         });
 
         return { pendingActions, rawIndices };
