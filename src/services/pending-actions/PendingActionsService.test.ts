@@ -80,12 +80,12 @@ describe('PendingActionsService', () => {
                         {
                             action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60), // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
                             action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60) - 1, // high latency oracle
                             to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                     ],
                         rawIndices,
@@ -110,17 +110,17 @@ describe('PendingActionsService', () => {
                         {
                             action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime, // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
                             action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60), // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
                             action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60) - 1, // high latency oracle
                             to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                     ],
                         rawIndices,
@@ -148,12 +148,12 @@ describe('PendingActionsService', () => {
                         {
                             action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60), // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
                             action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60) - 1, // high latency oracle
                             to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
-                            var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
+                            var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                     ],
                         rawIndices,
