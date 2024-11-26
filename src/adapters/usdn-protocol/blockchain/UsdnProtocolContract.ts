@@ -2,7 +2,6 @@ import {
     type Address,
     type Hex,
     type PublicActions,
-    type ReadContractParameters,
     type WalletClient,
     isAddress,
     maxUint256,
@@ -10,21 +9,31 @@ import {
 } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
 
-export type FunctionCall = Omit<ReadContractParameters<typeof abi>, 'abi' | 'address'>;
-
 export default class UsdnProtocolContract {
-    /** Client to use to interact with the smart contract */
-    private readonly blockchainClient: WalletClient & PublicActions;
-    /** The address of the USDN Protocol's smart contract */
-    private readonly contractAddress: Address;
-
-    constructor(contractAddress: Address, blockchainClient: WalletClient & PublicActions) {
+    constructor(
+        /** The address of the USDN Protocol's smart contract */
+        private readonly contractAddress: Address,
+        /** Client to use to interact with the smart contract */
+        private readonly blockchainClient: WalletClient & PublicActions,
+    ) {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address for the USDN protocol');
         }
 
         this.contractAddress = contractAddress;
         this.blockchainClient = blockchainClient;
+    }
+
+    /**
+     * Get the address of the oracle middleware currently in use by the protocol
+     * @returns The address of the oracle middleware (the dead address if none set)
+     */
+    async getOracleMiddleware() {
+        return this.blockchainClient.readContract({
+            abi: abi,
+            address: this.contractAddress,
+            functionName: 'getOracleMiddleware',
+        });
     }
 
     /**

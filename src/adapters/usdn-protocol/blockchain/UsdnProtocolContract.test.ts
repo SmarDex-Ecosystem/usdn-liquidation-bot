@@ -50,6 +50,23 @@ describe('UsdnProtocolContract', () => {
             mockReadContract.mockRejectedValue(error);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
+            await expect(contract.getOracleMiddleware()).rejects.toThrow(error);
+        });
+        it('should return a valid ethereum address', async () => {
+            mockReadContract.mockResolvedValue(zeroAddress);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+            const result = await contract.getOracleMiddleware();
+
+            expect(result).toEqual(zeroAddress);
+        });
+    });
+
+    describe('getActionablePendingActions', () => {
+        it('should throw an error if the call fails', async () => {
+            const error = new Error('Contract call failed');
+            mockReadContract.mockRejectedValue(error);
+            const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
+
             await expect(contract.getActionablePendingActions()).rejects.toThrow(error);
         });
         it('should return the pending actions and the corresponding raw indices', async () => {
