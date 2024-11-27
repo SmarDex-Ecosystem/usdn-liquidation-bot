@@ -19,16 +19,13 @@ export default class UsdnProtocolContract {
         if (!isAddress(contractAddress)) {
             throw new Error('Invalid Ethereum address for the USDN protocol');
         }
-
-        this.contractAddress = contractAddress;
-        this.blockchainClient = blockchainClient;
     }
 
     /**
      * Get the address of the oracle middleware currently in use by the protocol
      * @returns The address of the oracle middleware (the dead address if none set)
      */
-    async getOracleMiddleware() {
+    async getOracleMiddlewareAddress() {
         return this.blockchainClient.readContract({
             abi: abi,
             address: this.contractAddress,

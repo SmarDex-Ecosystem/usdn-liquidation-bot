@@ -1,7 +1,7 @@
 import { type Address, type PublicActions, isAddress } from 'viem';
 import { abi } from './BaseOracleMiddlewareAbi.ts';
 
-export default class OracleMiddleware {
+export default class OracleMiddlewareContract {
     constructor(
         /** The address of the OracleMiddleware smart contract */
         private readonly contractAddress: Address,

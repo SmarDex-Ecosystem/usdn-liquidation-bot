@@ -1,10 +1,11 @@
 import { describe, it, vi, afterEach, beforeEach, expect } from 'vitest';
 import PendingActionsService from './PendingActionsService.ts';
-import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
 import { getBlockchainClient } from '../../utils/index.ts';
-import { type OnBlock, parseEther } from 'viem';
+import { type OnBlock, parseEther, zeroAddress } from 'viem';
 import type { AHighLatencyOracle, ALowLatencyOracle } from '../../adapters/oracles/AOracleAdapter.ts';
 import { OracleType } from '../../adapters/oracles/types.ts';
+import OracleMiddlewareContract from '../../adapters/usdn-protocol/blockchain/OracleMiddlewareContract.ts';
+import UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
 
 const blockchainClient = getBlockchainClient();
 let newBlockCallback: OnBlock;
@@ -23,14 +24,20 @@ const highLatencyOracle: AHighLatencyOracle = {
     getPriceAtTimestamp: vi.fn(),
 };
 
+const usdnProtocolContract = new UsdnProtocolContract(zeroAddress, blockchainClient);
 let getActionablePendingActionsSpy = vi
     .spyOn(usdnProtocolContract, 'getActionablePendingActions')
     .mockImplementation(vi.fn());
 const validateActionablePendingActionsSpy = vi
     .spyOn(usdnProtocolContract, 'validateActionablePendingActions')
     .mockResolvedValue({ hash: '0x0', validatedActionsAmount: 0n });
+
+const oracleMiddlewareContract = new OracleMiddlewareContract(zeroAddress, blockchainClient);
+vi.spyOn(oracleMiddlewareContract, 'getLowLatencyDelay').mockResolvedValue(20 * 60);
+vi.spyOn(oracleMiddlewareContract, 'getValidationDelay').mockResolvedValue(24);
 const pendingActionsService = new PendingActionsService(
     usdnProtocolContract,
+    oracleMiddlewareContract,
     blockchainClient,
     lowLatencyOracle,
     highLatencyOracle,
@@ -52,7 +59,7 @@ describe('PendingActionsService', () => {
 
     describe('watchActionablePendingActions', () => {
         it('should not do anything if there are no actionable pending actions', async () => {
-            pendingActionsService.watchActionablePendingActions();
+            await pendingActionsService.watchActionablePendingActions();
             vi.spyOn(usdnProtocolContract, 'getActionablePendingActions').mockResolvedValue({
                 pendingActions: [],
                 rawIndices: [],
@@ -91,7 +98,7 @@ describe('PendingActionsService', () => {
                         rawIndices,
                     });
 
-                pendingActionsService.watchActionablePendingActions();
+                await pendingActionsService.watchActionablePendingActions();
                 await newBlockCallback({ timestamp: BigInt(now) } as any, {} as any);
                 expect(validateActionablePendingActionsSpy).toHaveBeenCalledOnce();
                 expect(highLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();
@@ -126,7 +133,7 @@ describe('PendingActionsService', () => {
                         rawIndices,
                     });
 
-                pendingActionsService.watchActionablePendingActions();
+                await pendingActionsService.watchActionablePendingActions();
                 await newBlockCallback({ timestamp: BigInt(now) } as any, {} as any);
                 expect(highLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();
                 expect(lowLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledTimes(2);
@@ -159,7 +166,7 @@ describe('PendingActionsService', () => {
                         rawIndices,
                     });
 
-                pendingActionsService.watchActionablePendingActions();
+                await pendingActionsService.watchActionablePendingActions();
                 await newBlockCallback({ timestamp: BigInt(now) } as any, {} as any);
                 expect(highLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();
                 expect(lowLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();

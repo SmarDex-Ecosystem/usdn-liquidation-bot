@@ -1,11 +1,15 @@
 import type { Hex, PublicActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
 import type { AHighLatencyOracle, ALowLatencyOracle } from '../../adapters/oracles/AOracleAdapter.ts';
+import { getBlockTime } from '../../utils/index.ts';
+import type OracleMiddleware from '../../adapters/usdn-protocol/blockchain/OracleMiddlewareContract.ts';
 
 export default class PendingActionsService {
     constructor(
         /** Adapter to communicate with the USDN Protocol's smart contract */
         private readonly usdnProtocol: UsdnProtocolContract,
+        /** Adapter to communicate with the Oracle Middleware's smart contract */
+        private readonly oracleMiddleware: OracleMiddleware,
         /** Client to communicate with the blockchain */
         private readonly blockchainClient: PublicActions,
         /** Oracle to use for actions within the low latency time frame */
@@ -15,10 +19,14 @@ export default class PendingActionsService {
     ) {}
 
     /** Watch for actionable pending actions at every block and validate them when there are any */
-    watchActionablePendingActions() {
-        // TODO get those values from a contract call instead (RA2BL-80)
-        const validationDelay = 24;
-        const lowLatencyDelay = 20 * 60;
+    async watchActionablePendingActions() {
+        if (!this.oracleMiddleware) {
+            throw new Error('Oracle middleware contract not set');
+        }
+
+        const validationDelay = await this.oracleMiddleware.getValidationDelay();
+        const lowLatencyDelay = await this.oracleMiddleware.getLowLatencyDelay();
+        const blockTime = BigInt(getBlockTime(await this.blockchainClient.getChainId()));
         const unwatch = this.blockchainClient.watchBlocks({
             onBlock: async (block) => {
                 const { pendingActions, rawIndices } = await this.usdnProtocol.getActionablePendingActions();
@@ -32,8 +40,8 @@ export default class PendingActionsService {
                 }
 
                 const priceSignaturePromises: Promise<Hex>[] = [];
-                // add the block time (12s) to account for the time spent in the mempool
-                const validationTimestamp = block.timestamp + 12n;
+                // add the block time to account for the time spent in the mempool
+                const validationTimestamp = block.timestamp + blockTime;
                 let oracleFee = 0n;
                 for (let i = 0; i < pendingActions.length; i++) {
                     const pendingAction = pendingActions[i];

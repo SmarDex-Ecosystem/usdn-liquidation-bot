@@ -50,12 +50,12 @@ describe('UsdnProtocolContract', () => {
             mockReadContract.mockRejectedValue(error);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
 
-            await expect(contract.getOracleMiddleware()).rejects.toThrow(error);
+            await expect(contract.getOracleMiddlewareAddress()).rejects.toThrow(error);
         });
         it('should return a valid ethereum address', async () => {
             mockReadContract.mockResolvedValue(zeroAddress);
             const contract = new UsdnProtocolContract(mockContractAddress, mockBlockchainClient);
-            const result = await contract.getOracleMiddleware();
+            const result = await contract.getOracleMiddlewareAddress();
 
             expect(result).toEqual(zeroAddress);
         });
