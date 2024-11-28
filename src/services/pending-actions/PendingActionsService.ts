@@ -61,7 +61,9 @@ export default class PendingActionsService {
 
                 oracleFee += oracleToUse.VALIDATION_COST;
                 priceSignaturePromises.push(
-                    oracleToUse.getPriceAtTimestamp(timestamp).then(({ signature }) => signature),
+                    oracleToUse
+                        .getPriceAtTimestamp(pendingAction.timestamp + lowLatencyDelay)
+                        .then(({ signature }) => signature),
                 );
             }
 

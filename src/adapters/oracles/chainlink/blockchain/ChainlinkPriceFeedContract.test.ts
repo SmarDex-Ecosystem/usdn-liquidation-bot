@@ -79,6 +79,15 @@ describe('ChainlinkPriceFeedContract', () => {
             expect(roundData).to.be.null;
             expect(spy).toHaveBeenCalledOnce();
         });
+        it('should return null if the latest round is equal to the provided timestamp', async () => {
+            const spy = vi.spyOn(mockedClient, 'readContract').mockImplementation(async () => validChainlinkData);
+            const chainlinkContract = new ChainlinkPriceFeedContract(mockedClient);
+
+            const roundData = await chainlinkContract.getRoundDataAfterTimestamp(Number(validChainlinkData[3]));
+
+            expect(roundData).to.be.null;
+            expect(spy).toHaveBeenCalledOnce();
+        });
         it('should return the right round if the round IDs are not consecutive', async () => {
             const phaseId = 2n;
             const previousPhaseId = phaseId - 1n;

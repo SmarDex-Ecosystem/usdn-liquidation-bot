@@ -8,6 +8,16 @@ export const abi = [
                 type: 'address',
                 internalType: 'address',
             },
+            {
+                name: 'lookAhead',
+                type: 'uint256',
+                internalType: 'uint256',
+            },
+            {
+                name: 'maxIter',
+                type: 'uint256',
+                internalType: 'uint256',
+            },
         ],
         outputs: [
             {
@@ -24,6 +34,11 @@ export const abi = [
                         name: 'timestamp',
                         type: 'uint40',
                         internalType: 'uint40',
+                    },
+                    {
+                        name: 'var0',
+                        type: 'uint24',
+                        internalType: 'uint24',
                     },
                     {
                         name: 'to',

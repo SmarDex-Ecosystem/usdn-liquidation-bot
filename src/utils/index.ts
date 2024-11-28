@@ -2,7 +2,10 @@ import { http, type Hex, publicActions, createWalletClient, webSocket } from 'vi
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
-export const tenderlyChainId = 983659430532;
+if (!process.env.TENDERLY_TESTNET_CHAIN_ID) {
+    throw new Error('The env variable TENDERLY_TESTNET_CHAIN_ID is required for compatibility with Virtual Testnets');
+}
+export const tenderlyChainId = Number(process.env.TENDERLY_TESTNET_CHAIN_ID);
 
 /**
  * Sleep for the specified amount of milliseconds
