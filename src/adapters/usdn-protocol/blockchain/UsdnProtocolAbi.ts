@@ -182,4 +182,17 @@ export const abi = [
         ],
         stateMutability: 'payable',
     },
+    {
+        type: 'function',
+        name: 'getOracleMiddleware',
+        inputs: [],
+        outputs: [
+            {
+                name: '',
+                type: 'address',
+                internalType: 'contract IBaseOracleMiddleware',
+            },
+        ],
+        stateMutability: 'view',
+    },
 ] as const;
