@@ -1,12 +1,4 @@
-import {
-    type Address,
-    type Hex,
-    type PublicActions,
-    type WalletClient,
-    isAddress,
-    maxUint256,
-    zeroAddress,
-} from 'viem';
+import { type Address, type Hex, type PublicActions, type WalletClient, isAddress, zeroAddress } from 'viem';
 import { abi } from './UsdnProtocolAbi.ts';
 
 export default class UsdnProtocolContract {
@@ -46,7 +38,7 @@ export default class UsdnProtocolContract {
             args: [
                 zeroAddress, // query for the 0 address so we get every actionable pending actions
                 0n, // no need to look ahead as we get the pending actions at every block
-                maxUint256, // fetch all the actionable pending actions at once
+                1000n, // fetch a high amount just in case (maxUint256 will trigger an out-of-memory error)
             ],
         });
 

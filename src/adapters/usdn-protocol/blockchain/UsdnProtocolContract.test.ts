@@ -1,4 +1,4 @@
-import { maxUint256, parseEther, zeroAddress, type Address } from 'viem';
+import { parseEther, zeroAddress, type Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UsdnProtocolContract from './UsdnProtocolContract.ts';
 import { getBlockchainClient } from '../../../utils/index.ts';
@@ -96,7 +96,7 @@ describe('UsdnProtocolContract', () => {
             expect(mockReadContract.mock.lastCall?.[0].functionName).toEqual('getActionablePendingActions');
             expect(mockReadContract.mock.lastCall?.[0].args?.[0]).toEqual(zeroAddress);
             expect(mockReadContract.mock.lastCall?.[0].args?.[1]).toEqual(0n);
-            expect(mockReadContract.mock.lastCall?.[0].args?.[2]).toEqual(maxUint256);
+            expect(mockReadContract.mock.lastCall?.[0].args?.[2]).toEqual(1000n);
         });
     });
 
