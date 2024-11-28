@@ -2,6 +2,7 @@ import type { Hex, PublicActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
 import type { AHighLatencyOracle, ALowLatencyOracle } from '../../adapters/oracles/AOracleAdapter.ts';
 import { sleep } from '../../utils/index.ts';
+import type AOracleAdapter from '../../adapters/oracles/AOracleAdapter.ts';
 
 export default class PendingActionsService {
     private isRunning = false;
@@ -52,18 +53,17 @@ export default class PendingActionsService {
             let oracleFee = 0n;
             for (let i = 0; i < pendingActions.length; i++) {
                 const pendingAction = pendingActions[i];
-                const timestamp = pendingAction.timestamp + validationDelay;
                 // check which oracle adapter to use based on the age of the action
-                const oracleToUse =
-                    validationTimestamp <= pendingAction.timestamp + lowLatencyDelay
-                        ? this.lowLatencyOracleAdapter
-                        : this.highLatencyOracleAdapter;
+                let timestamp = pendingAction.timestamp + validationDelay;
+                let oracleToUse: AOracleAdapter = this.lowLatencyOracleAdapter;
+                if (validationTimestamp > pendingAction.timestamp + lowLatencyDelay) {
+                    oracleToUse = this.highLatencyOracleAdapter;
+                    timestamp = pendingAction.timestamp + lowLatencyDelay;
+                }
 
                 oracleFee += oracleToUse.VALIDATION_COST;
                 priceSignaturePromises.push(
-                    oracleToUse
-                        .getPriceAtTimestamp(pendingAction.timestamp + lowLatencyDelay)
-                        .then(({ signature }) => signature),
+                    oracleToUse.getPriceAtTimestamp(timestamp).then(({ signature }) => signature),
                 );
             }
 
