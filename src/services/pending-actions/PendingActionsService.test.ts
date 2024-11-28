@@ -33,8 +33,10 @@ const validateActionablePendingActionsSpy = vi
     .mockResolvedValue({ hash: '0x0', validatedActionsAmount: 0n });
 
 const oracleMiddlewareContract = new OracleMiddlewareContract(zeroAddress, blockchainClient);
-vi.spyOn(oracleMiddlewareContract, 'getLowLatencyDelay').mockResolvedValue(20 * 60);
-vi.spyOn(oracleMiddlewareContract, 'getValidationDelay').mockResolvedValue(24);
+const lowLatencyDelay = 20 * 60;
+vi.spyOn(oracleMiddlewareContract, 'getLowLatencyDelay').mockResolvedValue(lowLatencyDelay);
+const validationDelay = 24;
+vi.spyOn(oracleMiddlewareContract, 'getValidationDelay').mockResolvedValue(validationDelay);
 const pendingActionsService = new PendingActionsService(
     usdnProtocolContract,
     oracleMiddlewareContract,
@@ -79,18 +81,20 @@ describe('PendingActionsService', () => {
                 vi.setSystemTime(now * 1000);
             });
             it('at every new block distributed among oracles', async () => {
+                const lowLatencyActionTimestamp = now + blockTime - lowLatencyDelay;
+                const highLatencyActionTimestamp = now + blockTime - lowLatencyDelay - 1;
                 getActionablePendingActionsSpy = vi
                     .spyOn(usdnProtocolContract, 'getActionablePendingActions')
                     .mockResolvedValue({
                         // biome-ignore format: unnecessary
                         pendingActions: [
                         {
-                            action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60), // low latency oracle
+                            action: 2, securityDepositValue: parseEther('1'), timestamp: lowLatencyActionTimestamp, // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
-                            action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60) - 1, // high latency oracle
+                            action: 4, securityDepositValue: parseEther('1'), timestamp: highLatencyActionTimestamp, // high latency oracle
                             to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
@@ -101,8 +105,14 @@ describe('PendingActionsService', () => {
                 await pendingActionsService.watchActionablePendingActions();
                 await newBlockCallback({ timestamp: BigInt(now) } as any, {} as any);
                 expect(validateActionablePendingActionsSpy).toHaveBeenCalledOnce();
-                expect(highLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();
                 expect(lowLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();
+                expect(lowLatencyOracle.getPriceAtTimestamp).toBeCalledWith(
+                    lowLatencyActionTimestamp + validationDelay,
+                );
+                expect(highLatencyOracle.getPriceAtTimestamp).toHaveBeenCalledOnce();
+                expect(highLatencyOracle.getPriceAtTimestamp).toBeCalledWith(
+                    highLatencyActionTimestamp + lowLatencyDelay,
+                );
             });
             it('and skip actions for which the price data fetching failed', async () => {
                 lowLatencyOracle.getPriceAtTimestamp = vi
@@ -120,12 +130,12 @@ describe('PendingActionsService', () => {
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
-                            action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60), // low latency oracle
+                            action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - lowLatencyDelay, // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
-                            action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60) - 1, // high latency oracle
+                            action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - lowLatencyDelay - 1, // high latency oracle
                             to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
@@ -153,12 +163,12 @@ describe('PendingActionsService', () => {
                         // biome-ignore format: unnecessary
                         pendingActions: [
                         {
-                            action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60), // low latency oracle
+                            action: 2, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (lowLatencyDelay), // low latency oracle
                             to: '0x0000000000000000000000000000000000000001', validator: '0x0000000000000000000000000000000000000002',
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },
                         {
-                            action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (20 * 60) - 1, // high latency oracle
+                            action: 4, securityDepositValue: parseEther('1'), timestamp: now + blockTime - (lowLatencyDelay) - 1, // high latency oracle
                             to: '0x0000000000000000000000000000000000000003', validator: '0x0000000000000000000000000000000000000004',
                             var0: 0, var1: 1, var2: 2n, var3: 3n, var4: 4n, var5: 5n, var6: 6n, var7: 7n,
                         },

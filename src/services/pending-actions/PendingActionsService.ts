@@ -3,6 +3,7 @@ import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/U
 import type { AHighLatencyOracle, ALowLatencyOracle } from '../../adapters/oracles/AOracleAdapter.ts';
 import { getBlockTime } from '../../utils/index.ts';
 import type OracleMiddleware from '../../adapters/usdn-protocol/blockchain/OracleMiddlewareContract.ts';
+import type AOracleAdapter from '../../adapters/oracles/AOracleAdapter.ts';
 
 export default class PendingActionsService {
     constructor(
@@ -45,12 +46,13 @@ export default class PendingActionsService {
                 let oracleFee = 0n;
                 for (let i = 0; i < pendingActions.length; i++) {
                     const pendingAction = pendingActions[i];
-                    const timestamp = pendingAction.timestamp + validationDelay;
-                    // check which oracle adapter to use based on the age of the action
-                    const oracleToUse =
-                        validationTimestamp <= pendingAction.timestamp + lowLatencyDelay
-                            ? this.lowLatencyOracleAdapter
-                            : this.highLatencyOracleAdapter;
+                    // check which oracle adapter and target timestamp to use based on the age of the action
+                    let timestamp = pendingAction.timestamp + validationDelay;
+                    let oracleToUse: AOracleAdapter = this.lowLatencyOracleAdapter;
+                    if (validationTimestamp > pendingAction.timestamp + lowLatencyDelay) {
+                        oracleToUse = this.highLatencyOracleAdapter;
+                        timestamp = pendingAction.timestamp + lowLatencyDelay;
+                    }
 
                     oracleFee += oracleToUse.VALIDATION_COST;
                     priceSignaturePromises.push(
