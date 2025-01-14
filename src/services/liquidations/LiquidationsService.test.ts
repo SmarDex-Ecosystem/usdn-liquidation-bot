@@ -26,7 +26,7 @@ vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
     const actual = await importOriginal();
     return {
         ...actual,
-        getBotEthBalance: vi.fn().mockResolvedValue(0.1),
+        getBotEthBalance: vi.fn().mockResolvedValue(1119000000000000000000n),
     };
 });
 
