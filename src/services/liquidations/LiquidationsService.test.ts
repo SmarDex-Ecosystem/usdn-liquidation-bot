@@ -22,13 +22,13 @@ const liquidateSpy = vi
     .spyOn(usdnProtocolContract, 'liquidate')
     .mockResolvedValue({ hash: undefined, liquidatedTicksAmount: 0 });
 
-vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        getBotEthBalance: vi.fn().mockResolvedValue(1119000000000000000000n),
-    };
-});
+// vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
+//     const actual = await importOriginal();
+//     return {
+//         ...actual,
+//         getBotEthBalance: vi.fn().mockResolvedValue(1119000000000000000000n),
+//     };
+// });
 
 describe('LiquidationPriceHistory', () => {
     beforeEach(() => {
