@@ -22,13 +22,13 @@ const liquidateSpy = vi
     .spyOn(usdnProtocolContract, 'liquidate')
     .mockResolvedValue({ hash: undefined, liquidatedTicksAmount: 0 });
 
-// vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
-//     const actual = await importOriginal();
-//     return {
-//         ...actual,
-//         getBotEthBalance: vi.fn().mockResolvedValue(1119000000000000000000n),
-//     };
-// });
+vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        getBotEthBalance: vi.fn().mockResolvedValue(1119000000000000000000n),
+    };
+});
 
 describe('LiquidationPriceHistory', () => {
     beforeEach(() => {
@@ -56,6 +56,8 @@ describe('LiquidationPriceHistory', () => {
             expect(liquidateSpy).toBeCalledTimes(0);
             // advance 80% of block time
             vi.advanceTimersByTime(getBlockTime(mainnet.id) * 800);
+            await vi.runAllTicks();
+
             // the liquidate function should not have been called as there are no price records available
             expect(getSmallestPriceRecordSpy).toBeCalledTimes(1);
             expect(liquidateSpy).toBeCalledTimes(0);
@@ -78,6 +80,8 @@ describe('LiquidationPriceHistory', () => {
             expect(liquidateSpy).toBeCalledTimes(0);
             // advance 80% of block time
             vi.advanceTimersByTime(getBlockTime(mainnet.id) * 800);
+            await vi.runAllTicks();
+
             // the liquidate function should have been called with the smallest price record to date
             expect(getSmallestPriceRecordSpy).toBeCalledTimes(1);
             expect(liquidateSpy).toBeCalledTimes(1);

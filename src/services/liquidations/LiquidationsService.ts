@@ -1,13 +1,9 @@
-import { type Hex, type PublicActions } from 'viem';
+import { parseEther, type Hex, type PublicActions } from 'viem';
 import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/UsdnProtocolContract.ts';
 import type LiquidationPriceHistoryService from '../liquidation-price-history/LiquidationPriceHistory.ts';
-import { getBlockTime } from '../../utils/index.ts';
+import { getBlockTime, getBotEthBalance } from '../../utils/index.ts';
 
 const LOW_BALANCE_THRESHOLD = process.env.LOW_BALANCE_THRESHOLD ? process.env.LOW_BALANCE_THRESHOLD : '0.1';
-
-const test = async () => {
-  console.log('test');
-};
 
 export default class LiquidationsService {
   constructor(
@@ -31,16 +27,14 @@ export default class LiquidationsService {
       onBlockNumber: (blockNumber) => {
         currentTimeout = setTimeout(
           async () => {
-            // const balance = await getBotEthBalance();
-            // if (balance < parseEther(LOW_BALANCE_THRESHOLD)) {
-            //     // emit a warning if the bot balance is dangerously low
-            //     console.error(`Bot balance is too low: ${balance}`);
-            // }
-            await test();
+            const balance = await getBotEthBalance();
+            if (balance < parseEther(LOW_BALANCE_THRESHOLD)) {
+                // emit a warning if the bot balance is dangerously low
+                console.error(`Bot balance is too low: ${balance}`);
+            }
 
             currentTimeout = undefined;
             const priceRecord = this.liquidationPriceHistory.getSmallestPriceRecord();
-            console.log('called pricerecord');
             if (!priceRecord) {
               console.warn(`No price record for block ${blockNumber}`);
               return;
