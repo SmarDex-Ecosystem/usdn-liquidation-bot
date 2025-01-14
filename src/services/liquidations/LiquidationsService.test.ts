@@ -1,10 +1,10 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import LiquidationsService from './LiquidationsService.ts';
+import { liquidationPriceHistory } from '../liquidation-price-history/index.ts';
+import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
 import type { OnBlockNumberFn } from 'viem';
 import { mainnet } from 'viem/chains';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
-import { getBlockTime, getBlockchainClient } from '../../utils/index.ts';
-import { liquidationPriceHistory } from '../liquidation-price-history/index.ts';
-import LiquidationsService from './LiquidationsService.ts';
+import { getBlockchainClient, getBlockTime } from '../../utils/index.ts';
 
 const blockchainClient = getBlockchainClient();
 let liquidationsService: LiquidationsService;
