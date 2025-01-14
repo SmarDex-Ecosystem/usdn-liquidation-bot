@@ -6,7 +6,7 @@ This repository contains the code for a fully functional bot that can interact w
 
 If successful, those actions will yield a reward to the address used to execute them.
 
-## How does it work
+## How Does It Work
 
 ### Liquidations
 
@@ -16,7 +16,7 @@ If it is successful, the address used to sign the transaction will receive a rew
 
 ### Validation Of Pending Actions
 
-After every block, the bot will check if there are pending actions that can be validated in the next block.
+After every block, the bot will check if there are actionable pending actions that can be validated in the next block.
 If that's the case, the bot will launch a transaction on the network to attempt to validate this pending action.
 If it's successful, the address used to sign the transaction will receive the security deposit of this pending action in native tokens for the chain it is on (ETH for Ethereum, POL for Polygon etc.)
 
@@ -42,7 +42,7 @@ First and foremost, you will need to copy the `.env.example` in a `.env` file, a
 * `LOW_BALANCE_THRESHOLD`: The balance of ETH the address corresponding to the given private key below which warning logs will be emitted.
   * The default value is 0.1 ETH.
 
-### For local development
+### For Local Development
 
 To launch the bot on your local machine, you can simply run `npm run dev`.
 
