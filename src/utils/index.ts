@@ -69,9 +69,7 @@ export function getBlockchainClient() {
  * @returns The balance of the bot in ETH
  */
 export async function getBotEthBalance() {
-    const balanceInWei = await getBlockchainClient().getBalance({
-        address: LIQUIDATION_BOT_ADDRESS,
-    });
-
-    return parseFloat(formatEther(balanceInWei));
+    return getBlockchainClient().getBalance({
+      address: LIQUIDATION_BOT_ADDRESS,
+  });
 }
