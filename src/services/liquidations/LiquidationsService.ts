@@ -3,9 +3,7 @@ import type UsdnProtocolContract from '../../adapters/usdn-protocol/blockchain/U
 import { getBotEthBalance, sleep } from '../../utils/index.ts';
 import type LiquidationPriceHistoryService from '../liquidation-price-history/LiquidationPriceHistory.ts';
 
-const LOW_BALANCE_THRESHOLD = process.env.LOW_BALANCE_THRESHOLD
-    ? Number.parseFloat(process.env.LOW_BALANCE_THRESHOLD)
-    : 0.1;
+const LOW_BALANCE_THRESHOLD = process.env.LOW_BALANCE_THRESHOLD ? parseFloat(process.env.LOW_BALANCE_THRESHOLD) : 0.1;
 
 export default class LiquidationsService {
     private isRunning = false;

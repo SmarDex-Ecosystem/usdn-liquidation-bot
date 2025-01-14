@@ -2,8 +2,8 @@ import { http, type Hex, createWalletClient, formatEther, publicActions, webSock
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
-if (!process.env.TENDERLY_TESTNET_CHAIN_ID) {
-    throw new Error('The env variable TENDERLY_TESTNET_CHAIN_ID is required for compatibility with Virtual Testnets');
+if (!process.env.TENDERLY_TESTNET_CHAIN_ID || !process.env.LIQUIDATION_BOT_ADDRESS) {
+    throw new Error('Env vars TENDERLY_TESTNET_CHAIN_ID and LIQUIDATION_BOT_ADDRESS must be set');
 }
 export const tenderlyChainId = Number(process.env.TENDERLY_TESTNET_CHAIN_ID);
 
@@ -71,5 +71,5 @@ export async function getBotEthBalance() {
         address: process.env.LIQUIDATION_BOT_ADDRESS as Hex,
     });
 
-    return formatEther(balanceInWei);
+    return parseFloat(formatEther(balanceInWei));
 }
