@@ -29,18 +29,18 @@ export default class LiquidationsService {
             this.isRunning = false;
         });
 
-        const balance = await getBotEthBalance();
-
-        if (balance < LOW_BALANCE_THRESHOLD) {
-            // emit a warning if the bot balance is dangerously low
-            console.warn(`Bot balance is too low: ${balance}`);
-        }
-
         this.isRunning = true;
         this.liquidationPriceHistory.watchNewPrices();
 
         while (this.isRunning) {
             await sleep(5000);
+
+            const balance = await getBotEthBalance();
+            if (balance < LOW_BALANCE_THRESHOLD) {
+                // emit a warning if the bot balance is dangerously low
+                console.warn(`Bot balance is too low: ${balance}`);
+            }
+
             const blockNumber = await this.blockchainClient.getBlockNumber();
             const priceRecord = this.liquidationPriceHistory.getSmallestPriceRecord();
             if (!priceRecord) {

@@ -1,11 +1,13 @@
-import { http, type Hex, createWalletClient, formatEther, publicActions, webSocket } from 'viem';
+import { http, type Hex, publicActions, createWalletClient, webSocket, formatEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
-if (!process.env.TENDERLY_TESTNET_CHAIN_ID || !process.env.LIQUIDATION_BOT_ADDRESS) {
-    throw new Error('Env vars TENDERLY_TESTNET_CHAIN_ID and LIQUIDATION_BOT_ADDRESS must be set');
+if (!process.env.TENDERLY_TESTNET_CHAIN_ID) {
+    throw new Error('The env variable TENDERLY_TESTNET_CHAIN_ID is required for compatibility with Virtual Testnets');
 }
 export const tenderlyChainId = Number(process.env.TENDERLY_TESTNET_CHAIN_ID);
+
+const LIQUIDATION_BOT_ADDRESS = privateKeyToAccount(process.env.PRIVATE_KEY as Hex).address;
 
 /**
  * Sleep for the specified amount of milliseconds
@@ -55,7 +57,7 @@ export function getBlockchainClient() {
     const account = privateKeyToAccount(privateKey as Hex);
     const client = createWalletClient({
         transport: rpcUrl.protocol === 'https:' ? http(rpcUrl.toString()) : webSocket(rpcUrl.toString()),
-        account: account,
+        account,
         pollingInterval: 2000,
     }).extend(publicActions);
 
@@ -68,7 +70,7 @@ export function getBlockchainClient() {
  */
 export async function getBotEthBalance() {
     const balanceInWei = await getBlockchainClient().getBalance({
-        address: process.env.LIQUIDATION_BOT_ADDRESS as Hex,
+        address: LIQUIDATION_BOT_ADDRESS,
     });
 
     return parseFloat(formatEther(balanceInWei));
