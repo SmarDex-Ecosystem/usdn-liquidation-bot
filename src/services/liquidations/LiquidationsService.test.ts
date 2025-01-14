@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import LiquidationsService from './LiquidationsService.ts';
-import { liquidationPriceHistory } from '../liquidation-price-history/index.ts';
-import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
 import type { OnBlockNumberFn } from 'viem';
 import { mainnet } from 'viem/chains';
-import { getBlockchainClient, getBlockTime } from '../../utils/index.ts';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { usdnProtocolContract } from '../../adapters/usdn-protocol/index.ts';
+import { getBlockTime, getBlockchainClient } from '../../utils/index.ts';
+import { liquidationPriceHistory } from '../liquidation-price-history/index.ts';
+import LiquidationsService from './LiquidationsService.ts';
 
 const blockchainClient = getBlockchainClient();
 let liquidationsService: LiquidationsService;
@@ -19,6 +19,14 @@ const getSmallestPriceRecordSpy = vi
 const liquidateSpy = vi
     .spyOn(usdnProtocolContract, 'liquidate')
     .mockResolvedValue({ hash: undefined, liquidatedTicksAmount: 0 });
+
+vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        getBotEthBalance: vi.fn().mockResolvedValue(0.1),
+    };
+});
 
 describe('LiquidationPriceHistory', () => {
     beforeEach(() => {

@@ -1,4 +1,4 @@
-import { http, type Hex, publicActions, createWalletClient, webSocket } from 'viem';
+import { http, type Hex, createWalletClient, formatEther, publicActions, webSocket } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
@@ -60,4 +60,16 @@ export function getBlockchainClient() {
     }).extend(publicActions);
 
     return client;
+}
+
+/**
+ * Get the balance of the bot
+ * @returns The balance of the bot in ETH
+ */
+export async function getBotEthBalance() {
+    const balanceInWei = await getBlockchainClient().getBalance({
+        address: process.env.BOT_ADDRESS as Hex,
+    });
+
+    return formatEther(balanceInWei);
 }
