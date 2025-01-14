@@ -38,7 +38,7 @@ export default class LiquidationsService {
             const balance = await getBotEthBalance();
             if (balance < LOW_BALANCE_THRESHOLD) {
                 // emit a warning if the bot balance is dangerously low
-                console.warn(`Bot balance is too low: ${balance}`);
+                console.error(`Bot balance is too low: ${balance}`);
             }
 
             const blockNumber = await this.blockchainClient.getBlockNumber();
