@@ -1,4 +1,4 @@
-import { http, type Hex, publicActions, createWalletClient, webSocket, formatEther } from 'viem';
+import { http, type Hex, publicActions, createWalletClient, webSocket } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
