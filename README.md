@@ -39,6 +39,8 @@ First and foremost, you will need to copy the `.env.example` in a `.env` file, a
 * `PRIVATE_KEY`: The private key of the address that will sign transactions.
   * **Storing private keys in environment variables is considered unsafe.** We strongly encourage you to at least use [GitHub Secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) if you deploy this bot using GitHub actions. Or ideally, to use [AWS KMS](https://aws.amazon.com/kms/) and improve the bot so it can make use of it.
   * The address corresponding to the private key needs funds to pay for gas before it can sign transactions on the network. Please make sure the address has the necessary funds before deploying the bot.
+* `LOW_BALANCE_THRESHOLD`: The balance of ETH the address corresponding to the given private key below which warning logs will be emitted.
+  * The default value is 0.1 ETH.
 
 ### For local development
 
