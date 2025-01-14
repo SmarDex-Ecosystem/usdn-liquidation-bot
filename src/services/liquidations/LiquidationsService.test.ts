@@ -22,6 +22,14 @@ const liquidateSpy = vi
     .spyOn(usdnProtocolContract, 'liquidate')
     .mockResolvedValue({ hash: undefined, liquidatedTicksAmount: 0 });
 
+vi.mock(import('../../utils/index.ts'), async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        getBotEthBalance: vi.fn().mockResolvedValue(0.1),
+    };
+});
+
 describe('LiquidationPriceHistory', () => {
     beforeEach(() => {
         unwatchSpy = vi.fn();
