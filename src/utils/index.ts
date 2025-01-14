@@ -68,7 +68,7 @@ export function getBlockchainClient() {
  */
 export async function getBotEthBalance() {
     const balanceInWei = await getBlockchainClient().getBalance({
-        address: process.env.BOT_ADDRESS as Hex,
+        address: process.env.LIQUIDATION_BOT_ADDRESS as Hex,
     });
 
     return formatEther(balanceInWei);
