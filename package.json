@@ -1,6 +1,6 @@
 {
-    "name": "@usdn/usdn-liquidation-bot",
-    "version": "0.2.0",
+    "name": "@usdn/usdn-private-liquidation-bot",
+    "version": "0.1.0",
     "description": "Service to automate liquidation of USDN long positions",
     "main": "dist/index.js",
     "type": "module",
