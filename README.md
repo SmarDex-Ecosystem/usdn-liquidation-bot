@@ -36,7 +36,8 @@ First and foremost, you will need to copy the `.env.example` in a `.env` file, a
   * By default, it's the address of the ETH/USD price feed on Ethereum `0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419`.
 * `WSTETH`: The address of the underlying asset used by the USDN protocol.
   * By default, it's the address of the wstETH token used on Ethereum `0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0`.
-* `PRIVATE_KEY`: The private key of the address that will sign transactions.
+* `PRIVATE_KEY_SECRET_NAME`: (Required) The name of the secret holding the private key of the address that will sign transactions.
+* `AWS_REGION`: (Required) The region in which the aforementioned secret is stored.
   * **Storing private keys in environment variables is considered unsafe.** We strongly encourage you to at least use [GitHub Secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) if you deploy this bot using GitHub actions. Or ideally, to use [AWS KMS](https://aws.amazon.com/kms/) and improve the bot so it can make use of it.
   * The address corresponding to the private key needs funds to pay for gas before it can sign transactions on the network. Please make sure the address has the necessary funds before deploying the bot.
 * `LOW_BALANCE_THRESHOLD`: The balance of ETH the address corresponding to the given private key below which warning logs will be emitted.
