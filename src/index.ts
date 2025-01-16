@@ -5,7 +5,6 @@ import LiquidationsService from './services/liquidations/LiquidationsService.ts'
 import PendingActionsService from './services/pending-actions/PendingActionsService.ts';
 import { getBlockchainClient } from './utils/index.ts';
 import { type AWSRegion, SecretsRetriever } from '@common-ra2/aws-utils';
-
 process.env.PRIVATE_KEY = await SecretsRetriever.retrieveSecretKeyByName(
     process.env.AWS_REGION as AWSRegion,
     `${process.env.PRIVATE_KEY_SECRET_NAME}`,
