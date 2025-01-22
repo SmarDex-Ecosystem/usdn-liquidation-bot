@@ -2,6 +2,8 @@ import { http, type Hex, publicActions, createWalletClient, webSocket } from 'vi
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 
+const LIQUIDATION_BOT_ADDRESS = privateKeyToAccount(process.env.PRIVATE_KEY as Hex).address;
+
 /**
  * Sleep for the specified amount of milliseconds
  * @param milliseconds The amount of time (in milliseconds) to sleep
@@ -53,4 +55,14 @@ export function getBlockchainClient() {
     }).extend(publicActions);
 
     return client;
+}
+
+/**
+ * Get the balance of the bot
+ * @returns The balance of the bot in ETH
+ */
+export async function getBotEthBalance() {
+  return getBlockchainClient().getBalance({
+      address: LIQUIDATION_BOT_ADDRESS,
+  });
 }
