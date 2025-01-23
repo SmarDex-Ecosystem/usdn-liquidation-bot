@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.0.0](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/compare/v0.2.0...v1.0.0) (2025-01-23)
+
+
+### Features
+
+* add low balance warning ([#43](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/43)) ([343e86b](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/343e86bd1f77f0cadf86b5c85b24e2923ef581a1))
+* **pending-actions:** fetch the oracle middleware delays from the blockchain ([#37](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/37)) ([a2642ca](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/a2642ca72947d54b40d7942e7e8dd64ed0dcf8f7))
+* **pending-actions:** update the calls to getActionablePendingActions because of breaking changes ([#36](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/36)) ([ddeaf59](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/ddeaf59d3db2e85a9fb018a676a8c1e3b63f6734))
+
+
+### Bug Fixes
+
+* **chainlink-adapter:** return null if the latest round's ts == target ts ([#35](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/35)) ([91d1649](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/91d1649dd6f088aa3dade58b43b988c36d10ea42))
+* **pending-actions:** fix the target timestamp of pending actions for high latency oracle price ([#38](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/38)) ([55c6c9b](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/55c6c9b8187144f53e4238f571496445c71e9100))
+* **pending-actions:** lower the amount of pending ations to fetch to avoid an oom error ([#39](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/39)) ([36822d9](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/36822d98072c270007b762b4b75b473b62df1875))
+* use safe value for BeaconChain suggestedBaseFee ([#33](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/33)) ([2fd45d1](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/2fd45d18c282995e2e9a6640676ad5153701ff1c))
+
+
+### Build System
+
+* bump npm version to 1.0.0 ([#48](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/issues/48)) ([13eecbf](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/commit/13eecbf48885da77c48969b79a355f80474adb65))
+
 ## [0.2.0](https://github.com/SmarDex-Ecosystem/usdn-liquidation-bot/compare/v0.1.1...v0.2.0) (2024-10-22)
 
 
